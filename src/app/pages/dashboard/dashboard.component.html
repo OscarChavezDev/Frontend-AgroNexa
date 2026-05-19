@@ -1,0 +1,105 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Bienvenido, {{ user?.nombre }} 👋</h1>
+      <p class="subtitle">Resumen de tu actividad agrícola</p>
+    </div>
+    <a routerLink="/parcelas/nueva" class="btn-primary">+ Nueva parcela</a>
+  </div>
+
+  <!-- Stats — siempre visibles, se actualizan cuando llegan datos -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card--green">
+      <div class="stat-icon">🌾</div>
+      <div class="stat-info">
+        <span class="stat-value" [class.sk-val]="loadingParcelas">{{ loadingParcelas ? '' : totalParcelas }}</span>
+        <span class="stat-label">Parcelas registradas</span>
+      </div>
+    </div>
+    <div class="stat-card stat-card--blue">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <span class="stat-value" [class.sk-val]="loadingParcelas">{{ loadingParcelas ? '' : parcelasActivas }}</span>
+        <span class="stat-label">Parcelas activas</span>
+      </div>
+    </div>
+    <div class="stat-card stat-card--amber">
+      <div class="stat-icon">🔬</div>
+      <div class="stat-info">
+        <span class="stat-value" [class.sk-val]="loadingMuestras">{{ loadingMuestras ? '' : totalMuestras }}</span>
+        <span class="stat-label">Muestras totales</span>
+      </div>
+    </div>
+    <div class="stat-card stat-card--purple">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ user?.plan | titlecase }}</span>
+        <span class="stat-label">Plan actual</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listas recientes -->
+  <div class="dashboard-grid">
+    <!-- Últimas Parcelas -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Últimas Parcelas</h3>
+        <a routerLink="/parcelas" class="link-more">Ver todas →</a>
+      </div>
+
+      <div class="sk-list" *ngIf="loadingParcelas">
+        <div class="sk-row" *ngFor="let i of [1,2,3]">
+          <div class="sk sk-icon"></div>
+          <div class="sk-lines"><div class="sk sk-t"></div><div class="sk sk-s"></div></div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingParcelas && parcelas.length === 0">
+        <p>No tienes parcelas aún.</p>
+        <a routerLink="/parcelas/nueva" class="btn-outline">Registrar parcela</a>
+      </div>
+      <div class="item-list" *ngIf="!loadingParcelas && parcelas.length > 0">
+        <a *ngFor="let p of parcelas.slice(0,4)" [routerLink]="['/parcelas', p.id]" class="item-row">
+          <div class="item-icon">🌱</div>
+          <div class="item-info">
+            <span class="item-title">{{ p.nombre }}</span>
+            <span class="item-sub">{{ p.cultivo }} · {{ p.areaAproximada }} {{ p.unidadArea }}</span>
+          </div>
+          <span class="badge badge--{{ p.estado === 'activo' ? 'green' : 'gray' }}">{{ p.estado }}</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Últimas Muestras -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Últimas Muestras</h3>
+        <a routerLink="/muestras" class="link-more">Ver todas →</a>
+      </div>
+
+      <div class="sk-list" *ngIf="loadingMuestras">
+        <div class="sk-row" *ngFor="let i of [1,2,3]">
+          <div class="sk sk-icon"></div>
+          <div class="sk-lines"><div class="sk sk-t"></div><div class="sk sk-s"></div></div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingMuestras && muestras.length === 0">
+        <p>No tienes muestras registradas.</p>
+      </div>
+      <div class="item-list" *ngIf="!loadingMuestras && muestras.length > 0">
+        <a *ngFor="let m of ultimasMuestras" [routerLink]="['/muestras', m.id]" class="item-row">
+          <div class="item-icon">🔬</div>
+          <div class="item-info">
+            <span class="item-title">{{ m.parteAfectada || 'Sin especificar' }}</span>
+            <span class="item-sub">{{ m.createdAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <span class="badge badge--{{ m.nivelAfectacion === 'severo' ? 'red' : m.nivelAfectacion === 'moderado' ? 'amber' : 'green' }}">
+            {{ m.nivelAfectacion || '-' }}
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

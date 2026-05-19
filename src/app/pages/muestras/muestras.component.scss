@@ -1,0 +1,17 @@
+@use '../../../styles/page' as *;
+
+.sintomas-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.chip {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+
+  &--more { background: #e5e7eb; color: #6b7280; }
+}

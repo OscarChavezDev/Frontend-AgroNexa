@@ -1,0 +1,222 @@
+@use '../../../styles/page' as *;
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-col, .diagnostico-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a3a2a;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f4ee;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sintomas-section, .observacion {
+  margin-top: 12px;
+}
+
+.sintomas-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sintoma-tag {
+  background: #fef9c3;
+  color: #854d0e;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+// Galería de imágenes
+.imagenes-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e8ede6;
+}
+
+.gallery-link {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: linear-gradient(90deg, #f0f4ee 25%, #e8ede6 50%, #f0f4ee 75%);
+  background-size: 200% 100%;
+  animation: img-shimmer 1.4s infinite;
+
+  &.loaded { animation: none; background: #f0f4ee; }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s, opacity 0.3s;
+    opacity: 0;
+
+    &.loaded { opacity: 1; }
+  }
+
+  &:hover img { transform: scale(1.05); }
+}
+
+@keyframes img-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+
+  .gallery-link:hover & { opacity: 1; }
+}
+
+.gallery-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px 8px;
+  flex-wrap: wrap;
+}
+
+.tipo-chip {
+  background: #f0fdf4;
+  color: #166534;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.desc-text {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+// Diagnóstico
+.diagnostico-card {
+  position: sticky;
+  top: 20px;
+}
+
+.diagnostico-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 16px;
+
+  h3 { margin: 0; font-size: 17px; color: #1a3a2a; }
+  p { color: #6b7280; font-size: 14px; margin: 0; }
+}
+
+.diagnostico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f4ee;
+  h3 { margin: 0; font-size: 15px; font-weight: 600; color: #1a3a2a; }
+}
+
+.riesgo-badge {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+  &--red   { background: #fee2e2; color: #991b1b; }
+  &--amber { background: #fef3c7; color: #92400e; }
+  &--green { background: #d1fae5; color: #065f46; }
+  &--gray  { background: #f3f4f6; color: #6b7280; }
+}
+
+.enfermedad-info { margin-bottom: 16px; }
+
+.enfermedad-nombre {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a3a2a;
+  margin-bottom: 10px;
+}
+
+.confianza-label { font-size: 13px; color: #6b7280; display: block; margin-bottom: 6px; }
+.bar {
+  background: #f0f4ee;
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, #2d6a4f, #52b788);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.motivo, .recomendaciones {
+  margin-top: 16px;
+  p { font-size: 14px; color: #374151; line-height: 1.6; margin: 8px 0 0; }
+}
+
+.recomendaciones ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  li { font-size: 14px; color: #374151; margin-bottom: 6px; line-height: 1.5; }
+}
+
+.regen-action {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f4ee;
+  display: flex;
+  justify-content: center;
+}

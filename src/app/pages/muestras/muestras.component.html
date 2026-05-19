@@ -1,0 +1,54 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Muestras de campo</h1>
+      <p class="subtitle">Historial de muestras y diagnósticos</p>
+    </div>
+    <a routerLink="/muestras/nueva" class="btn-primary">+ Nueva muestra</a>
+  </div>
+
+  <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
+  <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div class="empty-state card" *ngIf="!loading && muestras.length === 0">
+    <span style="font-size:48px">🔬</span>
+    <h3>Sin muestras registradas</h3>
+    <p>Registra tu primera muestra de campo</p>
+    <a routerLink="/muestras/nueva" class="btn-primary">Nueva muestra</a>
+  </div>
+
+  <div class="card" *ngIf="!loading && muestras.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Parte afectada</th>
+          <th>Síntomas</th>
+          <th>Nivel</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of muestras">
+          <td><strong>{{ m.parteAfectada | titlecase }}</strong></td>
+          <td>
+            <div class="sintomas-chips">
+              <span *ngFor="let s of (m.sintomas || []).slice(0,2)" class="chip">{{ s }}</span>
+              <span *ngIf="(m.sintomas?.length || 0) > 2" class="chip chip--more">+{{ (m.sintomas?.length || 0) - 2 }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="badge badge--{{ nivelClass(m.nivelAfectacion) }}">{{ m.nivelAfectacion || 'leve' }}</span>
+          </td>
+          <td>{{ m.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="table-actions">
+              <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">Ver</a>
+              <button class="btn-danger-sm" (click)="eliminar(m.id!)">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

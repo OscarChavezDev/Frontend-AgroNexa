@@ -1,0 +1,81 @@
+@use '../../../styles/page' as *;
+
+.parcelas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.parcela-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border: 1px solid #e8ede6;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    h3 { margin: 0 0 6px; font-size: 16px; color: #1a3a2a; }
+  }
+
+  &__info { display: flex; flex-direction: column; gap: 6px; }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid #f0f4ee;
+  }
+}
+
+// Skeleton loader
+.parcelas-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.skeleton-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e8ede6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sk {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f4ee 25%, #e8ede6 50%, #f0f4ee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+
+  &-title  { height: 18px; width: 60%; }
+  &-line   { height: 13px; width: 90%; }
+  &-short  { width: 45%; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.cultivo-badge {
+  font-size: 13px;
+  background: #f0fdf4;
+  color: #166534;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}

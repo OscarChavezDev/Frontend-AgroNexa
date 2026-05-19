@@ -1,0 +1,168 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Detalle de Muestra</h1>
+      <p class="subtitle" *ngIf="muestra">{{ muestra.parteAfectada | titlecase }} · {{ muestra.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+    </div>
+    <a routerLink="/muestras" class="btn-outline">← Volver</a>
+  </div>
+
+  <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
+  <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div *ngIf="!loading && muestra" class="detail-layout">
+
+    <!-- Columna izquierda: datos de la muestra -->
+    <div class="detail-col">
+
+      <!-- Observación de campo -->
+      <div class="card">
+        <h3 class="card-title">Observación de campo</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Parte afectada</span>
+            <span class="detail-value">{{ muestra.parteAfectada | titlecase }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Nivel de afectación</span>
+            <span class="badge badge--{{ muestra.nivelAfectacion === 'severo' ? 'red' : muestra.nivelAfectacion === 'moderado' ? 'amber' : 'green' }}">
+              {{ muestra.nivelAfectacion || 'leve' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Estado</span>
+            <span class="detail-value">{{ muestra.estado | titlecase }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha</span>
+            <span class="detail-value">{{ muestra.createdAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <div class="sintomas-section" *ngIf="muestra.sintomas?.length">
+          <span class="detail-label">Síntomas identificados</span>
+          <div class="sintomas-list">
+            <span *ngFor="let s of muestra.sintomas" class="sintoma-tag">{{ s }}</span>
+          </div>
+        </div>
+
+        <div class="observacion" *ngIf="muestra.observaciones">
+          <span class="detail-label">Observaciones</span>
+          <p>{{ muestra.observaciones }}</p>
+        </div>
+      </div>
+
+      <!-- Fotografías -->
+      <div class="card" *ngIf="imagenes.length > 0">
+        <h3 class="card-title">Fotografías ({{ imagenes.length }})</h3>
+        <div class="imagenes-gallery">
+          <div class="gallery-item" *ngFor="let img of imagenes">
+            <a [href]="img.url" target="_blank" rel="noopener" class="gallery-link" #imgWrap>
+              <img [src]="img.url" [alt]="img.descripcion || img.tipoImagen || 'Imagen'"
+                   loading="lazy" decoding="async"
+                   (load)="imgWrap.classList.add('loaded'); $event.target['classList'].add('loaded')">
+              <div class="gallery-overlay">
+                <span>Ver completa</span>
+              </div>
+            </a>
+            <div class="gallery-meta" *ngIf="img.tipoImagen || img.descripcion">
+              <span class="tipo-chip" *ngIf="img.tipoImagen">{{ img.tipoImagen | titlecase }}</span>
+              <span class="desc-text" *ngIf="img.descripcion">{{ img.descripcion }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos del sensor -->
+      <div class="card" *ngIf="muestra.datosSensor">
+        <h3 class="card-title">Datos del sensor</h3>
+        <div class="detail-grid">
+          <div class="detail-item" *ngIf="muestra.datosSensor.ph">
+            <span class="detail-label">pH</span>
+            <span class="detail-value">{{ muestra.datosSensor.ph }}</span>
+          </div>
+          <div class="detail-item" *ngIf="muestra.datosSensor.nitrogeno">
+            <span class="detail-label">Nitrógeno</span>
+            <span class="detail-value">{{ muestra.datosSensor.nitrogeno }} ppm</span>
+          </div>
+          <div class="detail-item" *ngIf="muestra.datosSensor.fosforo">
+            <span class="detail-label">Fósforo</span>
+            <span class="detail-value">{{ muestra.datosSensor.fosforo }} ppm</span>
+          </div>
+          <div class="detail-item" *ngIf="muestra.datosSensor.potasio">
+            <span class="detail-label">Potasio</span>
+            <span class="detail-value">{{ muestra.datosSensor.potasio }} ppm</span>
+          </div>
+          <div class="detail-item" *ngIf="muestra.datosSensor.humedadSuelo">
+            <span class="detail-label">Humedad suelo</span>
+            <span class="detail-value">{{ muestra.datosSensor.humedadSuelo }}%</span>
+          </div>
+          <div class="detail-item" *ngIf="muestra.datosSensor.temperaturaSuelo">
+            <span class="detail-label">Temperatura suelo</span>
+            <span class="detail-value">{{ muestra.datosSensor.temperaturaSuelo }}°C</span>
+          </div>
+          <div class="detail-item" *ngIf="muestra.datosSensor.conductividadElectrica">
+            <span class="detail-label">Conductividad</span>
+            <span class="detail-value">{{ muestra.datosSensor.conductividadElectrica }} dS/m</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Columna derecha: diagnóstico -->
+    <div class="diagnostico-col">
+
+      <div class="card diagnostico-card" *ngIf="!diagnostico">
+        <div class="diagnostico-empty">
+          <span style="font-size:52px">🩺</span>
+          <h3>Sin diagnóstico aún</h3>
+          <p>Genera un diagnóstico preliminar basado en los síntomas y datos registrados.</p>
+          <button class="btn-primary" [disabled]="generando" (click)="generarDiagnostico()">
+            <span *ngIf="!generando">Generar diagnóstico</span>
+            <span *ngIf="generando" class="spinner"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card diagnostico-card" *ngIf="diagnostico">
+        <div class="diagnostico-header">
+          <h3>Diagnóstico Preliminar</h3>
+          <span class="riesgo-badge riesgo-badge--{{ riesgoClass }}">
+            Riesgo {{ diagnostico.resultado.riesgo | uppercase }}
+          </span>
+        </div>
+
+        <div class="enfermedad-info">
+          <span class="enfermedad-nombre">{{ diagnostico.resultado.enfermedad | titlecase }}</span>
+          <div class="confianza-bar">
+            <span class="confianza-label">Confianza: {{ (diagnostico.resultado.confianza * 100) | number:'1.0-0' }}%</span>
+            <div class="bar">
+              <div class="bar-fill" [style.width.%]="diagnostico.resultado.confianza * 100"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="motivo" *ngIf="diagnostico.motivo">
+          <span class="detail-label">Análisis</span>
+          <p>{{ diagnostico.motivo }}</p>
+        </div>
+
+        <div class="recomendaciones" *ngIf="diagnostico.recomendaciones?.length">
+          <span class="detail-label">Recomendaciones</span>
+          <ul>
+            <li *ngFor="let r of diagnostico.recomendaciones">{{ r }}</li>
+          </ul>
+        </div>
+
+        <div class="regen-action">
+          <button class="btn-outline" style="font-size:13px" [disabled]="generando" (click)="generarDiagnostico()">
+            <span *ngIf="!generando">↻ Regenerar diagnóstico</span>
+            <span *ngIf="generando" class="spinner" style="border-color:rgba(45,106,79,0.3);border-top-color:#2d6a4f"></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

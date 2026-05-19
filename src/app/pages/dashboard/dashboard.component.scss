@@ -1,0 +1,40 @@
+@use '../../../styles/page' as *;
+
+// Stat value skeleton
+.sk-val {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.3) 25%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  vertical-align: middle;
+}
+
+// List skeletons
+.sk-list { display: flex; flex-direction: column; gap: 12px; padding: 4px 0; }
+
+.sk-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sk-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+.sk {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f4ee 25%, #e8ede6 50%, #f0f4ee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+
+  &-icon { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+  &-t    { height: 14px; width: 70%; }
+  &-s    { height: 11px; width: 45%; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

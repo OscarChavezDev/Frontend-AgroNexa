@@ -1,0 +1,65 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Mis Parcelas</h1>
+      <p class="subtitle">Gestiona tus parcelas agrícolas</p>
+    </div>
+    <a routerLink="/parcelas/nueva" class="btn-primary">+ Nueva parcela</a>
+  </div>
+
+  <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <!-- Skeletons mientras carga -->
+  <div class="parcelas-skeleton" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3]">
+      <div class="sk sk-title"></div>
+      <div class="sk sk-line"></div>
+      <div class="sk sk-line sk-short"></div>
+    </div>
+  </div>
+
+  <!-- Sin datos -->
+  <div class="empty-state card" *ngIf="!loading && !errorMsg && parcelas.length === 0">
+    <span style="font-size:48px">🌾</span>
+    <h3>Sin parcelas registradas</h3>
+    <p>Empieza registrando tu primera parcela</p>
+    <a routerLink="/parcelas/nueva" class="btn-primary">Registrar parcela</a>
+  </div>
+
+  <div class="parcelas-grid" *ngIf="parcelas.length > 0">
+    <div class="parcela-card" *ngFor="let p of parcelas">
+      <div class="parcela-card__header">
+        <div>
+          <h3>{{ p.nombre }}</h3>
+          <span class="badge badge--{{ p.estado === 'activo' ? 'green' : 'gray' }}">{{ p.estado }}</span>
+        </div>
+        <span class="cultivo-badge">🌱 {{ p.cultivo }}</span>
+      </div>
+
+      <div class="parcela-card__info">
+        <div class="info-row">
+          <span class="info-label">Área:</span>
+          <span>{{ p.areaAproximada }} {{ p.unidadArea }}</span>
+        </div>
+        <div class="info-row" *ngIf="p.variedad">
+          <span class="info-label">Variedad:</span>
+          <span>{{ p.variedad }}</span>
+        </div>
+        <div class="info-row" *ngIf="p.cantidadPlantas">
+          <span class="info-label">Plantas:</span>
+          <span>{{ p.cantidadPlantas }}</span>
+        </div>
+        <div class="info-row" *ngIf="p.ubicacion">
+          <span class="info-label">Ubicación:</span>
+          <span>{{ p.ubicacion.lat }}, {{ p.ubicacion.lng }}</span>
+        </div>
+      </div>
+
+      <div class="parcela-card__actions">
+        <a [routerLink]="['/parcelas', p.id]" class="btn-outline-sm">Ver detalle</a>
+        <a [routerLink]="['/parcelas', p.id, 'editar']" class="btn-outline-sm">Editar</a>
+        <button class="btn-danger-sm" (click)="eliminar(p.id!, p.nombre)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

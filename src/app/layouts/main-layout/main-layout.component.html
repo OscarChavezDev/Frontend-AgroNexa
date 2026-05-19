@@ -1,0 +1,59 @@
+<div class="layout-wrapper" [class.sidebar-open]="sidebarOpen">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">🌱</span>
+      <span class="brand-name">AgroNexa</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a routerLink="/parcelas" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🌾</span>
+        <span class="nav-label">Mis Parcelas</span>
+      </a>
+      <a routerLink="/muestras" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Muestras</span>
+      </a>
+      <a routerLink="/planes" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">⭐</span>
+        <span class="nav-label">Planes</span>
+      </a>
+      <a routerLink="/perfil" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Mi Perfil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info" *ngIf="currentUser">
+        <div class="user-avatar">{{ currentUser.nombre[0] }}{{ currentUser.apellido[0] }}</div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser.nombre }} {{ currentUser.apellido }}</span>
+          <span class="user-role">{{ rolLabel }}</span>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main-area">
+    <header class="topbar">
+      <button class="menu-toggle" (click)="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-right">
+        <span class="plan-badge" *ngIf="currentUser">Plan {{ currentUser.plan | titlecase }}</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

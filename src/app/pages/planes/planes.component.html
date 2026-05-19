@@ -1,0 +1,63 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Planes y Suscripciones</h1>
+      <p class="subtitle">Elige el plan que mejor se adapta a tus necesidades</p>
+    </div>
+  </div>
+
+  <div class="success-banner" *ngIf="mensaje && !mensaje.includes('Error')">{{ mensaje }}</div>
+  <div class="error-banner" *ngIf="mensaje && mensaje.includes('Error')">{{ mensaje }}</div>
+
+  <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
+
+  <!-- Plan actual -->
+  <div class="card plan-actual" *ngIf="suscripcionActual && !loading">
+    <div class="plan-actual__info">
+      <span class="plan-actual__label">Tu plan actual</span>
+      <span class="plan-actual__nombre">{{ suscripcionActual.plan | titlecase }}</span>
+    </div>
+    <div class="plan-actual__estado">
+      <span class="badge badge--{{ suscripcionActual.estado === 'activo' ? 'green' : 'gray' }}">{{ suscripcionActual.estado }}</span>
+      <span class="plan-actual__vence" *ngIf="suscripcionActual.fechaFin">
+        Vence: {{ suscripcionActual.fechaFin | date:'dd/MM/yyyy' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="planes-grid" *ngIf="!loading">
+    <div class="plan-card" *ngFor="let plan of planes"
+      [class.plan-card--current]="esPlanActual(plan.codigo)"
+      [class.plan-card--popular]="plan.codigo === 'plus'">
+
+      <div class="popular-badge" *ngIf="plan.codigo === 'plus'">⭐ Más popular</div>
+
+      <div class="plan-header">
+        <h3>{{ plan.nombre }}</h3>
+        <div class="plan-precio">
+          <span class="precio-monto">{{ plan.precio === 0 ? 'Gratis' : 'S/ ' + plan.precio }}</span>
+          <span class="precio-periodo" *ngIf="plan.precio > 0">/ mes</span>
+        </div>
+        <span class="trial-info" *ngIf="plan.trialDias && plan.precio > 0">
+          {{ plan.trialDias }} días de prueba gratis
+        </span>
+      </div>
+
+      <ul class="plan-features">
+        <li *ngFor="let f of plan.caracteristicas">
+          <span class="check">✓</span> {{ f }}
+        </li>
+      </ul>
+
+      <button class="btn-plan" [class.btn-plan--current]="esPlanActual(plan.codigo)"
+        [disabled]="esPlanActual(plan.codigo) || procesando === plan.codigo"
+        (click)="suscribirse(plan)">
+        <span *ngIf="esPlanActual(plan.codigo)">Plan actual</span>
+        <span *ngIf="!esPlanActual(plan.codigo) && procesando !== plan.codigo">
+          {{ plan.precio === 0 ? 'Activar gratis' : 'Suscribirse' }}
+        </span>
+        <span *ngIf="procesando === plan.codigo" class="spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
