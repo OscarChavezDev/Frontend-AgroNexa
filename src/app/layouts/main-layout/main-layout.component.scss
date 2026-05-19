@@ -1,175 +1,294 @@
 :host { display: block; height: 100vh; }
 
+// ── Layout shell ────────────────────────────────────────────────────────────
 .layout-wrapper {
   display: flex;
   height: 100vh;
-  background: #f5f7f2;
+  background: var(--clr-background);
 }
 
+// ── Sidebar overlay (mobile) ────────────────────────────────────────────────
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(2px);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
 .sidebar {
-  width: 240px;
-  min-width: 240px;
-  background: #1a3a2a;
+  width: 248px;
+  min-width: 248px;
+  background: var(--clr-brand-800);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-slow);
   z-index: 100;
+  position: relative;
+
+  // Subtle vertical divider
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(255,255,255,.07) 20%,
+      rgba(255,255,255,.07) 80%,
+      transparent 100%
+    );
+  }
 }
 
+// ── Brand ────────────────────────────────────────────────────────────────────
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 24px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-
-  .brand-icon { font-size: 28px; }
-  .brand-name { font-size: 20px; font-weight: 700; color: #a8d5a2; letter-spacing: 0.5px; }
+  gap: 11px;
+  padding: 22px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.3px;
+}
+
+// ── Nav ───────────────────────────────────────────────────────────────────────
 .sidebar-nav {
   flex: 1;
-  padding: 16px 12px;
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  overflow-y: auto;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   padding: 10px 12px;
-  border-radius: 8px;
-  color: rgba(255,255,255,0.7);
+  border-radius: var(--radius-md);
+  color: rgba(255,255,255,.58);
   text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  position: relative;
 
-  &:hover { background: rgba(255,255,255,0.08); color: #fff; }
-  &.active { background: #2d6a4f; color: #fff; font-weight: 600; }
-  .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+  &:hover {
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.9);
+  }
+
+  &.active {
+    background: rgba(255,255,255,.12);
+    color: #fff;
+    font-weight: 600;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 25%; bottom: 25%;
+      width: 3px;
+      background: var(--clr-brand-300);
+      border-radius: 0 3px 3px 0;
+    }
+  }
 }
 
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  flex-shrink: 0;
+  opacity: .85;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
 .sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 14px 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  padding: 6px 6px;
+  border-radius: var(--radius-md);
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #2d6a4f;
-  color: #a8d5a2;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--clr-brand-600);
+  color: var(--clr-brand-100);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.15);
 }
 
 .user-details {
   display: flex;
   flex-direction: column;
-  .user-name { font-size: 13px; color: #fff; font-weight: 600; }
-  .user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+  overflow: hidden;
+
+  .user-name {
+    font-size: 13px;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .user-role { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 1px; }
 }
 
 .btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  padding: 8px;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  border-radius: 6px;
-  color: rgba(255,255,255,0.7);
+  padding: 9px 12px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-md);
+  color: rgba(255,255,255,.55);
   cursor: pointer;
   font-size: 13px;
-  transition: background 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background var(--transition-fast), color var(--transition-fast);
 
-  &:hover { background: rgba(220,38,38,0.3); color: #fff; }
+  &:hover {
+    background: rgba(220,38,38,.25);
+    border-color: rgba(220,38,38,.3);
+    color: #fca5a5;
+  }
 }
 
+// ── Main area ─────────────────────────────────────────────────────────────────
 .main-area {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0;
 }
 
+// ── Topbar ────────────────────────────────────────────────────────────────────
 .topbar {
-  height: 60px;
-  background: #fff;
-  border-bottom: 1px solid #e8ede6;
+  height: 58px;
+  background: var(--clr-surface);
+  border-bottom: 1px solid var(--clr-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 28px;
   flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-xs);
+  z-index: 10;
 }
 
 .menu-toggle {
   display: none;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--clr-neutral-100); }
 
   span {
     display: block;
-    width: 22px;
+    width: 20px;
     height: 2px;
-    background: #374151;
+    background: var(--clr-neutral-700);
     border-radius: 2px;
+    transition: transform var(--transition-base);
   }
 }
 
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  margin-left: auto;
 }
 
 .plan-badge {
-  background: #d1fae5;
-  color: #065f46;
-  padding: 4px 12px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, var(--clr-brand-25), #e8f8ef);
+  color: var(--clr-brand-700);
+  padding: 5px 13px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
+  border: 1px solid var(--clr-brand-100);
+  letter-spacing: .1px;
 }
 
+// ── Content ───────────────────────────────────────────────────────────────────
 .content {
   flex: 1;
   overflow-y: auto;
   padding: 28px 32px;
 }
 
+// ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     height: 100vh;
     transform: translateX(-100%);
   }
 
-  .layout-wrapper.sidebar-open .sidebar {
-    transform: translateX(0);
+  .layout-wrapper.sidebar-open {
+    .sidebar { transform: translateX(0); }
+    .sidebar-overlay { display: block; opacity: 1; }
   }
 
   .menu-toggle { display: flex; }
-
   .content { padding: 20px 16px; }
 }
