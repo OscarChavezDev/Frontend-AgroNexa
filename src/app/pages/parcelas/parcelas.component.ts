@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { Parcela } from '../../core/models/parcela.model';
@@ -17,7 +17,10 @@ export class ParcelasComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
   private timeout?: ReturnType<typeof setTimeout>;
 
-  constructor(private parcelasService: ParcelasService) {}
+  constructor(
+    private parcelasService: ParcelasService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() { this.cargar(); }
 
@@ -35,13 +38,26 @@ export class ParcelasComponent implements OnInit, OnDestroy {
     this.timeout = setTimeout(() => {
       if (this.loading) {
         this.loading = false;
-        this.errorMsg = 'No se pudo conectar con el servidor. Verifica tu conexión.';
+        this.errorMsg = 'No se pudo conectar con el servidor (Tiempo de espera agotado).';
+        this.cdr.detectChanges();
       }
     }, 5000);
 
     this.sub = this.parcelasService.listar().subscribe({
-      next: (res) => { clearTimeout(this.timeout); this.parcelas = res.data || []; this.loading = false; },
-      error: () => { clearTimeout(this.timeout); this.errorMsg = 'Error al cargar parcelas'; this.loading = false; }
+      next: (res) => { 
+        clearTimeout(this.timeout); 
+        console.log('Respuesta del backend (Parcelas):', res);
+        this.parcelas = res.data || []; 
+        this.loading = false; 
+        this.cdr.detectChanges();
+      },
+      error: (err) => { 
+        clearTimeout(this.timeout); 
+        console.error('Error al obtener parcelas:', err);
+        this.errorMsg = 'Error al cargar parcelas'; 
+        this.loading = false; 
+        this.cdr.detectChanges();
+      }
     });
   }
 
