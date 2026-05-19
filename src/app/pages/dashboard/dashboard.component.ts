@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { MuestrasService } from '../../core/services/muestras.service';
@@ -22,18 +22,37 @@ export class DashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private parcelasService: ParcelasService,
-    private muestrasService: MuestrasService
+    private muestrasService: MuestrasService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.user = this.authService.currentUser;
     this.parcelasService.listar().subscribe({
-      next: (res) => { this.parcelas = res.data || []; this.loadingParcelas = false; },
-      error: () => this.loadingParcelas = false
+      next: (res) => { 
+        console.log('Respuesta del backend (Dashboard Parcelas):', res);
+        this.parcelas = res.data || []; 
+        this.loadingParcelas = false; 
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error (Dashboard Parcelas):', err);
+        this.loadingParcelas = false;
+        this.cdr.detectChanges();
+      }
     });
     this.muestrasService.listar().subscribe({
-      next: (res) => { this.muestras = res.data || []; this.loadingMuestras = false; },
-      error: () => this.loadingMuestras = false
+      next: (res) => { 
+        console.log('Respuesta del backend (Dashboard Muestras):', res);
+        this.muestras = res.data || []; 
+        this.loadingMuestras = false; 
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error (Dashboard Muestras):', err);
+        this.loadingMuestras = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 

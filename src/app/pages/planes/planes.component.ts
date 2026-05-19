@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SuscripcionesService } from '../../core/services/suscripciones.service';
 import { Plan, Suscripcion } from '../../core/models/suscripcion.model';
 
@@ -15,17 +15,33 @@ export class PlanesComponent implements OnInit {
   procesando = '';
   mensaje = '';
 
-  constructor(private suscripcionesService: SuscripcionesService) {}
+  constructor(
+    private suscripcionesService: SuscripcionesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() { this.cargar(); }
 
   cargar() {
     this.loading = true;
     this.suscripcionesService.obtenerPlanes().subscribe({
-      next: (res) => { this.planes = res.data || []; this.loading = false; }
+      next: (res) => { 
+        console.log('Respuesta del backend (Planes):', res);
+        this.planes = res.data || []; 
+        this.loading = false; 
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al obtener planes:', err);
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
     this.suscripcionesService.suscripcionActual().subscribe({
-      next: (res) => this.suscripcionActual = res.data || null,
+      next: (res) => {
+        this.suscripcionActual = res.data || null;
+        this.cdr.detectChanges();
+      },
       error: () => {}
     });
   }
