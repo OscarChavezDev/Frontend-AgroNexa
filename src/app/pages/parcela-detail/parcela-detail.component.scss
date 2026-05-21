@@ -175,9 +175,10 @@
 }
 
 .muestra-icon {
-  font-size: 22px;
   width: 32px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -39,8 +39,9 @@ export class MuestraFormComponent implements OnInit {
   tiposImagen = ['hoja', 'fruto', 'tallo', 'planta_completa', 'suelo'];
 
   imagenes: ImagenItem[] = [];
+  loadingParcelas = true;
 
-  sensorMode: 'exacto' | 'visual' = 'exacto';
+  sensorMode: 'visual' | 'exacto' = 'visual';
 
   sensorNiveles: Record<string, 'bajo' | 'medio' | 'alto' | ''> = {
     ph: '', nitrogeno: '', fosforo: '', potasio: '', humedadSuelo: ''
@@ -72,7 +73,8 @@ export class MuestraFormComponent implements OnInit {
     private parcelasService: ParcelasService,
     private imagenesService: ImagenesService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       parcelaId: ['', Validators.required],
@@ -92,7 +94,10 @@ export class MuestraFormComponent implements OnInit {
   ngOnInit() {
     const parcelaId = this.route.snapshot.queryParamMap.get('parcelaId') || '';
     if (parcelaId) this.form.patchValue({ parcelaId });
-    this.parcelasService.listar().subscribe({ next: (res) => this.parcelas = res.data || [] });
+    this.parcelasService.listar().subscribe({
+      next: (res) => { this.parcelas = res.data || []; this.loadingParcelas = false; this.cdr.detectChanges(); },
+      error: () => { this.loadingParcelas = false; this.cdr.detectChanges(); }
+    });
   }
 
   toggleSintoma(s: string) {
@@ -106,16 +111,12 @@ export class MuestraFormComponent implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (!files) return;
     Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.imagenes.push({
-          file,
-          preview: e.target?.result as string,
-          tipoImagen: 'fruto',
-          descripcion: ''
-        });
-      };
-      reader.readAsDataURL(file);
+      this.imagenes.push({
+        file,
+        preview: URL.createObjectURL(file),
+        tipoImagen: 'fruto',
+        descripcion: ''
+      });
     });
     (event.target as HTMLInputElement).value = '';
   }

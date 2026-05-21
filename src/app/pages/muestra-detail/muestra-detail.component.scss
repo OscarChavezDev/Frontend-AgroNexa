@@ -185,16 +185,24 @@
 }
 
 .sensor-icon {
-  font-size: 20px;
   background: #fff;
   width: 40px;
   height: 40px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-  border: 1px solid rgba(228, 235, 222, 0.5);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  border: 1px solid rgba(228, 235, 222, 0.8);
+
+  &--ph  { color: #059669; }
+  &--n   { color: #16a34a; }
+  &--p   { color: #7c3aed; }
+  &--k   { color: #d97706; }
+  &--h   { color: #0ea5e9; }
+  &--t   { color: #ef4444; }
+  &--ce  { color: #6366f1; }
 }
 
 .sensor-info {
@@ -323,7 +331,7 @@
   gap: 12px;
   padding: 16px;
 
-  .empty-icon { font-size: 48px; }
+  .empty-icon { display: flex; opacity: .7; }
   h3 { margin: 0; font-size: 17px; color: #1a3a2a; }
   p { color: #6b7280; font-size: 13.5px; margin: 0; line-height: 1.5; }
 }
@@ -428,7 +436,7 @@
     color: #1e3a8a;
     border-bottom: 1px solid #eef2ff;
 
-    .title-icon { font-size: 18px; }
+    .title-icon { display: flex; color: #1e3a8a; }
   }
 
   p {
@@ -454,8 +462,8 @@
   padding: 12px 0;
   
   .success-icon {
-    font-size: 36px;
-    display: block;
+    display: flex;
+    justify-content: center;
     margin-bottom: 8px;
   }
 

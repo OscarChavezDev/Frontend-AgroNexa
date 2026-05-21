@@ -14,8 +14,10 @@
       <h3 class="section-title">Parcela</h3>
       <div class="form-group">
         <label>Parcela *</label>
-        <select formControlName="parcelaId" [class.error]="f['parcelaId'].invalid && f['parcelaId'].touched">
-          <option value="">Seleccionar parcela...</option>
+        <select formControlName="parcelaId"
+                [disabled]="loadingParcelas"
+                [class.error]="f['parcelaId'].invalid && f['parcelaId'].touched">
+          <option value="">{{ loadingParcelas ? 'Cargando parcelas...' : 'Seleccionar parcela...' }}</option>
           <option *ngFor="let p of parcelas" [value]="p.id">{{ p.nombre }} — {{ p.cultivo | titlecase }}</option>
         </select>
         <span class="field-error" *ngIf="f['parcelaId'].invalid && f['parcelaId'].touched">Requerido</span>
@@ -75,7 +77,12 @@
       <label class="upload-zone" for="file-upload-input">
         <input type="file" id="file-upload-input" accept="image/*" multiple
                (change)="onFilesSelected($event)" style="display:none">
-        <span class="upload-icon">📷</span>
+        <span class="upload-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </span>
         <span class="upload-text">Seleccionar imágenes</span>
         <span class="upload-sub">JPG, PNG, WEBP · puedes agregar múltiples archivos</span>
       </label>
@@ -102,12 +109,19 @@
       <h3 class="section-title">Datos del suelo <span class="optional">(opcional)</span></h3>
 
       <div class="sensor-toggle">
-        <button type="button" class="sensor-mode-btn" [class.active]="sensorMode === 'exacto'" (click)="sensorMode = 'exacto'">
-          📡 Tengo sensor
-        </button>
         <button type="button" class="sensor-mode-btn" [class.active]="sensorMode === 'visual'" (click)="sensorMode = 'visual'">
-          📊 Sin sensor
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          Sin sensor
         </button>
+        <button type="button" class="sensor-mode-btn" [class.active]="sensorMode === 'exacto'" (click)="sensorMode = 'exacto'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Tengo sensor
+        </button>
+        
       </div>
 
       <!-- Modo exacto: valores numéricos -->

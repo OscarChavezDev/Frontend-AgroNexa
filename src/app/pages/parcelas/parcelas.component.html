@@ -20,7 +20,9 @@
 
   <!-- Sin datos -->
   <div class="empty-state card" *ngIf="!loading && !errorMsg && parcelas.length === 0">
-    <span style="font-size:48px">🌾</span>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
     <h3>Sin parcelas registradas</h3>
     <p>Empieza registrando tu primera parcela</p>
     <a routerLink="/parcelas/nueva" class="btn-primary">Registrar parcela</a>
@@ -33,7 +35,7 @@
           <h3>{{ p.nombre }}</h3>
           <span class="badge badge--{{ p.estado === 'activo' ? 'green' : 'gray' }}">{{ p.estado }}</span>
         </div>
-        <span class="cultivo-badge">🌱 {{ p.cultivo }}</span>
+        <span class="cultivo-badge">{{ p.cultivo | titlecase }}</span>
       </div>
 
       <div class="parcela-card__info">

@@ -76,14 +76,20 @@
         </div>
 
         <div class="empty-state card" *ngIf="muestras.length === 0">
-          <span style="font-size:40px">🔬</span>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
+          </svg>
           <p>No hay muestras registradas para esta parcela.</p>
           <button class="btn-primary" (click)="nuevaMuestra()">Registrar primera muestra</button>
         </div>
 
         <div class="muestras-list" *ngIf="muestras.length > 0">
           <a *ngFor="let m of muestras" [routerLink]="['/muestras', m.id]" class="muestra-row">
-            <div class="muestra-icon">🔬</div>
+            <div class="muestra-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
+            </svg>
+          </div>
             <div class="muestra-info">
               <span class="muestra-title">{{ m.parteAfectada | titlecase }}</span>
               <span class="muestra-sub">
@@ -104,7 +110,9 @@
         <h3 class="card-title">Ubicación registrada</h3>
         <div id="parcela-mini-map" class="mini-map-container"></div>
         <p class="coords-text">
-          <span class="coord-pin">📍</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
           Lat {{ parcela.ubicacion.lat }}, Lng {{ parcela.ubicacion.lng }}
         </p>
       </div>
