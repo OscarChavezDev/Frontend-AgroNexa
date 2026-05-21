@@ -1,37 +1,58 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>Bienvenido, {{ user?.nombre }} 👋</h1>
+      <h1>Bienvenido, {{ user?.nombre }}</h1>
       <p class="subtitle">Resumen de tu actividad agrícola</p>
     </div>
-    <a routerLink="/parcelas/nueva" class="btn-primary">+ Nueva parcela</a>
+    <a routerLink="/parcelas/nueva" class="btn-primary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nueva parcela
+    </a>
   </div>
 
-  <!-- Stats — siempre visibles, se actualizan cuando llegan datos -->
   <div class="stats-grid">
     <div class="stat-card stat-card--green">
-      <div class="stat-icon">🌾</div>
+      <div class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
       <div class="stat-info">
         <span class="stat-value" [class.sk-val]="loadingParcelas">{{ loadingParcelas ? '' : totalParcelas }}</span>
         <span class="stat-label">Parcelas registradas</span>
       </div>
     </div>
+
     <div class="stat-card stat-card--blue">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+        </svg>
+      </div>
       <div class="stat-info">
         <span class="stat-value" [class.sk-val]="loadingParcelas">{{ loadingParcelas ? '' : parcelasActivas }}</span>
         <span class="stat-label">Parcelas activas</span>
       </div>
     </div>
+
     <div class="stat-card stat-card--amber">
-      <div class="stat-icon">🔬</div>
+      <div class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
+        </svg>
+      </div>
       <div class="stat-info">
         <span class="stat-value" [class.sk-val]="loadingMuestras">{{ loadingMuestras ? '' : totalMuestras }}</span>
         <span class="stat-label">Muestras totales</span>
       </div>
     </div>
+
     <div class="stat-card stat-card--purple">
-      <div class="stat-icon">⭐</div>
+      <div class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
       <div class="stat-info">
         <span class="stat-value">{{ user?.plan | titlecase }}</span>
         <span class="stat-label">Plan actual</span>
@@ -39,7 +60,6 @@
     </div>
   </div>
 
-  <!-- Listas recientes -->
   <div class="dashboard-grid">
     <!-- Últimas Parcelas -->
     <div class="card">
@@ -56,12 +76,22 @@
       </div>
 
       <div class="empty-state" *ngIf="!loadingParcelas && parcelas.length === 0">
+        <div class="empty-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
         <p>No tienes parcelas aún.</p>
         <a routerLink="/parcelas/nueva" class="btn-outline">Registrar parcela</a>
       </div>
+
       <div class="item-list" *ngIf="!loadingParcelas && parcelas.length > 0">
         <a *ngFor="let p of parcelas.slice(0,4)" [routerLink]="['/parcelas', p.id]" class="item-row">
-          <div class="item-icon">🌱</div>
+          <div class="item-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
           <div class="item-info">
             <span class="item-title">{{ p.nombre }}</span>
             <span class="item-sub">{{ p.cultivo }} · {{ p.areaAproximada }} {{ p.unidadArea }}</span>
@@ -86,11 +116,21 @@
       </div>
 
       <div class="empty-state" *ngIf="!loadingMuestras && muestras.length === 0">
+        <div class="empty-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
+          </svg>
+        </div>
         <p>No tienes muestras registradas.</p>
       </div>
+
       <div class="item-list" *ngIf="!loadingMuestras && muestras.length > 0">
         <a *ngFor="let m of ultimasMuestras" [routerLink]="['/muestras', m.id]" class="item-row">
-          <div class="item-icon">🔬</div>
+          <div class="item-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
+            </svg>
+          </div>
           <div class="item-info">
             <span class="item-title">{{ m.parteAfectada || 'Sin especificar' }}</span>
             <span class="item-sub">{{ m.createdAt | date:'dd/MM/yyyy' }}</span>
