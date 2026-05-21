@@ -14,6 +14,9 @@ export class MuestrasComponent implements OnInit, OnDestroy {
   loading = true;
   errorMsg = '';
 
+  paginaActual = 1;
+  pageSize = 10;
+
   private sub?: Subscription;
   private timeout?: ReturnType<typeof setTimeout>;
 
@@ -47,8 +50,11 @@ export class MuestrasComponent implements OnInit, OnDestroy {
       next: (res) => { 
         clearTimeout(this.timeout); 
         console.log('Respuesta del backend (Muestras):', res);
-        this.muestras = res.data || []; 
-        this.loading = false; 
+        this.muestras = (res.data || []).sort((a: Muestra, b: Muestra) =>
+          new Date(a.createdAt || '').getTime() - new Date(b.createdAt || '').getTime()
+        );
+        this.paginaActual = 1;
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => { 
@@ -59,6 +65,40 @@ export class MuestrasComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  get muestrasPaginadas(): Muestra[] {
+    const size = +this.pageSize;
+    const inicio = (this.paginaActual - 1) * size;
+    return this.muestras.slice(inicio, inicio + size);
+  }
+
+  get totalPaginas(): number { return Math.ceil(this.muestras.length / +this.pageSize); }
+  get rangoInicio(): number { return this.muestras.length === 0 ? 0 : (this.paginaActual - 1) * +this.pageSize + 1; }
+  get rangoFin(): number { return Math.min(this.paginaActual * +this.pageSize, this.muestras.length); }
+
+  get paginas(): (number | null)[] {
+    const total = this.totalPaginas;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: (number | null)[] = [1];
+    const curr = this.paginaActual;
+    if (curr > 3) pages.push(null);
+    for (let i = Math.max(2, curr - 1); i <= Math.min(total - 1, curr + 1); i++) pages.push(i);
+    if (curr < total - 2) pages.push(null);
+    pages.push(total);
+    return pages;
+  }
+
+  cambiarPagina(n: number) {
+    if (n < 1 || n > this.totalPaginas) return;
+    this.paginaActual = n;
+    this.cdr.detectChanges();
+  }
+
+  onPageSizeChange() {
+    this.pageSize = +this.pageSize;
+    this.paginaActual = 1;
+    this.cdr.detectChanges();
   }
 
   eliminar(id: string) {

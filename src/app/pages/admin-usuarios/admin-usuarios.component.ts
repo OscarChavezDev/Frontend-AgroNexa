@@ -19,6 +19,9 @@ export class AdminUsuariosComponent implements OnInit {
   filtroRol = '';
   filtroEstado = '';
 
+  paginaActual = 1;
+  pageSize = 10;
+
   // Modal de cambiar estado
   modalAbierto = false;
   usuarioSeleccionado: User | null = null;
@@ -68,7 +71,9 @@ export class AdminUsuariosComponent implements OnInit {
 
     this.adminService.listarUsuarios(filtros).subscribe({
       next: (res) => {
-        this.usuarios = res.data || [];
+        this.usuarios = (res.data || []).sort((a: User, b: User) =>
+          new Date(a.createdAt || '').getTime() - new Date(b.createdAt || '').getTime()
+        );
         this.aplicarFiltros();
         this.loading = false;
         this.cdr.detectChanges();
@@ -92,6 +97,53 @@ export class AdminUsuariosComponent implements OnInit {
       );
     }
     this.usuariosFiltrados = resultado;
+    this.paginaActual = 1;
+  }
+
+  getNumero(u: User): number {
+    return this.usuarios.indexOf(u) + 1;
+  }
+
+  get usuariosPaginados(): User[] {
+    const size = +this.pageSize;
+    const inicio = (this.paginaActual - 1) * size;
+    return this.usuariosFiltrados.slice(inicio, inicio + size);
+  }
+
+  get totalPaginas(): number {
+    return Math.ceil(this.usuariosFiltrados.length / +this.pageSize);
+  }
+
+  get rangoInicio(): number {
+    return this.usuariosFiltrados.length === 0 ? 0 : (this.paginaActual - 1) * +this.pageSize + 1;
+  }
+
+  get rangoFin(): number {
+    return Math.min(this.paginaActual * +this.pageSize, this.usuariosFiltrados.length);
+  }
+
+  get paginas(): (number | null)[] {
+    const total = this.totalPaginas;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: (number | null)[] = [1];
+    const curr = this.paginaActual;
+    if (curr > 3) pages.push(null);
+    for (let i = Math.max(2, curr - 1); i <= Math.min(total - 1, curr + 1); i++) pages.push(i);
+    if (curr < total - 2) pages.push(null);
+    pages.push(total);
+    return pages;
+  }
+
+  cambiarPagina(n: number) {
+    if (n < 1 || n > this.totalPaginas) return;
+    this.paginaActual = n;
+    this.cdr.detectChanges();
+  }
+
+  onPageSizeChange() {
+    this.pageSize = +this.pageSize;
+    this.paginaActual = 1;
+    this.cdr.detectChanges();
   }
 
   onBusquedaChange() {
@@ -160,7 +212,5 @@ export class AdminUsuariosComponent implements OnInit {
     });
   }
 
-  get totalFiltrados(): number {
-    return this.usuariosFiltrados.length;
-  }
+  get totalFiltrados(): number { return this.usuariosFiltrados.length; }
 }

@@ -83,10 +83,37 @@
 
   <!-- Users table -->
   <div class="card table-card" *ngIf="!loading && usuariosFiltrados.length > 0">
+
+    <!-- Paginación superior -->
+    <div class="pagination-bar pagination-bar--top" *ngIf="totalPaginas > 1 || totalFiltrados > 5">
+      <div class="page-size-selector">
+        <span>Mostrar</span>
+        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" id="page-size-select-top">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+        </select>
+        <span>por página</span>
+      </div>
+      <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ totalFiltrados }}</span>
+      <div class="page-controls">
+        <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" title="Anterior">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <ng-container *ngFor="let p of paginas">
+          <span *ngIf="p === null" class="page-ellipsis">…</span>
+          <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)" title="Siguiente">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
     <div class="table-responsive">
       <table class="data-table" id="admin-users-table">
         <thead>
           <tr>
+            <th class="col-num">N</th>
             <th>Usuario</th>
             <th>Correo</th>
             <th>Rol</th>
@@ -97,7 +124,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let u of usuariosFiltrados" [class.row-processing]="procesandoId === u.id">
+          <tr *ngFor="let u of usuariosPaginados" [class.row-processing]="procesandoId === u.id">
+            <td class="col-num">
+              <span class="num-badge" [class.num-badge--admin]="u.rol === 'admin'">{{ getNumero(u) }}</span>
+            </td>
             <td>
               <div class="user-cell">
                 <div class="user-cell-avatar">{{ u.nombre ? u.nombre[0] : '' }}{{ u.apellido ? u.apellido[0] : '' }}</div>
@@ -125,26 +155,24 @@
             <td>
               <div class="table-actions" *ngIf="u.rol !== 'admin'">
                 <button
-                  class="btn-outline-sm"
+                  class="btn-icon btn-icon--edit"
                   (click)="abrirModalEstado(u)"
                   [disabled]="procesandoId === u.id"
                   title="Cambiar estado"
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
                   </svg>
-                  Estado
                 </button>
                 <button
-                  class="btn-danger-sm"
+                  class="btn-icon btn-icon--delete"
                   (click)="eliminar(u)"
                   [disabled]="procesandoId === u.id"
                   title="Eliminar usuario"
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                   </svg>
-                  Eliminar
                 </button>
               </div>
               <span class="admin-label" *ngIf="u.rol === 'admin'">
@@ -157,6 +185,33 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination-bar" *ngIf="totalPaginas > 1 || totalFiltrados > 5">
+      <div class="page-size-selector">
+        <span>Mostrar</span>
+        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" id="page-size-select">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+        </select>
+        <span>por página</span>
+      </div>
+
+      <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ totalFiltrados }}</span>
+
+      <div class="page-controls">
+        <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" title="Anterior">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <ng-container *ngFor="let p of paginas">
+          <span *ngIf="p === null" class="page-ellipsis">…</span>
+          <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)" title="Siguiente">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -19,38 +19,103 @@
     <a routerLink="/muestras/nueva" class="btn-primary">Nueva muestra</a>
   </div>
 
-  <div class="card" *ngIf="!loading && muestras.length > 0">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Parte afectada</th>
-          <th>Síntomas</th>
-          <th>Nivel</th>
-          <th>Fecha</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let m of muestras">
-          <td><strong>{{ m.parteAfectada | titlecase }}</strong></td>
-          <td>
-            <div class="sintomas-chips">
-              <span *ngFor="let s of (m.sintomas || []).slice(0,2)" class="chip">{{ s }}</span>
-              <span *ngIf="(m.sintomas?.length || 0) > 2" class="chip chip--more">+{{ (m.sintomas?.length || 0) - 2 }}</span>
-            </div>
-          </td>
-          <td>
-            <span class="badge badge--{{ nivelClass(m.nivelAfectacion) }}">{{ m.nivelAfectacion || 'leve' }}</span>
-          </td>
-          <td>{{ m.createdAt | date:'dd/MM/yyyy' }}</td>
-          <td>
-            <div class="table-actions">
-              <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">Ver</a>
-              <button class="btn-danger-sm" (click)="eliminar(m.id!)">Eliminar</button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="card table-card" *ngIf="!loading && muestras.length > 0">
+
+    <!-- Paginación superior -->
+    <div class="pagination-bar pagination-bar--top" *ngIf="totalPaginas > 1 || muestras.length > 5">
+      <div class="page-size-selector">
+        <span>Mostrar</span>
+        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" id="m-page-size-top">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+        </select>
+        <span>por página</span>
+      </div>
+      <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ muestras.length }}</span>
+      <div class="page-controls">
+        <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" title="Anterior">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <ng-container *ngFor="let p of paginas">
+          <span *ngIf="p === null" class="page-ellipsis">…</span>
+          <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)" title="Siguiente">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-num">N</th>
+            <th>Parte afectada</th>
+            <th>Síntomas</th>
+            <th>Nivel</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of muestrasPaginadas; let i = index">
+            <td class="col-num">
+              <span class="num-badge">{{ rangoInicio + i }}</span>
+            </td>
+            <td><strong>{{ m.parteAfectada | titlecase }}</strong></td>
+            <td>
+              <div class="sintomas-chips">
+                <span *ngFor="let s of (m.sintomas || []).slice(0,2)" class="chip">{{ s }}</span>
+                <span *ngIf="(m.sintomas?.length || 0) > 2" class="chip chip--more">+{{ (m.sintomas?.length || 0) - 2 }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge badge--{{ nivelClass(m.nivelAfectacion) }}">{{ m.nivelAfectacion || 'leve' }}</span>
+            </td>
+            <td>{{ m.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <div class="table-actions">
+                <a [routerLink]="['/muestras', m.id]" class="btn-icon btn-icon--view" title="Ver detalle">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </a>
+                <button class="btn-icon btn-icon--delete" (click)="eliminar(m.id!)" title="Eliminar muestra">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación inferior -->
+    <div class="pagination-bar" *ngIf="totalPaginas > 1 || muestras.length > 5">
+      <div class="page-size-selector">
+        <span>Mostrar</span>
+        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" id="m-page-size-bot">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+        </select>
+        <span>por página</span>
+      </div>
+      <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ muestras.length }}</span>
+      <div class="page-controls">
+        <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" title="Anterior">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <ng-container *ngFor="let p of paginas">
+          <span *ngIf="p === null" class="page-ellipsis">…</span>
+          <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)" title="Siguiente">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
