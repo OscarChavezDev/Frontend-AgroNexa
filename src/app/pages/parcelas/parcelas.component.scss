@@ -3,53 +3,78 @@
 .parcelas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 18px;
 }
 
 .parcela-card {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
   padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  border: 1px solid #e8ede6;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--clr-border);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  transition: box-shadow 0.2s;
+  gap: 14px;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 
-  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  &:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    h3 { margin: 0 0 6px; font-size: 16px; color: #1a3a2a; }
+    gap: 10px;
+
+    h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--clr-brand-800);
+      letter-spacing: -.1px;
+    }
   }
 
-  &__info { display: flex; flex-direction: column; gap: 6px; }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+  }
 
   &__actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
     margin-top: auto;
-    padding-top: 8px;
-    border-top: 1px solid #f0f4ee;
+    padding-top: 12px;
+    border-top: 1px solid var(--clr-border-soft);
   }
 }
 
-// Skeleton loader
+.cultivo-badge {
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--clr-brand-25);
+  color: var(--clr-brand-700);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--clr-brand-100);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// Skeleton
 .parcelas-skeleton {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 18px;
 }
 
 .skeleton-card {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
   padding: 20px;
-  border: 1px solid #e8ede6;
+  border: 1px solid var(--clr-border);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -57,25 +82,16 @@
 
 .sk {
   border-radius: 6px;
-  background: linear-gradient(90deg, #f0f4ee 25%, #e8ede6 50%, #f0f4ee 75%);
+  background: linear-gradient(90deg, var(--clr-neutral-100) 25%, var(--clr-border) 50%, var(--clr-neutral-100) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 
-  &-title  { height: 18px; width: 60%; }
-  &-line   { height: 13px; width: 90%; }
-  &-short  { width: 45%; }
+  &-title { height: 16px; width: 55%; }
+  &-line  { height: 12px; width: 85%; }
+  &-short { width: 40%; }
 }
 
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
-}
-
-.cultivo-badge {
-  font-size: 13px;
-  background: #f0fdf4;
-  color: #166534;
-  padding: 4px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
 }

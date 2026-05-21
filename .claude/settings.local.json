@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(move \"c:\\\\Users\\\\Oscar\\\\Documents\\\\1UNAS\\\\IX CICLO\\\\INNOVACION Y EMPRENDIMIENTO\\\\SISTEMA\\\\Front-AgroNexa\\\\src\\\\assets\\\\logo.svg\" \"c:\\\\Users\\\\Oscar\\\\Documents\\\\1UNAS\\\\IX CICLO\\\\INNOVACION Y EMPRENDIMIENTO\\\\SISTEMA\\\\Front-AgroNexa\\\\public\\\\assets\\\\logo.svg\")"
+    ]
+  }
+}

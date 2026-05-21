@@ -1,12 +1,13 @@
 @use '../../../styles/auth' as *;
 @use '../../../styles/page' as *;
 
-// Tarjetas de rol
+.btn-full { width: 100%; justify-content: center; padding: 11px 20px; font-size: 14px; }
+.req { color: #ef4444; font-weight: 700; }
+
 .rol-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-
   @media (max-width: 480px) { grid-template-columns: 1fr; }
 }
 
@@ -15,23 +16,22 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 4px;
+  gap: 5px;
   padding: 16px 10px;
-  border: 2px solid #e2e8e0;
-  border-radius: 10px;
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s;
-  background: #fff;
+  transition: all var(--transition-fast);
+  background: var(--clr-surface);
 
   &.selected {
-    border-color: #2d6a4f;
-    background: #f0fdf4;
-    box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+    border-color: var(--clr-brand-600);
+    background: var(--clr-brand-25);
+    box-shadow: 0 0 0 3px rgba(45,106,79,.1);
   }
+  &:hover:not(.selected) { border-color: var(--clr-brand-300); background: var(--clr-neutral-50); }
 
-  &:hover:not(.selected) { border-color: #a7c4b5; background: #fafafa; }
-
-  .rol-icon { font-size: 26px; }
-  .rol-name { font-size: 13px; font-weight: 700; color: #1a3a2a; }
-  .rol-desc { font-size: 11px; color: #6b7280; }
+  .rol-icon { font-size: 24px; }
+  .rol-name { font-size: 12.5px; font-weight: 700; color: var(--clr-brand-800); }
+  .rol-desc { font-size: 11px; color: var(--clr-neutral-500); line-height: 1.4; }
 }

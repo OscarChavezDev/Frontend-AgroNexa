@@ -11,8 +11,7 @@
 
   <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
 
-  <!-- Plan actual -->
-  <div class="card plan-actual" *ngIf="suscripcionActual && !loading">
+  <div class="plan-actual card" *ngIf="suscripcionActual && !loading">
     <div class="plan-actual__info">
       <span class="plan-actual__label">Tu plan actual</span>
       <span class="plan-actual__nombre">{{ suscripcionActual.plan | titlecase }}</span>
@@ -30,7 +29,12 @@
       [class.plan-card--current]="esPlanActual(plan.codigo)"
       [class.plan-card--popular]="plan.codigo === 'plus'">
 
-      <div class="popular-badge" *ngIf="plan.codigo === 'plus'">⭐ Más popular</div>
+      <div class="popular-badge" *ngIf="plan.codigo === 'plus'">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        Más popular
+      </div>
 
       <div class="plan-header">
         <h3>{{ plan.nombre }}</h3>
@@ -45,7 +49,12 @@
 
       <ul class="plan-features">
         <li *ngFor="let f of plan.caracteristicas">
-          <span class="check">✓</span> {{ f }}
+          <span class="check" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+          {{ f }}
         </li>
       </ul>
 

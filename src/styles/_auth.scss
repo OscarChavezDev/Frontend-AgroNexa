@@ -1,40 +1,96 @@
-// Shared auth page styles
+// ── Auth page wrapper ─────────────────────────────────────────────────────────
 .auth-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a3a2a 0%, #2d6a4f 50%, #52b788 100%);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
   padding: 24px;
+  background: var(--clr-brand-800);
+  position: relative;
+  overflow: hidden;
+
+  // Decorative background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(82,183,136,.18) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(116,198,157,.12) 0%, transparent 70%);
+    bottom: -150px; left: -100px;
+    pointer-events: none;
+  }
 }
 
+// ── Auth card ─────────────────────────────────────────────────────────────────
 .auth-card {
   background: #fff;
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  z-index: 1;
 
   &--wide { max-width: 560px; }
 }
 
+// ── Auth brand ────────────────────────────────────────────────────────────────
 .auth-brand {
   text-align: center;
   margin-bottom: 32px;
 
-  .brand-icon { font-size: 48px; display: block; margin-bottom: 8px; }
-  h1 { margin: 0 0 8px; font-size: 26px; font-weight: 800; color: #1a3a2a; }
-  p { margin: 0; font-size: 14px; color: #6b7280; }
+  .brand-logo-auth {
+    width: 72px; height: 72px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .auth-logo-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--clr-brand-800);
+    letter-spacing: -.4px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: 13.5px;
+    color: var(--clr-neutral-500);
+    line-height: 1.5;
+  }
 }
 
+// ── Auth link ─────────────────────────────────────────────────────────────────
 .auth-link {
   text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
-  color: #6b7280;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: var(--clr-neutral-500);
 
-  a { color: #2d6a4f; font-weight: 600; text-decoration: none;
+  a {
+    color: var(--clr-brand-600);
+    font-weight: 700;
+    text-decoration: none;
     &:hover { text-decoration: underline; }
   }
 }
