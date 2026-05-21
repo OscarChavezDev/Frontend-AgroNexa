@@ -23,6 +23,8 @@ import { MuestraFormComponent } from './pages/muestra-form/muestra-form.componen
 import { MuestraDetailComponent } from './pages/muestra-detail/muestra-detail.component';
 import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
     MuestraDetailComponent,
     PlanesComponent,
     PerfilComponent,
+    AdminDashboardComponent,
+    AdminUsuariosComponent,
   ],
   imports: [
     BrowserModule,

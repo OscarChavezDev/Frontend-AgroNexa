@@ -1,12 +1,52 @@
 @use '../../../styles/page' as *;
 
 .parcela-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-col {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
+.mapa-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+  z-index: 10;
+
+  @media (max-width: 960px) {
+    position: static;
+  }
+}
+
 .detail-card {
+  border-top: 4px solid #2d6a4f; // Verde Foresta
+
+  .card-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #2d6a4f;
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f4ee;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .detail-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -50,11 +90,20 @@
 
 // Mapa
 .map-card {
+  border-top: 4px solid #3b82f6; // Azul de Ubicación
+
   .card-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #1a3a2a;
-    margin: 0 0 14px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eef2ff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }
 

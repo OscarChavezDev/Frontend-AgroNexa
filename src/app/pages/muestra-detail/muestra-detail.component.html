@@ -9,6 +9,9 @@
 
   <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
   <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="success-banner" *ngIf="creadoExito">
+    ✨ ¡Muestra registrada con éxito! Puedes consultar los detalles a continuación.
+  </div>
 
   <div *ngIf="!loading && muestra" class="detail-layout">
 
@@ -16,7 +19,7 @@
     <div class="detail-col">
 
       <!-- Observación de campo -->
-      <div class="card">
+      <div class="card observacion-card">
         <h3 class="card-title">Observación de campo</h3>
         <div class="detail-grid">
           <div class="detail-item">
@@ -53,7 +56,7 @@
       </div>
 
       <!-- Fotografías -->
-      <div class="card" *ngIf="imagenes.length > 0">
+      <div class="card fotos-card" *ngIf="imagenes.length > 0">
         <h3 class="card-title">Fotografías ({{ imagenes.length }})</h3>
         <div class="imagenes-gallery">
           <div class="gallery-item" *ngFor="let img of imagenes">
@@ -74,36 +77,57 @@
       </div>
 
       <!-- Datos del sensor -->
-      <div class="card" *ngIf="muestra.datosSensor">
+      <div class="card sensor-card" *ngIf="muestra.datosSensor">
         <h3 class="card-title">Datos del sensor</h3>
-        <div class="detail-grid">
-          <div class="detail-item" *ngIf="muestra.datosSensor.ph">
-            <span class="detail-label">pH</span>
-            <span class="detail-value">{{ muestra.datosSensor.ph }}</span>
+        <div class="sensor-grid">
+          <div class="sensor-item" *ngIf="muestra.datosSensor.ph !== undefined && muestra.datosSensor.ph !== null">
+            <div class="sensor-icon">🧪</div>
+            <div class="sensor-info">
+              <span class="sensor-label">pH</span>
+              <span class="sensor-value">{{ muestra.datosSensor.ph }}</span>
+            </div>
           </div>
-          <div class="detail-item" *ngIf="muestra.datosSensor.nitrogeno">
-            <span class="detail-label">Nitrógeno</span>
-            <span class="detail-value">{{ muestra.datosSensor.nitrogeno }} ppm</span>
+          <div class="sensor-item" *ngIf="muestra.datosSensor.nitrogeno !== undefined && muestra.datosSensor.nitrogeno !== null">
+            <div class="sensor-icon">🌱</div>
+            <div class="sensor-info">
+              <span class="sensor-label">Nitrógeno</span>
+              <span class="sensor-value">{{ muestra.datosSensor.nitrogeno }}<span class="unit"> ppm</span></span>
+            </div>
           </div>
-          <div class="detail-item" *ngIf="muestra.datosSensor.fosforo">
-            <span class="detail-label">Fósforo</span>
-            <span class="detail-value">{{ muestra.datosSensor.fosforo }} ppm</span>
+          <div class="sensor-item" *ngIf="muestra.datosSensor.fosforo !== undefined && muestra.datosSensor.fosforo !== null">
+            <div class="sensor-icon">⚡</div>
+            <div class="sensor-info">
+              <span class="sensor-label">Fósforo</span>
+              <span class="sensor-value">{{ muestra.datosSensor.fosforo }}<span class="unit"> ppm</span></span>
+            </div>
           </div>
-          <div class="detail-item" *ngIf="muestra.datosSensor.potasio">
-            <span class="detail-label">Potasio</span>
-            <span class="detail-value">{{ muestra.datosSensor.potasio }} ppm</span>
+          <div class="sensor-item" *ngIf="muestra.datosSensor.potasio !== undefined && muestra.datosSensor.potasio !== null">
+            <div class="sensor-icon">🔋</div>
+            <div class="sensor-info">
+              <span class="sensor-label">Potasio</span>
+              <span class="sensor-value">{{ muestra.datosSensor.potasio }}<span class="unit"> ppm</span></span>
+            </div>
           </div>
-          <div class="detail-item" *ngIf="muestra.datosSensor.humedadSuelo">
-            <span class="detail-label">Humedad suelo</span>
-            <span class="detail-value">{{ muestra.datosSensor.humedadSuelo }}%</span>
+          <div class="sensor-item" *ngIf="muestra.datosSensor.humedadSuelo !== undefined && muestra.datosSensor.humedadSuelo !== null">
+            <div class="sensor-icon">💧</div>
+            <div class="sensor-info">
+              <span class="sensor-label">Humedad Suelo</span>
+              <span class="sensor-value">{{ muestra.datosSensor.humedadSuelo }}<span class="unit">%</span></span>
+            </div>
           </div>
-          <div class="detail-item" *ngIf="muestra.datosSensor.temperaturaSuelo">
-            <span class="detail-label">Temperatura suelo</span>
-            <span class="detail-value">{{ muestra.datosSensor.temperaturaSuelo }}°C</span>
+          <div class="sensor-item" *ngIf="muestra.datosSensor.temperaturaSuelo !== undefined && muestra.datosSensor.temperaturaSuelo !== null">
+            <div class="sensor-icon">🌡️</div>
+            <div class="sensor-info">
+              <span class="sensor-label">Temp. Suelo</span>
+              <span class="sensor-value">{{ muestra.datosSensor.temperaturaSuelo }}<span class="unit">°C</span></span>
+            </div>
           </div>
-          <div class="detail-item" *ngIf="muestra.datosSensor.conductividadElectrica">
-            <span class="detail-label">Conductividad</span>
-            <span class="detail-value">{{ muestra.datosSensor.conductividadElectrica }} dS/m</span>
+          <div class="sensor-item" *ngIf="muestra.datosSensor.conductividadElectrica !== undefined && muestra.datosSensor.conductividadElectrica !== null">
+            <div class="sensor-icon">⚡</div>
+            <div class="sensor-info">
+              <span class="sensor-label">Conductividad</span>
+              <span class="sensor-value">{{ muestra.datosSensor.conductividadElectrica }}<span class="unit"> dS/m</span></span>
+            </div>
           </div>
         </div>
       </div>
@@ -113,11 +137,11 @@
     <!-- Columna derecha: diagnóstico -->
     <div class="diagnostico-col">
 
-      <div class="card diagnostico-card" *ngIf="!diagnostico">
+      <div class="card diagnostico-card" *ngIf="!diagnostico || !diagnostico.resultado">
         <div class="diagnostico-empty">
-          <span style="font-size:52px">🩺</span>
+          <span class="empty-icon">🩺</span>
           <h3>Sin diagnóstico aún</h3>
-          <p>Genera un diagnóstico preliminar basado en los síntomas y datos registrados.</p>
+          <p>Genera un diagnóstico preliminar basado en los síntomas y datos registrados de tus sensores.</p>
           <button class="btn-primary" [disabled]="generando" (click)="generarDiagnostico()">
             <span *ngIf="!generando">Generar diagnóstico</span>
             <span *ngIf="generando" class="spinner"></span>
@@ -125,7 +149,7 @@
         </div>
       </div>
 
-      <div class="card diagnostico-card" *ngIf="diagnostico">
+      <div class="card diagnostico-card" *ngIf="diagnostico && diagnostico.resultado">
         <div class="diagnostico-header">
           <h3>Diagnóstico Preliminar</h3>
           <span class="riesgo-badge riesgo-badge--{{ riesgoClass }}">
@@ -156,10 +180,35 @@
         </div>
 
         <div class="regen-action">
-          <button class="btn-outline" style="font-size:13px" [disabled]="generando" (click)="generarDiagnostico()">
+          <button class="btn-outline-regen" [disabled]="generando" (click)="generarDiagnostico()">
             <span *ngIf="!generando">↻ Regenerar diagnóstico</span>
-            <span *ngIf="generando" class="spinner" style="border-color:rgba(45,106,79,0.3);border-top-color:#2d6a4f"></span>
+            <span *ngIf="generando" class="spinner-small"></span>
           </button>
+        </div>
+      </div>
+
+      <!-- Consultar con un Especialista -->
+      <div class="card especialista-card">
+        <h3 class="card-title">
+          <span class="title-icon">👨‍🌾</span> Asesoría Profesional
+        </h3>
+        
+        <div *ngIf="!consultaEnviada">
+          <p>
+            ¿Deseas una opinión profesional sobre esta muestra y su diagnóstico? Solicita la revisión directa de un ingeniero agrónomo especialista.
+          </p>
+          <button class="btn-primary btn-specialist" [disabled]="solicitandoConsulta" (click)="consultarEspecialista()">
+            <span *ngIf="!solicitandoConsulta">✉️ Consultar especialista</span>
+            <span *ngIf="solicitandoConsulta" class="spinner"></span>
+          </button>
+        </div>
+
+        <div *ngIf="consultaEnviada" class="specialist-success">
+          <span class="success-icon">✅</span>
+          <h4>¡Solicitud Enviada!</h4>
+          <p>
+            Un agrónomo especialista revisará esta muestra y se pondrá en contacto contigo a la brevedad.
+          </p>
         </div>
       </div>
 

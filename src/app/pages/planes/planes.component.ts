@@ -49,16 +49,22 @@ export class PlanesComponent implements OnInit {
   suscribirse(plan: Plan) {
     if (!confirm(`¿Suscribirse al plan ${plan.nombre}?`)) return;
     this.procesando = plan.codigo;
+    this.cdr.detectChanges();
     this.suscripcionesService.suscribirse(plan.codigo).subscribe({
       next: (res) => {
         this.suscripcionActual = res.data || null;
         this.mensaje = `Plan ${plan.nombre} activado correctamente`;
         this.procesando = '';
-        setTimeout(() => this.mensaje = '', 3000);
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.mensaje = '';
+          this.cdr.detectChanges();
+        }, 3000);
       },
       error: (err) => {
         this.mensaje = err.error?.message || 'Error al cambiar plan';
         this.procesando = '';
+        this.cdr.detectChanges();
       }
     });
   }

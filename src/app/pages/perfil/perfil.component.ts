@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from '../../core/services/users.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,21 +12,43 @@ import { User } from '../../core/models/user.model';
 })
 export class PerfilComponent implements OnInit {
   form: FormGroup;
+  passwordForm: FormGroup;
   user: User | null = null;
   saving = false;
   mensaje = '';
   errorMsg = '';
 
+  passwordSaving = false;
+  passwordMensaje = '';
+  passwordErrorMsg = '';
+
+  showPasswordActual = false;
+  showPasswordNueva = false;
+  showPasswordConfirm = false;
+
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       nombre:   ['', Validators.required],
       apellido: ['', Validators.required],
       telefono: ['']
     });
+
+    this.passwordForm = this.fb.group({
+      passwordActual: ['', [Validators.required, Validators.minLength(6)]],
+      passwordNueva: ['', [Validators.required, Validators.minLength(6)]],
+      passwordConfirm: ['', [Validators.required]]
+    }, { validators: this.passwordsMatchValidator });
+  }
+
+  passwordsMatchValidator(g: FormGroup) {
+    const nueva = g.get('passwordNueva')?.value;
+    const confirm = g.get('passwordConfirm')?.value;
+    return nueva === confirm ? null : { mismatch: true };
   }
 
   ngOnInit() {
@@ -45,17 +67,54 @@ export class PerfilComponent implements OnInit {
     this.saving = true;
     this.mensaje = '';
     this.errorMsg = '';
+    this.cdr.detectChanges();
     this.usersService.actualizarPerfil(this.form.value).subscribe({
       next: () => {
         this.mensaje = 'Perfil actualizado correctamente';
         this.saving = false;
-        setTimeout(() => this.mensaje = '', 3000);
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.mensaje = '';
+          this.cdr.detectChanges();
+        }, 3000);
       },
-      error: (err) => { this.errorMsg = err.error?.message || 'Error al guardar'; this.saving = false; }
+      error: (err) => {
+        this.errorMsg = err.error?.message || 'Error al guardar';
+        this.saving = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onPasswordSubmit() {
+    if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
+    this.passwordSaving = true;
+    this.passwordMensaje = '';
+    this.passwordErrorMsg = '';
+    this.cdr.detectChanges();
+
+    const { passwordActual, passwordNueva } = this.passwordForm.value;
+    this.usersService.cambiarPassword(passwordActual, passwordNueva).subscribe({
+      next: () => {
+        this.passwordMensaje = 'Contraseña actualizada correctamente';
+        this.passwordSaving = false;
+        this.passwordForm.reset();
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.passwordMensaje = '';
+          this.cdr.detectChanges();
+        }, 3000);
+      },
+      error: (err) => {
+        this.passwordErrorMsg = err.error?.message || 'Error al cambiar la contraseña';
+        this.passwordSaving = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
   get f() { return this.form.controls; }
+  get pf() { return this.passwordForm.controls; }
 
   get iniciales(): string {
     return `${this.user?.nombre?.[0] || ''}${this.user?.apellido?.[0] || ''}`.toUpperCase();

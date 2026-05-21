@@ -33,48 +33,139 @@
       </div>
     </div>
 
-    <!-- Formulario editable -->
-    <div class="perfil-form-card card">
-      <h3 class="card-title">Editar información</h3>
+    <!-- Contenedor de formularios -->
+    <div class="perfil-forms-container">
+      <!-- Formulario editable -->
+      <div class="perfil-form-card card">
+        <h3 class="card-title">Editar información</h3>
 
-      <div class="success-banner" *ngIf="mensaje">{{ mensaje }}</div>
-      <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+        <div class="success-banner" *ngIf="mensaje">{{ mensaje }}</div>
+        <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nombre *</label>
-            <input type="text" formControlName="nombre"
-              [class.error]="f['nombre'].invalid && f['nombre'].touched">
-            <span class="field-error" *ngIf="f['nombre'].invalid && f['nombre'].touched">Requerido</span>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input type="text" formControlName="nombre"
+                [class.error]="f['nombre'].invalid && f['nombre'].touched">
+              <span class="field-error" *ngIf="f['nombre'].invalid && f['nombre'].touched">Requerido</span>
+            </div>
+            <div class="form-group">
+              <label>Apellido *</label>
+              <input type="text" formControlName="apellido"
+                [class.error]="f['apellido'].invalid && f['apellido'].touched">
+              <span class="field-error" *ngIf="f['apellido'].invalid && f['apellido'].touched">Requerido</span>
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Apellido *</label>
-            <input type="text" formControlName="apellido"
-              [class.error]="f['apellido'].invalid && f['apellido'].touched">
-            <span class="field-error" *ngIf="f['apellido'].invalid && f['apellido'].touched">Requerido</span>
+            <label>Teléfono <span class="optional">(opcional)</span></label>
+            <input type="tel" formControlName="telefono" placeholder="999 999 999">
           </div>
-        </div>
 
-        <div class="form-group">
-          <label>Teléfono <span class="optional">(opcional)</span></label>
-          <input type="tel" formControlName="telefono" placeholder="999 999 999">
-        </div>
+          <!-- Correo — solo lectura visual -->
+          <div class="readonly-block">
+            <span class="readonly-label">Correo electrónico</span>
+            <span class="readonly-value">{{ user?.correo }}</span>
+            <span class="readonly-hint">No se puede modificar</span>
+          </div>
 
-        <!-- Correo — solo lectura visual -->
-        <div class="readonly-block">
-          <span class="readonly-label">Correo electrónico</span>
-          <span class="readonly-value">{{ user?.correo }}</span>
-          <span class="readonly-hint">No se puede modificar</span>
-        </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="saving">
+              <span *ngIf="!saving">Guardar cambios</span>
+              <span *ngIf="saving" class="spinner"></span>
+            </button>
+          </div>
+        </form>
+      </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn-primary" [disabled]="saving">
-            <span *ngIf="!saving">Guardar cambios</span>
-            <span *ngIf="saving" class="spinner"></span>
-          </button>
-        </div>
-      </form>
+      <!-- Formulario de cambio de contraseña -->
+      <div class="perfil-form-card card">
+        <h3 class="card-title">Cambiar contraseña</h3>
+
+        <div class="success-banner" *ngIf="passwordMensaje">{{ passwordMensaje }}</div>
+        <div class="error-banner" *ngIf="passwordErrorMsg">{{ passwordErrorMsg }}</div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" novalidate>
+          <!-- Contraseña actual -->
+          <div class="form-group">
+            <label>Contraseña actual *</label>
+            <div class="input-with-toggle">
+              <input [type]="showPasswordActual ? 'text' : 'password'" formControlName="passwordActual"
+                placeholder="••••••••" [class.error]="pf['passwordActual'].invalid && pf['passwordActual'].touched"
+                autocomplete="current-password">
+              <button type="button" class="toggle-pw" (click)="showPasswordActual = !showPasswordActual"
+                [attr.aria-label]="showPasswordActual ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                <svg *ngIf="!showPasswordActual" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg *ngIf="showPasswordActual" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" *ngIf="pf['passwordActual'].invalid && pf['passwordActual'].touched">
+              {{ pf['passwordActual'].hasError('required') ? 'La contraseña actual es requerida' : 'Mínimo 6 caracteres' }}
+            </span>
+          </div>
+
+          <div class="form-row">
+            <!-- Nueva contraseña -->
+            <div class="form-group">
+              <label>Nueva contraseña *</label>
+              <div class="input-with-toggle">
+                <input [type]="showPasswordNueva ? 'text' : 'password'" formControlName="passwordNueva"
+                  placeholder="••••••••" [class.error]="pf['passwordNueva'].invalid && pf['passwordNueva'].touched"
+                  autocomplete="new-password">
+                <button type="button" class="toggle-pw" (click)="showPasswordNueva = !showPasswordNueva"
+                  [attr.aria-label]="showPasswordNueva ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                  <svg *ngIf="!showPasswordNueva" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg *ngIf="showPasswordNueva" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+              <span class="field-error" *ngIf="pf['passwordNueva'].invalid && pf['passwordNueva'].touched">
+                {{ pf['passwordNueva'].hasError('required') ? 'La nueva contraseña es requerida' : 'Mínimo 6 caracteres' }}
+              </span>
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div class="form-group">
+              <label>Confirmar contraseña *</label>
+              <div class="input-with-toggle">
+                <input [type]="showPasswordConfirm ? 'text' : 'password'" formControlName="passwordConfirm"
+                  placeholder="••••••••" [class.error]="(pf['passwordConfirm'].invalid && pf['passwordConfirm'].touched) || (passwordForm.hasError('mismatch') && pf['passwordConfirm'].touched)"
+                  autocomplete="new-password">
+                <button type="button" class="toggle-pw" (click)="showPasswordConfirm = !showPasswordConfirm"
+                  [attr.aria-label]="showPasswordConfirm ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                  <svg *ngIf="!showPasswordConfirm" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg *ngIf="showPasswordConfirm" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+              <span class="field-error" *ngIf="pf['passwordConfirm'].touched && pf['passwordConfirm'].invalid">
+                La confirmación es requerida
+              </span>
+              <span class="field-error" *ngIf="pf['passwordConfirm'].touched && !pf['passwordConfirm'].invalid && passwordForm.hasError('mismatch')">
+                Las contraseñas no coinciden
+              </span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="passwordSaving">
+              <span *ngIf="!passwordSaving">Actualizar contraseña</span>
+              <span *ngIf="passwordSaving" class="spinner"></span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
   </div>

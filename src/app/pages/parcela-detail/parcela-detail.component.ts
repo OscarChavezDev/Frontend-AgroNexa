@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { MuestrasService } from '../../core/services/muestras.service';
@@ -26,26 +26,50 @@ export class ParcelaDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private parcelasService: ParcelasService,
-    private muestrasService: MuestrasService
+    private muestrasService: MuestrasService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.parcelaId = this.route.snapshot.paramMap.get('id') || '';
-    this.cargar();
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.parcelaId = id;
+        this.cargar();
+      } else {
+        this.errorMsg = 'ID de parcela no válido';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   cargar() {
     this.loading = true;
+    this.cdr.detectChanges();
     this.parcelasService.obtener(this.parcelaId).subscribe({
       next: (res) => {
-        this.parcela = res.data || null;
-        this.loading = false;
-        this.cargarMuestras();
-        if (this.parcela?.ubicacion) {
-          setTimeout(() => this.waitForMapsAndInit(), 0);
+        try {
+          this.parcela = res.data || null;
+          this.loading = false;
+          this.cargarMuestras();
+          if (this.parcela?.ubicacion) {
+            setTimeout(() => this.waitForMapsAndInit(), 0);
+          }
+        } catch (e) {
+          console.error('Error in ParcelaDetail obtener next:', e);
+          this.errorMsg = 'Error al procesar datos de la parcela';
+          this.loading = false;
+        } finally {
+          this.cdr.detectChanges();
         }
       },
-      error: () => { this.errorMsg = 'Error al cargar la parcela'; this.loading = false; }
+      error: (err) => {
+        console.error('Error fetching Parcela:', err);
+        this.errorMsg = 'Error al cargar la parcela';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -84,7 +108,19 @@ export class ParcelaDetailComponent implements OnInit {
 
   cargarMuestras() {
     this.muestrasService.listarPorParcela(this.parcelaId).subscribe({
-      next: (res) => this.muestras = res.data || []
+      next: (res) => {
+        try {
+          this.muestras = res.data || [];
+        } catch (e) {
+          console.error('Error in cargarMuestras next:', e);
+        } finally {
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Error loading muestras for parcela:', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 

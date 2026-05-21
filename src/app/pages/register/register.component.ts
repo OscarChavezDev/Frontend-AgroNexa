@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -22,7 +22,12 @@ export class RegisterComponent {
     { value: 'institucion',icon: '🏛️', label: 'Institución', desc: 'Entidad técnica o educativa' },
   ];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
     this.form = this.fb.group({
       nombre:   ['', Validators.required],
       apellido: ['', Validators.required],
@@ -37,14 +42,17 @@ export class RegisterComponent {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading = true;
     this.errorMsg = '';
+    this.cdr.detectChanges();
     this.authService.register(this.form.value).subscribe({
       next: () => {
         this.successMsg = 'Cuenta creada. Redirigiendo al login…';
+        this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err) => {
         this.errorMsg = err.error?.message || 'Error al crear la cuenta';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -27,4 +27,8 @@ export class UsersService {
   cambiarEstado(id: string, estado: string): Observable<ApiResponse<User>> {
     return this.api.put<ApiResponse<User>>(`${endpoint.USERS_STATUS}/${id}/status`, { estado });
   }
+
+  cambiarPassword(passwordActual: string, passwordNueva: string): Observable<ApiResponse<any>> {
+    return this.api.put<ApiResponse<any>>(`${endpoint.USERS_ME}/password`, { passwordActual, passwordNueva });
+  }
 }

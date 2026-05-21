@@ -11,52 +11,223 @@
   }
 }
 
-.detail-col, .diagnostico-col {
+.detail-col {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.card-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a3a2a;
-  margin: 0 0 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f4ee;
+.diagnostico-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 24px;
+  z-index: 10;
+
+  @media (max-width: 960px) {
+    position: static;
+  }
 }
 
+// Estilo de Tarjetas Modernas
+.card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(228, 235, 222, 0.7);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    box-shadow: 0 8px 30px rgba(45, 106, 79, 0.05);
+    border-color: rgba(45, 106, 79, 0.15);
+  }
+}
+
+.card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1a3a2a;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f4ee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Botón Volver con micro-animación
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1.5px solid #d8e5d3;
+  color: #2d6a4f;
+  background: #fff;
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: #f7faf6;
+    border-color: #2d6a4f;
+    color: #1b4332;
+    transform: translateX(-3px);
+  }
+}
+
+// Grilla de detalles básicos
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
   margin-bottom: 16px;
 }
 
-.sintomas-section, .observacion {
-  margin-top: 12px;
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 14.5px;
+  color: #1a3a2a;
+  font-weight: 600;
+}
+
+// Síntomas
+.sintomas-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f4ee;
 }
 
 .sintomas-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .sintoma-tag {
-  background: #fef9c3;
-  color: #854d0e;
-  padding: 4px 12px;
+  background: #fefce8;
+  color: #a16207;
+  border: 1px solid #fef08a;
+  padding: 6px 14px;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(161, 98, 7, 0.03);
+
+  &:hover {
+    background: #fef08a;
+    transform: translateY(-1px);
+  }
+}
+
+// Observaciones tipo nota clínica
+.observacion {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: #f9fafb;
+  border-left: 4px solid #2d6a4f;
+  border-radius: 4px 12px 12px 4px;
+  
+  p {
+    font-size: 13.5px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 4px 0 0;
+    font-style: italic;
+  }
+}
+
+// Dashboard de Sensores
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.sensor-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f7faf6;
+  border: 1px solid #eef3eb;
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(45, 106, 79, 0.05);
+    border-color: #d8e5d3;
+    background: #fff;
+  }
+}
+
+.sensor-icon {
+  font-size: 20px;
+  background: #fff;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  border: 1px solid rgba(228, 235, 222, 0.5);
+}
+
+.sensor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sensor-label {
+  font-size: 10.5px;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.sensor-value {
+  font-size: 15px;
+  color: #1a3a2a;
+  font-weight: 700;
+  
+  .unit {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-left: 1px;
+  }
 }
 
 // Galería de imágenes
 .imagenes-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
 }
 
@@ -64,9 +235,11 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e8ede6;
+  transition: transform 0.2s;
+  &:hover { transform: translateY(-2px); }
 }
 
 .gallery-link {
@@ -137,10 +310,9 @@
   color: #6b7280;
 }
 
-// Diagnóstico
+// Columna de Diagnóstico Estilo Clinica Agraria
 .diagnostico-card {
-  position: sticky;
-  top: 20px;
+  border-top: 4px solid #2d6a4f;
 }
 
 .diagnostico-empty {
@@ -151,8 +323,9 @@
   gap: 12px;
   padding: 16px;
 
+  .empty-icon { font-size: 48px; }
   h3 { margin: 0; font-size: 17px; color: #1a3a2a; }
-  p { color: #6b7280; font-size: 14px; margin: 0; }
+  p { color: #6b7280; font-size: 13.5px; margin: 0; line-height: 1.5; }
 }
 
 .diagnostico-header {
@@ -162,13 +335,13 @@
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid #f0f4ee;
-  h3 { margin: 0; font-size: 15px; font-weight: 600; color: #1a3a2a; }
+  h3 { margin: 0; font-size: 15px; font-weight: 700; color: #1a3a2a; }
 }
 
 .riesgo-badge {
   padding: 4px 14px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.5px;
 
@@ -178,19 +351,25 @@
   &--gray  { background: #f3f4f6; color: #6b7280; }
 }
 
-.enfermedad-info { margin-bottom: 16px; }
+.enfermedad-info {
+  background: #f7faf6;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border: 1px solid #eef3eb;
+}
 
 .enfermedad-nombre {
   display: block;
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   color: #1a3a2a;
   margin-bottom: 10px;
 }
 
-.confianza-label { font-size: 13px; color: #6b7280; display: block; margin-bottom: 6px; }
+.confianza-label { font-size: 12.5px; color: #6b7280; display: block; margin-bottom: 6px; font-weight: 500; }
 .bar {
-  background: #f0f4ee;
+  background: #e2ebd9;
   border-radius: 4px;
   height: 8px;
   overflow: hidden;
@@ -199,7 +378,7 @@
   height: 100%;
   background: linear-gradient(to right, #2d6a4f, #52b788);
   border-radius: 4px;
-  transition: width 0.6s ease;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .motivo, .recomendaciones {
@@ -210,7 +389,7 @@
 .recomendaciones ul {
   margin: 8px 0 0;
   padding-left: 20px;
-  li { font-size: 14px; color: #374151; margin-bottom: 6px; line-height: 1.5; }
+  li { font-size: 13.5px; color: #374151; margin-bottom: 6px; line-height: 1.5; }
 }
 
 .regen-action {
@@ -219,4 +398,172 @@
   border-top: 1px solid #f0f4ee;
   display: flex;
   justify-content: center;
+}
+
+.btn-outline-regen {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #d8e5d3;
+  color: #2d6a4f;
+  background: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #f7faf6;
+    border-color: #2d6a4f;
+  }
+}
+
+// Tarjeta de Asesoría Profesional
+.especialista-card {
+  border-top: 4px solid #3b82f6;
+
+  .card-title {
+    color: #1e3a8a;
+    border-bottom: 1px solid #eef2ff;
+
+    .title-icon { font-size: 18px; }
+  }
+
+  p {
+    font-size: 13.5px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+}
+
+.btn-specialist {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15) !important;
+  
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.25) !important;
+    transform: translateY(-2px);
+  }
+}
+
+.specialist-success {
+  text-align: center;
+  padding: 12px 0;
+  
+  .success-icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  h4 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    color: #1e3a8a;
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 13px;
+    color: #1e40af;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Estilo de Botón Primario General
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(45, 106, 79, 0.25);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Spinners
+.spinner, .spinner-small, .spinner-large {
+  display: inline-block;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.spinner-small {
+  width: 14px;
+  height: 14px;
+  border-color: rgba(45, 106, 79, 0.3);
+  border-top-color: #2d6a4f;
+}
+
+.spinner-large {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+  border-color: rgba(45, 106, 79, 0.2);
+  border-top-color: #2d6a4f;
+}
+
+// Estilos de tarjetas del lado izquierdo con bordes superiores de colores temáticos
+.observacion-card {
+  border-top: 4px solid #2d6a4f; // Verde Foresta
+  
+  .card-title {
+    color: #2d6a4f;
+    border-bottom: 1px solid #f0f4ee;
+  }
+}
+
+.sensor-card {
+  border-top: 4px solid #d97706; // Ámbar/Oro Cálido
+  
+  .card-title {
+    color: #d97706;
+    border-bottom: 1px solid #fef3c7;
+  }
+}
+
+.fotos-card {
+  border-top: 4px solid #10b981; // Verde Esmeralda
+  
+  .card-title {
+    color: #10b981;
+    border-bottom: 1px solid #ecfdf5;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

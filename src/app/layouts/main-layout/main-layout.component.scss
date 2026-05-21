@@ -130,6 +130,17 @@
   opacity: .85;
 }
 
+// ── Admin nav section ─────────────────────────────────────────────────────────
+.nav-item--admin {
+  &.active {
+    background: rgba(139, 92, 246, .15);
+
+    &::before { background: #a78bfa; }
+  }
+
+  &:hover { background: rgba(139, 92, 246, .1); }
+}
+
 // ── Footer ────────────────────────────────────────────────────────────────────
 .sidebar-footer {
   padding: 14px 12px;

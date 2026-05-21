@@ -89,3 +89,28 @@
     font-style: italic;
   }
 }
+
+// Estilo unificado de AgroNexa con borde superior verde foresta
+.form-card {
+  border-top: 4px solid #2d6a4f !important;
+  
+  .section-title {
+    color: #2d6a4f !important;
+    font-size: 14.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    
+    &::before {
+      background: #2d6a4f !important;
+      width: 4px;
+      height: 14px;
+      border-radius: 2px;
+    }
+  }
+}
+

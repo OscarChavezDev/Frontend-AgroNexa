@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParcelasService } from '../../core/services/parcelas.service';
@@ -32,7 +32,8 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     private parcelasService: ParcelasService,
     private router: Router,
     private route: ActivatedRoute,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
@@ -51,9 +52,16 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.parcelaId = this.route.snapshot.paramMap.get('id') || '';
-    this.isEdit = !!this.parcelaId && this.route.snapshot.url.some(s => s.path === 'editar');
-    if (this.isEdit) this.cargarParcela();
+    this.route.paramMap.subscribe(params => {
+      this.parcelaId = params.get('id') || '';
+      this.isEdit = !!this.parcelaId && this.route.snapshot.url.some(s => s.path === 'editar');
+      if (this.isEdit) {
+        this.cargarParcela();
+      } else {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -143,29 +151,57 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
 
   cargarParcela() {
     this.loading = true;
+    this.cdr.detectChanges();
     this.parcelasService.obtener(this.parcelaId).subscribe({
       next: (res) => {
-        const p = res.data!;
-        this.form.patchValue({
-          ...p,
-          lat: p.ubicacion?.lat,
-          lng: p.ubicacion?.lng
-        });
-        this.loading = false;
-        setTimeout(() => this.waitForMapsAndInit(), 0);
+        try {
+          const p = res?.data;
+          if (p) {
+            this.form.patchValue({
+              ...p,
+              lat: p.ubicacion?.lat,
+              lng: p.ubicacion?.lng
+            });
+            setTimeout(() => this.waitForMapsAndInit(), 0);
+          } else {
+            this.errorMsg = 'No se encontraron datos de la parcela';
+          }
+          this.loading = false;
+        } catch (e) {
+          console.error('Error in ParcelaForm cargarParcela next:', e);
+          this.errorMsg = 'Error al procesar datos de la parcela';
+          this.loading = false;
+        } finally {
+          this.cdr.detectChanges();
+        }
       },
-      error: () => { this.errorMsg = 'Error al cargar parcela'; this.loading = false; }
+      error: (err) => {
+        console.error('Error fetching Parcela for edit:', err);
+        this.errorMsg = 'Error al cargar parcela';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.saving = true;
+    this.cdr.detectChanges();
     const { lat, lng, ...rest } = this.form.value;
     const payload = { ...rest, ubicacion: { lat: +lat, lng: +lng } };
 
     const onSuccess = () => this.router.navigate(['/parcelas']);
-    const onError = (err: any) => { this.errorMsg = err.error?.message || 'Error al guardar'; this.saving = false; };
+    const onError = (err: any) => {
+      try {
+        this.errorMsg = err.error?.message || 'Error al guardar';
+      } catch (e) {
+        this.errorMsg = 'Error de red al guardar';
+      } finally {
+        this.saving = false;
+        this.cdr.detectChanges();
+      }
+    };
 
     if (this.isEdit) {
       this.parcelasService.actualizar(this.parcelaId, payload).subscribe({ next: onSuccess, error: onError });

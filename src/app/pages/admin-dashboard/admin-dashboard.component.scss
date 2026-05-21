@@ -1,0 +1,206 @@
+@use '../../../styles/page' as *;
+
+// ── Skeleton loading ──────────────────────────────────────────────────────────
+.sk-val {
+  display: inline-block;
+  width: 52px; height: 24px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,.25) 25%, rgba(255,255,255,.45) 50%, rgba(255,255,255,.25) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.sk-label {
+  display: inline-block;
+  width: 80px; height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--clr-neutral-100) 25%, var(--clr-border) 50%, var(--clr-neutral-100) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-top: 4px;
+}
+
+.sk-icon-pulse {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  animation: pulse 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .4; }
+  50%      { opacity: .8; }
+}
+
+// ── Summary grid ──────────────────────────────────────────────────────────────
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.admin-summary-card {
+  .summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+// ── Progress bar ──────────────────────────────────────────────────────────────
+.progress-stat {
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--clr-neutral-600);
+  }
+
+  .progress-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--clr-brand-700);
+  }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--clr-neutral-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &--green { background: linear-gradient(90deg, #10b981, #34d399); }
+  &--blue  { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+}
+
+// ── Summary metrics ───────────────────────────────────────────────────────────
+.summary-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--clr-neutral-50);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--clr-neutral-100); }
+}
+
+.metric-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &--green { background: #10b981; }
+  &--amber { background: #f59e0b; }
+  &--red   { background: #ef4444; }
+  &--gray  { background: var(--clr-neutral-400); }
+}
+
+.metric-label {
+  font-size: 13px;
+  color: var(--clr-neutral-600);
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--clr-brand-800);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+// ── Activity stats ────────────────────────────────────────────────────────────
+.activity-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.activity-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  background: var(--clr-neutral-50);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+
+  &:hover {
+    background: var(--clr-neutral-100);
+    transform: translateY(-1px);
+  }
+}
+
+.activity-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+
+  &--green  { background: #d1fae5; color: #065f46; }
+  &--purple { background: #ede9fe; color: #5b21b6; }
+  &--blue   { background: #dbeafe; color: #1e40af; }
+}
+
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.activity-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--clr-brand-800);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.1;
+}
+
+.activity-label {
+  font-size: 11.5px;
+  color: var(--clr-neutral-500);
+  font-weight: 500;
+}
+
+// ── Ratio info ────────────────────────────────────────────────────────────────
+.ratio-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--clr-brand-25);
+  border: 1px solid var(--clr-brand-100);
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  color: var(--clr-brand-700);
+
+  svg { flex-shrink: 0; color: var(--clr-brand-500); }
+  strong { font-weight: 700; }
+}

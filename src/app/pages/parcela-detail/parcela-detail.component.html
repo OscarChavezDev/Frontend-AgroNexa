@@ -16,82 +16,97 @@
 
   <div *ngIf="!loading && parcela" class="parcela-layout">
 
-    <!-- Info general -->
-    <div class="card detail-card">
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span class="detail-label">Cultivo</span>
-          <span class="detail-value">{{ parcela.cultivo | titlecase }}</span>
-        </div>
-        <div class="detail-item" *ngIf="parcela.variedad">
-          <span class="detail-label">Variedad</span>
-          <span class="detail-value">{{ parcela.variedad }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Área</span>
-          <span class="detail-value">{{ parcela.areaAproximada }} {{ parcela.unidadArea }}</span>
-        </div>
-        <div class="detail-item" *ngIf="parcela.edadCultivo">
-          <span class="detail-label">Edad del cultivo</span>
-          <span class="detail-value">{{ parcela.edadCultivo }}</span>
-        </div>
-        <div class="detail-item" *ngIf="parcela.cantidadPlantas">
-          <span class="detail-label">Plantas</span>
-          <span class="detail-value">{{ parcela.cantidadPlantas | number }}</span>
-        </div>
-        <div class="detail-item" *ngIf="parcela.sistemaCultivo">
-          <span class="detail-label">Sistema</span>
-          <span class="detail-value">{{ parcela.sistemaCultivo | titlecase }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Estado</span>
-          <span class="badge badge--{{ parcela.estado === 'activo' ? 'green' : 'gray' }}">{{ parcela.estado }}</span>
-        </div>
-        <div class="detail-item" *ngIf="parcela.referencia">
-          <span class="detail-label">Referencia</span>
-          <span class="detail-value">{{ parcela.referencia }}</span>
-        </div>
-      </div>
-      <div class="observacion" *ngIf="parcela.observaciones">
-        <span class="detail-label">Observaciones</span>
-        <p>{{ parcela.observaciones }}</p>
-      </div>
-    </div>
-
-    <!-- Mapa de ubicación -->
-    <div class="card map-card" *ngIf="parcela.ubicacion">
-      <h3 class="card-title">Ubicación registrada</h3>
-      <div id="parcela-mini-map" class="mini-map-container"></div>
-      <p class="coords-text">
-        <span class="coord-pin">📍</span>
-        Lat {{ parcela.ubicacion.lat }}, Lng {{ parcela.ubicacion.lng }}
-      </p>
-    </div>
-
-    <!-- Muestras de esta parcela -->
-    <div class="muestras-section">
-      <div class="section-title-row">
-        <h2>Muestras registradas <span class="count-badge">{{ muestras.length }}</span></h2>
-      </div>
-
-      <div class="empty-state card" *ngIf="muestras.length === 0">
-        <span style="font-size:40px">🔬</span>
-        <p>No hay muestras registradas para esta parcela.</p>
-        <button class="btn-primary" (click)="nuevaMuestra()">Registrar primera muestra</button>
-      </div>
-
-      <div class="muestras-list" *ngIf="muestras.length > 0">
-        <a *ngFor="let m of muestras" [routerLink]="['/muestras', m.id]" class="muestra-row">
-          <div class="muestra-icon">🔬</div>
-          <div class="muestra-info">
-            <span class="muestra-title">{{ m.parteAfectada | titlecase }}</span>
-            <span class="muestra-sub">
-              {{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}
-              <span *ngIf="m.sintomas?.length"> · {{ m.sintomas!.slice(0,2).join(', ') }}{{ m.sintomas!.length > 2 ? '…' : '' }}</span>
-            </span>
+    <!-- Columna izquierda: Información y Muestras -->
+    <div class="detail-col">
+      <!-- Info general -->
+      <div class="card detail-card">
+        <h3 class="card-title">Información de la Parcela</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Cultivo</span>
+            <span class="detail-value">{{ parcela.cultivo | titlecase }}</span>
           </div>
-          <span class="badge badge--{{ nivelClass(m.nivelAfectacion) }}">{{ m.nivelAfectacion || 'leve' }}</span>
-        </a>
+          <div class="detail-item">
+            <span class="detail-label">Variedad</span>
+            <span class="detail-value">{{ parcela.variedad || 'No especificada' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Área</span>
+            <span class="detail-value">{{ parcela.areaAproximada ? (parcela.areaAproximada + ' ' + (parcela.unidadArea || 'ha')) : 'No especificada' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Edad del cultivo</span>
+            <span class="detail-value">{{ parcela.edadCultivo || 'No especificada' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Plantas</span>
+            <span class="detail-value">{{ parcela.cantidadPlantas ? (parcela.cantidadPlantas | number) : 'No especificada' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Sistema</span>
+            <span class="detail-value">{{ (parcela.sistemaCultivo | titlecase) || 'No especificado' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Estado</span>
+            <span class="badge badge--{{ parcela.estado === 'activo' ? 'green' : 'gray' }}">{{ parcela.estado }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Referencia</span>
+            <span class="detail-value">{{ parcela.referencia || 'Sin referencia' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="parcela.createdAt">
+            <span class="detail-label">Fecha de registro</span>
+            <span class="detail-value">{{ parcela.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="parcela.updatedAt">
+            <span class="detail-label">Última actualización</span>
+            <span class="detail-value">{{ parcela.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+        <div class="observacion">
+          <span class="detail-label">Observaciones</span>
+          <p>{{ parcela.observaciones || 'Sin observaciones registradas' }}</p>
+        </div>
+      </div>
+
+      <!-- Muestras de esta parcela -->
+      <div class="muestras-section">
+        <div class="section-title-row">
+          <h2>Muestras registradas <span class="count-badge">{{ muestras.length }}</span></h2>
+        </div>
+
+        <div class="empty-state card" *ngIf="muestras.length === 0">
+          <span style="font-size:40px">🔬</span>
+          <p>No hay muestras registradas para esta parcela.</p>
+          <button class="btn-primary" (click)="nuevaMuestra()">Registrar primera muestra</button>
+        </div>
+
+        <div class="muestras-list" *ngIf="muestras.length > 0">
+          <a *ngFor="let m of muestras" [routerLink]="['/muestras', m.id]" class="muestra-row">
+            <div class="muestra-icon">🔬</div>
+            <div class="muestra-info">
+              <span class="muestra-title">{{ m.parteAfectada | titlecase }}</span>
+              <span class="muestra-sub">
+                {{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                <span *ngIf="m.sintomas?.length"> · {{ m.sintomas!.slice(0,2).join(', ') }}{{ m.sintomas!.length > 2 ? '…' : '' }}</span>
+              </span>
+            </div>
+            <span class="badge badge--{{ nivelClass(m.nivelAfectacion) }}">{{ m.nivelAfectacion || 'leve' }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: Ubicación y Mapa -->
+    <div class="mapa-col">
+      <!-- Mapa de ubicación -->
+      <div class="card map-card" *ngIf="parcela.ubicacion">
+        <h3 class="card-title">Ubicación registrada</h3>
+        <div id="parcela-mini-map" class="mini-map-container"></div>
+        <p class="coords-text">
+          <span class="coord-pin">📍</span>
+          Lat {{ parcela.ubicacion.lat }}, Lng {{ parcela.ubicacion.lng }}
+        </p>
       </div>
     </div>
 

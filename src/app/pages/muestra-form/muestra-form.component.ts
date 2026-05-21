@@ -159,7 +159,7 @@ export class MuestraFormComponent implements OnInit {
       next: (res) => {
         const muestraId = res.data?.id || '';
         if (this.imagenes.length === 0 || !muestraId) {
-          this.router.navigate(['/muestras', muestraId]);
+          this.router.navigate(['/muestras', muestraId], { queryParams: { creado: 'true' } });
           return;
         }
         const uploads$ = this.imagenes.map(img =>
@@ -167,7 +167,7 @@ export class MuestraFormComponent implements OnInit {
             .pipe(catchError(() => of(null)))
         );
         forkJoin(uploads$).subscribe(() => {
-          this.router.navigate(['/muestras', muestraId]);
+          this.router.navigate(['/muestras', muestraId], { queryParams: { creado: 'true' } });
         });
       },
       error: (err) => { this.errorMsg = err.error?.message || 'Error al guardar'; this.saving = false; }

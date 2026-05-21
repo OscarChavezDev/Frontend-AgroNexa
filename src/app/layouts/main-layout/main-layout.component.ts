@@ -26,7 +26,11 @@ export class MainLayoutComponent {
   }
 
   get rolLabel(): string {
-    const map: any = { productor: 'Productor', asociacion: 'Asociación', institucion: 'Institución' };
+    const map: any = { productor: 'Productor', asociacion: 'Asociación', institucion: 'Institución', admin: 'Administrador' };
     return map[this.currentUser?.rol || ''] || '';
+  }
+
+  get isAdmin(): boolean {
+    return this.currentUser?.rol === 'admin';
   }
 }

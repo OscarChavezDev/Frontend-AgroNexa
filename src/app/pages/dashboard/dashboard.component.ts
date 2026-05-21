@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { MuestrasService } from '../../core/services/muestras.service';
@@ -23,11 +24,16 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private parcelasService: ParcelasService,
     private muestrasService: MuestrasService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.user = this.authService.currentUser;
+    if (this.user?.rol === 'admin') {
+      this.router.navigate(['/admin']);
+      return;
+    }
     this.parcelasService.listar().subscribe({
       next: (res) => { 
         console.log('Respuesta del backend (Dashboard Parcelas):', res);
