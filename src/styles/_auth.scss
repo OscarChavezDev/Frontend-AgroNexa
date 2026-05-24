@@ -1,96 +1,283 @@
-// ── Auth page wrapper ─────────────────────────────────────────────────────────
+// ── Auth wrapper — split layout ────────────────────────────────────────────
 .auth-wrapper {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  justify-items: center;
-  padding: 24px;
-  background: var(--clr-brand-800);
+  grid-template-columns: 1fr 1fr;
+  background: var(--clr-bg-page);
   position: relative;
   overflow: hidden;
 
-  // Decorative background pattern
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Left brand panel ───────────────────────────────────────────────────────
+.auth-left {
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 10%, rgba(74, 222, 128, .10) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(45, 212, 191, .07) 0%, transparent 55%),
+    linear-gradient(155deg, #0b1d13 0%, #071410 50%, #060e08 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 56px;
+  position: relative;
+  overflow: hidden;
+
+  // Animated orbs
   &::before {
     content: '';
     position: absolute;
-    width: 600px; height: 600px;
+    width: 480px; height: 480px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(82,183,136,.18) 0%, transparent 70%);
-    top: -200px; right: -200px;
+    background: radial-gradient(circle, rgba(74, 222, 128, .09) 0%, transparent 70%);
+    top: -120px; right: -80px;
+    animation: authOrb1 9s ease-in-out infinite;
     pointer-events: none;
   }
 
   &::after {
     content: '';
     position: absolute;
-    width: 400px; height: 400px;
+    width: 320px; height: 320px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(116,198,157,.12) 0%, transparent 70%);
-    bottom: -150px; left: -100px;
+    background: radial-gradient(circle, rgba(45, 212, 191, .07) 0%, transparent 70%);
+    bottom: -80px; left: -40px;
+    animation: authOrb2 12s ease-in-out infinite;
     pointer-events: none;
+  }
+
+  // Dot grid pattern
+  .auth-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255, 255, 255, .06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) { display: none; }
+}
+
+.auth-left-content {
+  position: relative;
+  z-index: 1;
+  max-width: 400px;
+}
+
+.auth-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 52px;
+
+  .auth-brand-logo {
+    width: 44px; height: 44px;
+    background: rgba(74, 222, 128, .12);
+    border: 1px solid rgba(74, 222, 128, .25);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img { width: 28px; height: 28px; object-fit: contain; }
+  }
+
+  .auth-brand-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #ecfdf5;
+    letter-spacing: -.4px;
+  }
+}
+
+.auth-headline {
+  font-size: 36px;
+  font-weight: 800;
+  color: #ecfdf5;
+  letter-spacing: -.7px;
+  line-height: 1.18;
+  margin-bottom: 16px;
+
+  .highlight {
+    background: linear-gradient(135deg, #4ade80 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.auth-tagline {
+  font-size: 14.5px;
+  color: rgba(236, 253, 245, .58);
+  line-height: 1.65;
+  max-width: 320px;
+  margin-bottom: 44px;
+}
+
+.auth-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, .035);
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  cursor: default;
+
+  &:hover {
+    background: rgba(74, 222, 128, .06);
+    border-color: rgba(74, 222, 128, .15);
+  }
+
+  .fi-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #4ade80;
+
+    &--green  { background: rgba(74, 222, 128, .12); color: #4ade80; }
+    &--teal   { background: rgba(45, 212, 191, .12); color: #2dd4bf; }
+    &--amber  { background: rgba(251, 191, 36, .12); color: #fbbf24; }
+  }
+
+  .fi-body {
+    .fi-title { font-size: 13.5px; font-weight: 600; color: rgba(236, 253, 245, .9); }
+    .fi-sub   { font-size: 12px; color: rgba(236, 253, 245, .42); margin-top: 2px; }
+  }
+}
+
+// ── Right form panel ───────────────────────────────────────────────────────
+.auth-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 75% 15%, rgba(74, 222, 128, .04) 0%, transparent 45%),
+      radial-gradient(circle at 15% 85%, rgba(45, 212, 191, .03) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 40px 24px;
   }
 }
 
 // ── Auth card ─────────────────────────────────────────────────────────────────
 .auth-card {
-  background: #fff;
-  border-radius: var(--radius-xl);
-  padding: 40px 36px;
   width: 100%;
-  max-width: 420px;
-  box-shadow: var(--shadow-xl);
+  max-width: 400px;
   position: relative;
   z-index: 1;
-
-  &--wide { max-width: 560px; }
+  animation: authSlideUp .45s cubic-bezier(.34, 1.56, .64, 1) both;
 }
 
-// ── Auth brand ────────────────────────────────────────────────────────────────
-.auth-brand {
+// Mobile brand (hidden on desktop)
+.auth-brand-mobile {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 
   .brand-logo-auth {
-    width: 72px; height: 72px;
+    width: 68px; height: 68px;
+    background: rgba(74, 222, 128, .1);
+    border: 1px solid rgba(74, 222, 128, .22);
+    border-radius: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
   }
 
-  .auth-logo-img {
-    width: 72px;
-    height: 72px;
-    object-fit: contain;
-  }
+  .auth-logo-img { width: 40px; height: 40px; object-fit: contain; }
 
   h1 {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
-    color: var(--clr-brand-800);
-    letter-spacing: -.4px;
+    color: var(--clr-text-primary);
+    letter-spacing: -.5px;
     margin-bottom: 6px;
   }
 
   p {
-    font-size: 13.5px;
-    color: var(--clr-neutral-500);
-    line-height: 1.5;
+    font-size: 14px;
+    color: var(--clr-text-secondary);
   }
+
+  @media (min-width: 769px) { display: none; }
+}
+
+// Desktop form header
+.auth-form-header {
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--clr-text-primary);
+    letter-spacing: -.5px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--clr-text-secondary);
+  }
+
+  @media (max-width: 768px) { display: none; }
 }
 
 // ── Auth link ─────────────────────────────────────────────────────────────────
 .auth-link {
   text-align: center;
-  margin-top: 22px;
-  font-size: 13.5px;
-  color: var(--clr-neutral-500);
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--clr-text-muted);
 
   a {
-    color: var(--clr-brand-600);
-    font-weight: 700;
+    color: var(--clr-accent);
+    font-weight: 600;
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+    transition: color var(--transition-fast);
+    &:hover { color: #86efac; text-decoration: underline; }
   }
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes authOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(-18px, 22px) scale(1.04); }
+}
+
+@keyframes authOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(14px, -18px) scale(1.03); }
+}
+
+@keyframes authSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
