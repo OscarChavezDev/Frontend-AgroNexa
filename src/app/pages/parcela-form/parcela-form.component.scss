@@ -13,18 +13,22 @@
 .map-search-input {
   width: 100%;
   padding: 9px 12px;
-  border: 1.5px solid #d1d5db;
+  border: 1.5px solid var(--clr-border);
   border-radius: 8px;
   font-size: 14px;
-  color: #111827;
-  background: #fff;
+  color: var(--clr-neutral-200);
+  background: var(--clr-surface);
   box-sizing: border-box;
   font-family: inherit;
   transition: border-color 0.2s;
 
+  &::placeholder {
+    color: var(--clr-neutral-500);
+  }
+
   &:focus {
     outline: none;
-    border-color: #2d6a4f;
+    border-color: var(--clr-brand-500);
     box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
   }
 }
@@ -33,7 +37,7 @@
   width: 100%;
   height: 340px;
   border-radius: 8px;
-  border: 1.5px solid #d1d5db;
+  border: 1.5px solid var(--clr-border);
   overflow: hidden;
   margin-bottom: 16px;
 }
@@ -80,12 +84,13 @@
 }
 
 .coord-readonly {
-  background: #f9fafb !important;
-  color: #374151 !important;
+  background: var(--clr-surface) !important;
+  color: var(--clr-neutral-400) !important;
   cursor: default !important;
+  border-color: var(--clr-border) !important;
 
   &::placeholder {
-    color: #9ca3af;
+    color: var(--clr-neutral-500);
     font-style: italic;
   }
 }

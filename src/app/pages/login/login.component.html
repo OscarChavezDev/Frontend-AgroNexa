@@ -1,52 +1,151 @@
 <div class="auth-wrapper">
-  <div class="auth-card">
-    <div class="auth-brand">
-      <div class="brand-logo-auth">
-        <img src="assets/logo.svg" alt="AgroNexa" class="auth-logo-img">
-      </div>
-      <h1>AgroNexa</h1>
-      <p>Diagnóstico inteligente para tus cultivos</p>
-    </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <div class="form-group">
-        <label for="correo-login">Correo electrónico</label>
-        <input id="correo-login" type="email" formControlName="correo" placeholder="correo@ejemplo.com"
-          [class.error]="f['correo'].invalid && f['correo'].touched" autocomplete="email">
-        <span class="field-error" *ngIf="f['correo'].invalid && f['correo'].touched">
-          {{ f['correo'].hasError('required') ? 'El correo es requerido' : 'Ingresa un correo válido' }}
-        </span>
-      </div>
+  <!-- ── Left: Brand panel ──────────────────────────────────────────── -->
+  <div class="auth-left">
+    <div class="auth-grid-pattern"></div>
 
-      <div class="form-group">
-        <label for="pw-login">Contraseña</label>
-        <div class="input-with-toggle">
-          <input id="pw-login" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-            placeholder="••••••••" [class.error]="f['password'].invalid && f['password'].touched"
-            autocomplete="current-password">
-          <button type="button" class="toggle-pw" (click)="showPassword = !showPassword"
-            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-            <svg *ngIf="!showPassword" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-            <svg *ngIf="showPassword" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>
-            </svg>
-          </button>
+    <div class="auth-left-content">
+      <div class="auth-brand-mark">
+        <div class="auth-brand-logo">
+          <img src="assets/logo.svg" alt="AgroNexa">
         </div>
-        <span class="field-error" *ngIf="f['password'].invalid && f['password'].touched">
-          Mínimo 6 caracteres
-        </span>
+        <span class="auth-brand-name">AgroNexa</span>
       </div>
 
-      <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+      <h1 class="auth-headline">
+        Diagnóstico <span class="highlight">inteligente</span><br>para tus cultivos
+      </h1>
+      <p class="auth-tagline">
+        Registra parcelas, toma muestras y obtén análisis precisos para mejorar tus cosechas.
+      </p>
 
-      <button type="submit" class="btn-primary btn-full" [disabled]="loading">
-        <span *ngIf="!loading">Iniciar sesión</span>
-        <span *ngIf="loading" class="spinner"></span>
-      </button>
-    </form>
+      <div class="auth-features">
+        <div class="auth-feature-item">
+          <div class="fi-icon fi-icon--green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <div class="fi-body">
+            <div class="fi-title">Gestión de parcelas</div>
+            <div class="fi-sub">Registra y controla todas tus áreas de cultivo</div>
+          </div>
+        </div>
 
-    <p class="auth-link">¿No tienes cuenta? <a routerLink="/register">Regístrate aquí</a></p>
+        <div class="auth-feature-item">
+          <div class="fi-icon fi-icon--teal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
+            </svg>
+          </div>
+          <div class="fi-body">
+            <div class="fi-title">Análisis de muestras</div>
+            <div class="fi-sub">Diagnósticos con IA para detectar problemas</div>
+          </div>
+        </div>
+
+        <div class="auth-feature-item">
+          <div class="fi-icon fi-icon--amber">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="fi-body">
+            <div class="fi-title">Monitoreo en tiempo real</div>
+            <div class="fi-sub">Seguimiento continuo del estado de tus cultivos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right: Form panel ─────────────────────────────────────────── -->
+  <div class="auth-right">
+    <div class="auth-card">
+
+      <!-- Mobile brand -->
+      <div class="auth-brand-mobile">
+        <div class="brand-logo-auth">
+          <img src="assets/logo.svg" alt="AgroNexa" class="auth-logo-img">
+        </div>
+        <h1>AgroNexa</h1>
+        <p>Diagnóstico inteligente para tus cultivos</p>
+      </div>
+
+      <!-- Desktop form header -->
+      <div class="auth-form-header">
+        <h2>Bienvenido de vuelta</h2>
+        <p>Ingresa tus credenciales para continuar</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group">
+          <label for="correo-login">Correo electrónico</label>
+          <input
+            id="correo-login"
+            type="email"
+            formControlName="correo"
+            placeholder="correo@ejemplo.com"
+            [class.error]="f['correo'].invalid && f['correo'].touched"
+            autocomplete="email">
+          @if (f['correo'].invalid && f['correo'].touched) {
+            <span class="field-error">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              {{ f['correo'].hasError('required') ? 'El correo es requerido' : 'Ingresa un correo válido' }}
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="pw-login">Contraseña</label>
+          <div class="input-with-toggle">
+            <input
+              id="pw-login"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              [class.error]="f['password'].invalid && f['password'].touched"
+              autocomplete="current-password">
+            <button type="button" class="toggle-pw" (click)="showPassword = !showPassword"
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              @if (!showPassword) {
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              } @else {
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              }
+            </button>
+          </div>
+          @if (f['password'].invalid && f['password'].touched) {
+            <span class="field-error">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Mínimo 6 caracteres
+            </span>
+          }
+        </div>
+
+        @if (errorMsg) {
+          <div class="error-banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {{ errorMsg }}
+          </div>
+        }
+
+        <button type="submit" class="btn-primary btn-full" [disabled]="loading">
+          @if (!loading) {
+            <span>Iniciar sesión</span>
+          } @else {
+            <span class="spinner"></span>
+          }
+        </button>
+      </form>
+
+      <p class="auth-link">¿No tienes cuenta? <a routerLink="/register">Regístrate aquí</a></p>
+    </div>
   </div>
 </div>

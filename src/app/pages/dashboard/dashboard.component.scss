@@ -1,30 +1,89 @@
 @use '../../../styles/page' as *;
 
+// ── Stat upgrade link ──────────────────────────────────────────────────────────
+.stat-upgrade {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 5px;
+  color: var(--clr-purple);
+  text-decoration: none;
+  opacity: .75;
+  transition: opacity var(--transition-fast);
+
+  &:hover { opacity: 1; text-decoration: underline; }
+}
+
+// ── Card live dot ──────────────────────────────────────────────────────────────
+.card-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-right: 7px;
+  position: relative;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    animation: dotPulse 2.4s ease-out infinite;
+  }
+
+  &--green {
+    background: var(--clr-accent);
+    &::after { border: 1.5px solid rgba(74, 222, 128, .4); }
+  }
+
+  &--amber {
+    background: var(--clr-amber);
+    &::after { border: 1.5px solid rgba(251, 191, 36, .4); }
+  }
+}
+
+@keyframes dotPulse {
+  0%   { transform: scale(1); opacity: .8; }
+  70%  { transform: scale(2); opacity: 0; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+// ── Skeleton shimmer ───────────────────────────────────────────────────────────
 .sk-val {
   display: inline-block;
-  width: 48px; height: 22px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, rgba(255,255,255,.25) 25%, rgba(255,255,255,.45) 50%, rgba(255,255,255,.25) 75%);
+  width: 52px; height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,.04) 25%,
+    rgba(255,255,255,.09) 50%,
+    rgba(255,255,255,.04) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: shimmer 1.5s infinite;
   vertical-align: middle;
 }
 
 .sk-list { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
-
-.sk-row { display: flex; align-items: center; gap: 12px; }
-
-.sk-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.sk-row  { display: flex; align-items: center; gap: 12px; }
+.sk-lines { flex: 1; display: flex; flex-direction: column; gap: 7px; }
 
 .sk {
   border-radius: 6px;
-  background: linear-gradient(90deg, var(--clr-neutral-100) 25%, var(--clr-border) 50%, var(--clr-neutral-100) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,.04) 25%,
+    rgba(255,255,255,.08) 50%,
+    rgba(255,255,255,.04) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: shimmer 1.5s infinite;
 
-  &-icon { width: 36px; height: 36px; border-radius: var(--radius-md); flex-shrink: 0; }
-  &-t    { height: 13px; width: 65%; }
-  &-s    { height: 11px; width: 40%; }
+  &-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); flex-shrink: 0; }
+  &-t    { height: 13px; width: 60%; }
+  &-s    { height: 11px; width: 38%; }
 }
 
 @keyframes shimmer {
