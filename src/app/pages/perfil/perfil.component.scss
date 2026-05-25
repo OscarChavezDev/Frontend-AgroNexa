@@ -26,7 +26,7 @@
   padding: 32px 24px;
 
   h3 { margin: 0; font-size: 17px; color: #2d6a4f; font-weight: 700; }
-  .correo { font-size: 13px; color: #6b7280; margin: 0; }
+  .correo { font-size: 13px; color: var(--clr-neutral-400); margin: 0; }
 }
 
 .avatar-circle {
@@ -71,8 +71,7 @@
 }
 
 .identity-info {
-  width: 100%;
-  background: #f9fafb;
+  background: var(--clr-neutral-50);
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -90,12 +89,12 @@
 
 .identity-label {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--clr-neutral-500);
 }
 
 .identity-value {
   font-size: 13px;
-  color: #1a3a2a;
+  color: var(--clr-neutral-200);
   font-weight: 500;
 }
 
@@ -110,7 +109,7 @@
   color: #2d6a4f !important;
   margin: 0 0 20px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f0f4ee;
+  border-bottom: 1px solid var(--clr-border);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -121,8 +120,8 @@
   flex-direction: column;
   gap: 2px;
   padding: 12px 14px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: var(--clr-neutral-50);
+  border: 1px solid var(--clr-border);
   border-radius: 8px;
   margin-bottom: 16px;
 }
@@ -130,18 +129,18 @@
 .readonly-label {
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--clr-neutral-500);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .readonly-value {
   font-size: 14px;
-  color: #374151;
+  color: var(--clr-neutral-200);
   font-weight: 500;
 }
 
 .readonly-hint {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--clr-neutral-500);
 }

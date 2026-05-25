@@ -33,12 +33,6 @@
 .filter-selects {
   display: flex;
   gap: 8px;
-
-  select {
-    width: auto;
-    min-width: 160px;
-    padding: 9px 13px;
-  }
 }
 
 .filter-count {
@@ -47,6 +41,65 @@
   font-weight: 500;
   margin-left: auto;
   white-space: nowrap;
+}
+
+// ── Custom dropdowns ──────────────────────────────────────────────────────────
+.custom-select {
+  position: relative;
+  min-width: 160px;
+
+  &.open .custom-select-dropdown { display: block; }
+  &.open .custom-select-btn svg { transform: rotate(180deg); }
+}
+
+.custom-select-btn {
+  width: 100%;
+  padding: 9px 13px;
+  background: var(--clr-surface);
+  color: var(--clr-neutral-200);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: border-color var(--transition-fast);
+  white-space: nowrap;
+
+  svg { transition: transform var(--transition-fast); flex-shrink: 0; }
+
+  &:hover, &:focus {
+    border-color: var(--clr-brand-500);
+    outline: none;
+  }
+}
+
+.custom-select-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.custom-select-option {
+  padding: 9px 14px;
+  font-size: 13px;
+  color: var(--clr-neutral-200);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+
+  &:hover { background: var(--clr-brand-25); color: var(--clr-brand-400); }
+  &.selected { background: var(--clr-brand-25); color: var(--clr-brand-500); font-weight: 600; }
 }
 
 // ── Table card ────────────────────────────────────────────────────────────────
@@ -93,7 +146,7 @@
 .user-cell-name {
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--clr-brand-800);
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -107,12 +160,12 @@
 
 .cell-email {
   font-size: 13px;
-  color: var(--clr-neutral-600);
+  color: var(--clr-neutral-300);
 }
 
 .cell-date {
   font-size: 12.5px;
-  color: var(--clr-neutral-500);
+  color: var(--clr-neutral-400);
   white-space: nowrap;
 }
 
@@ -363,9 +416,7 @@
   transition: all var(--transition-fast);
   position: relative;
 
-  input[type="radio"] {
-    display: none;
-  }
+  input[type="radio"] { display: none; }
 
   &:hover {
     border-color: var(--clr-brand-400);
@@ -544,8 +595,11 @@
 
   .filter-selects {
     flex-direction: column;
+  }
 
-    select { min-width: unset; }
+  .custom-select {
+    min-width: unset;
+    width: 100%;
   }
 
   .filter-count {

@@ -37,14 +37,41 @@
         id="admin-search-users"
       >
     </div>
+
     <div class="filter-selects">
-      <select [(ngModel)]="filtroRol" (change)="onFiltroChange()" id="admin-filter-rol">
-        <option *ngFor="let r of roles" [value]="r.valor">{{ r.etiqueta }}</option>
-      </select>
-      <select [(ngModel)]="filtroEstado" (change)="onFiltroChange()" id="admin-filter-estado">
-        <option *ngFor="let e of estados" [value]="e.valor">{{ e.etiqueta }}</option>
-      </select>
+      <!-- Dropdown Rol -->
+      <div class="custom-select" [class.open]="dropdownRolAbierto">
+        <button class="custom-select-btn" (click)="dropdownRolAbierto = !dropdownRolAbierto" type="button">
+          {{ getRolLabel() }}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option"
+            *ngFor="let r of roles"
+            [class.selected]="r.valor === filtroRol"
+            (click)="filtroRol = r.valor; onFiltroChange(); dropdownRolAbierto = false">
+            {{ r.etiqueta }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown Estado -->
+      <div class="custom-select" [class.open]="dropdownEstadoAbierto">
+        <button class="custom-select-btn" (click)="dropdownEstadoAbierto = !dropdownEstadoAbierto" type="button">
+          {{ getEstadoLabel() }}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option"
+            *ngFor="let e of estados"
+            [class.selected]="e.valor === filtroEstado"
+            (click)="filtroEstado = e.valor; onFiltroChange(); dropdownEstadoAbierto = false">
+            {{ e.etiqueta }}
+          </div>
+        </div>
+      </div>
     </div>
+
     <span class="filter-count">{{ totalFiltrados }} usuario{{ totalFiltrados !== 1 ? 's' : '' }}</span>
   </div>
 

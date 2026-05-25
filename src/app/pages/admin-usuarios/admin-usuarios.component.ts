@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { AdminService } from '../../core/services/admin.service';
 import { User } from '../../core/models/user.model';
 
@@ -21,6 +21,10 @@ export class AdminUsuariosComponent implements OnInit {
 
   paginaActual = 1;
   pageSize = 10;
+
+  // Dropdowns custom
+  dropdownRolAbierto = false;
+  dropdownEstadoAbierto = false;
 
   // Modal de cambiar estado
   modalAbierto = false;
@@ -63,6 +67,25 @@ export class AdminUsuariosComponent implements OnInit {
     this.cargar();
   }
 
+  // ── Dropdowns ─────────────────────────────────────────────────────────────
+  getRolLabel(): string {
+    return this.roles.find(r => r.valor === this.filtroRol)?.etiqueta || 'Todos los roles';
+  }
+
+  getEstadoLabel(): string {
+    return this.estados.find(e => e.valor === this.filtroEstado)?.etiqueta || 'Todos los estados';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.custom-select')) {
+      this.dropdownRolAbierto = false;
+      this.dropdownEstadoAbierto = false;
+    }
+  }
+
+  // ── Carga y filtros ───────────────────────────────────────────────────────
   cargar() {
     this.loading = true;
     const filtros: { rol?: string; estado?: string } = {};

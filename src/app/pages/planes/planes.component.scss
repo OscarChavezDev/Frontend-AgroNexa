@@ -72,7 +72,7 @@
     margin: 0 0 14px;
     font-size: 17px;
     font-weight: 800;
-    color: var(--clr-brand-800);
+    color: var(--clr-neutral-100); // ← era var(--clr-brand-800)
     letter-spacing: -.2px;
   }
 }
@@ -87,7 +87,7 @@
 .precio-monto {
   font-size: 34px;
   font-weight: 800;
-  color: var(--clr-brand-800);
+  color: var(--clr-neutral-100); // ← era var(--clr-brand-800)
   font-family: 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -1px;
 }
@@ -124,7 +124,7 @@
     align-items: flex-start;
     gap: 9px;
     font-size: 13.5px;
-    color: var(--clr-neutral-700);
+    color: var(--clr-neutral-300); // ← era var(--clr-neutral-700)
     line-height: 1.5;
   }
 

@@ -68,11 +68,11 @@
     color: var(--clr-neutral-600);
   }
 
-  .progress-value {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--clr-brand-700);
-  }
+.progress-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff; // ← era var(--clr-brand-700)
+}
 }
 
 .progress-bar {
@@ -131,7 +131,7 @@
 .metric-value {
   font-size: 14px;
   font-weight: 700;
-  color: var(--clr-brand-800);
+  color: #ffffff; // ← era var(--clr-brand-800)
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
@@ -178,7 +178,7 @@
 .activity-value {
   font-size: 20px;
   font-weight: 800;
-  color: var(--clr-brand-800);
+  color: #ffffff; // ← era var(--clr-brand-800)
   font-family: 'Plus Jakarta Sans', sans-serif;
   line-height: 1.1;
 }
