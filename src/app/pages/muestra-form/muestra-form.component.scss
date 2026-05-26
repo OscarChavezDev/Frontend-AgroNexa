@@ -25,14 +25,32 @@
   font-weight: 500;
   transition: all 0.2s;
 
-  input[type="radio"] { display: none; }
+  input[type="radio"] {
+    display: none;
+  }
 
-  &.selected { font-weight: 700; }
+  &.selected {
+    font-weight: 700;
+  }
 }
 
-.nivel-leve.selected     { border-color: var(--clr-success-text); background: var(--clr-success-bg); color: var(--clr-success-text); }
-.nivel-moderado.selected { border-color: var(--clr-warning-text); background: var(--clr-warning-bg); color: var(--clr-warning-text); }
-.nivel-severo.selected   { border-color: var(--clr-error-text); background: var(--clr-error-bg); color: var(--clr-error-text); }
+.nivel-leve.selected {
+  border-color: var(--clr-success-text);
+  background: var(--clr-success-bg);
+  color: var(--clr-success-text);
+}
+
+.nivel-moderado.selected {
+  border-color: var(--clr-warning-text);
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning-text);
+}
+
+.nivel-severo.selected {
+  border-color: var(--clr-error-text);
+  background: var(--clr-error-bg);
+  color: var(--clr-error-text);
+}
 
 // Síntomas
 .tags-grid {
@@ -100,13 +118,23 @@
 
   .upload-icon {
     display: flex;
+
     svg {
       stroke: var(--clr-text-muted);
       transition: stroke 0.2s;
     }
   }
-  .upload-text { font-size: 14px; font-weight: 600; color: var(--clr-text-primary); }
-  .upload-sub  { font-size: 12px; color: var(--clr-text-muted); }
+
+  .upload-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--clr-text-primary);
+  }
+
+  .upload-sub {
+    font-size: 12px;
+    color: var(--clr-text-muted);
+  }
 }
 
 // Grid de imágenes seleccionadas
@@ -147,7 +175,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -157,7 +185,9 @@
   justify-content: center;
   transition: background 0.2s;
 
-  &:hover { background: var(--clr-red); }
+  &:hover {
+    background: var(--clr-red);
+  }
 }
 
 .imagen-meta {
@@ -166,7 +196,8 @@
   gap: 6px;
   padding: 0 10px 10px;
 
-  select, input {
+  select,
+  input {
     font-size: 12px;
     padding: 5px 8px;
   }
@@ -212,7 +243,7 @@
 }
 
 // Modo visual — barras de nivel
-.sensor-visual { }
+.sensor-visual {}
 
 .sensor-niveles-grid {
   display: grid;
@@ -251,17 +282,38 @@
   transition: all 0.18s;
   border-right: 1px solid var(--clr-border);
 
-  &:last-child { border-right: none; }
-  &:hover:not(.active) { background: rgba(255, 255, 255, 0.08); color: var(--clr-text-secondary); }
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--clr-text-secondary);
+  }
 }
-.nivel-bar-bajo.active  { background: var(--clr-blue-dim); color: var(--clr-blue); font-weight: 700; }
-.nivel-bar-medio.active { background: var(--clr-success-bg); color: var(--clr-success-text); font-weight: 700; }
-.nivel-bar-alto.active  { background: var(--clr-warning-bg); color: var(--clr-warning-text); font-weight: 700; }
+
+.nivel-bar-bajo.active {
+  background: var(--clr-blue-dim);
+  color: var(--clr-blue);
+  font-weight: 700;
+}
+
+.nivel-bar-medio.active {
+  background: var(--clr-success-bg);
+  color: var(--clr-success-text);
+  font-weight: 700;
+}
+
+.nivel-bar-alto.active {
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning-text);
+  font-weight: 700;
+}
 
 // Estilo unificado de AgroNexa con borde superior verde foresta
 .form-card {
   border-top: 4px solid var(--clr-brand-500) !important;
-  
+
   .section-title {
     color: var(--clr-brand-500) !important;
     font-size: 14.5px;
@@ -272,7 +324,7 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 20px;
-    
+
     &::before {
       background: var(--clr-brand-500) !important;
       width: 4px;
@@ -281,4 +333,3 @@
     }
   }
 }
-
