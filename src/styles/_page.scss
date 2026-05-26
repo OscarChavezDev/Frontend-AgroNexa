@@ -496,6 +496,11 @@ select {
   background-position: right 12px center;
   padding-right: 36px;
   appearance: none;
+
+  option {
+    background-color: var(--clr-bg-card);
+    color: var(--clr-text-primary);
+  }
 }
 
 .field-error { font-size: 12px; color: var(--clr-error-text); display: flex; align-items: center; gap: 4px; }
