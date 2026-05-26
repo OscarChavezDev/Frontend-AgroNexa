@@ -131,9 +131,16 @@ p { margin: 0; }
   border-radius: 3px;
 }
 
+// Styling for native select options to prevent low contrast (light text on white bg)
+select option {
+  background-color: var(--clr-bg-card);
+  color: var(--clr-text-primary);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
 }
+

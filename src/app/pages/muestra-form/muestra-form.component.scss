@@ -2,7 +2,7 @@
 
 .section-hint {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--clr-text-muted);
   margin: -12px 0 16px;
 }
 
@@ -19,20 +19,38 @@
   gap: 6px;
   padding: 8px 18px;
   border-radius: 8px;
-  border: 2px solid #e2e8e0;
+  border: 2px solid var(--clr-border);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s;
 
-  input[type="radio"] { display: none; }
+  input[type="radio"] {
+    display: none;
+  }
 
-  &.selected { font-weight: 700; }
+  &.selected {
+    font-weight: 700;
+  }
 }
 
-.nivel-leve.selected     { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
-.nivel-moderado.selected { border-color: #f59e0b; background: #fffbeb; color: #92400e; }
-.nivel-severo.selected   { border-color: #ef4444; background: #fef2f2; color: #b91c1c; }
+.nivel-leve.selected {
+  border-color: var(--clr-success-text);
+  background: var(--clr-success-bg);
+  color: var(--clr-success-text);
+}
+
+.nivel-moderado.selected {
+  border-color: var(--clr-warning-text);
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning-text);
+}
+
+.nivel-severo.selected {
+  border-color: var(--clr-error-text);
+  background: var(--clr-error-bg);
+  color: var(--clr-error-text);
+}
 
 // Síntomas
 .tags-grid {
@@ -44,28 +62,32 @@
 .tag {
   padding: 6px 14px;
   border-radius: 20px;
-  border: 2px solid #e2e8e0;
-  background: #fff;
+  border: 2px solid var(--clr-border);
+  background: var(--clr-bg-input);
   cursor: pointer;
   font-size: 13px;
-  color: #374151;
+  color: var(--clr-text-secondary);
   transition: all 0.2s;
 
   &--selected {
-    background: #2d6a4f;
-    border-color: #2d6a4f;
-    color: #fff;
+    background: var(--clr-brand-500);
+    border-color: var(--clr-brand-500);
+    color: var(--clr-text-primary);
     font-weight: 600;
   }
 
-  &:hover:not(.tag--selected) { border-color: #2d6a4f; color: #2d6a4f; }
+  &:hover:not(.tag--selected) {
+    border-color: var(--clr-accent);
+    color: var(--clr-accent);
+    background: var(--clr-accent-dim);
+  }
 }
 
 .selected-count {
   display: inline-block;
   margin-top: 8px;
   font-size: 12px;
-  color: #2d6a4f;
+  color: var(--clr-accent);
   font-weight: 600;
 }
 
@@ -77,22 +99,42 @@
   justify-content: center;
   gap: 6px;
   padding: 28px;
-  border: 2px dashed #c4cfc0;
+  border: 2px dashed var(--clr-border-strong);
   border-radius: 10px;
-  background: #f9fafb;
+  background: var(--clr-bg-input);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
   margin-bottom: 16px;
 
   &:hover {
-    border-color: #2d6a4f;
-    background: #f0fdf4;
+    border-color: var(--clr-accent);
+    background: var(--clr-accent-dim);
+
+    .upload-icon svg {
+      stroke: var(--clr-accent);
+    }
   }
 
-  .upload-icon { display: flex; }
-  .upload-text { font-size: 14px; font-weight: 600; color: #374151; }
-  .upload-sub  { font-size: 12px; color: #6b7280; }
+  .upload-icon {
+    display: flex;
+
+    svg {
+      stroke: var(--clr-text-muted);
+      transition: stroke 0.2s;
+    }
+  }
+
+  .upload-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--clr-text-primary);
+  }
+
+  .upload-sub {
+    font-size: 12px;
+    color: var(--clr-text-muted);
+  }
 }
 
 // Grid de imágenes seleccionadas
@@ -106,8 +148,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #fff;
-  border: 1px solid #e8ede6;
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -116,7 +158,7 @@
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: #f0f4ee;
+  background: var(--clr-bg-page);
 
   img {
     width: 100%;
@@ -133,7 +175,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -143,7 +185,9 @@
   justify-content: center;
   transition: background 0.2s;
 
-  &:hover { background: #dc2626; }
+  &:hover {
+    background: var(--clr-red);
+  }
 }
 
 .imagen-meta {
@@ -152,7 +196,8 @@
   gap: 6px;
   padding: 0 10px 10px;
 
-  select, input {
+  select,
+  input {
     font-size: 12px;
     padding: 5px 8px;
   }
@@ -169,22 +214,25 @@
   flex: 1;
   padding: 9px 12px;
   border-radius: 8px;
-  border: 1.5px solid #d1d5db;
-  background: #fff;
-  color: #6b7280;
+  border: 1.5px solid var(--clr-border);
+  background: var(--clr-bg-input);
+  color: var(--clr-text-secondary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 
   &.active {
-    border-color: #2d6a4f;
-    background: #f0fdf4;
-    color: #2d6a4f;
+    border-color: var(--clr-accent);
+    background: var(--clr-accent-dim);
+    color: var(--clr-accent);
     font-weight: 700;
   }
 
-  &:hover:not(.active) { border-color: #9ca3af; }
+  &:hover:not(.active) {
+    border-color: var(--clr-border-strong);
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 
 // Modo exacto
@@ -195,7 +243,7 @@
 }
 
 // Modo visual — barras de nivel
-.sensor-visual { }
+.sensor-visual {}
 
 .sensor-niveles-grid {
   display: grid;
@@ -212,41 +260,62 @@
 .sensor-nivel-label {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: var(--clr-text-secondary);
 }
 
 .nivel-bar-group {
   display: flex;
   border-radius: 8px;
   overflow: hidden;
-  border: 1.5px solid #e2e8e0;
+  border: 1.5px solid var(--clr-border);
 }
 
 .nivel-bar-btn {
   flex: 1;
   padding: 8px 4px;
   border: none;
-  background: #f9fafb;
+  background: var(--clr-bg-input);
   font-size: 12px;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--clr-text-muted);
   cursor: pointer;
   transition: all 0.18s;
-  border-right: 1px solid #e2e8e0;
+  border-right: 1px solid var(--clr-border);
 
-  &:last-child { border-right: none; }
-  &:hover:not(.active) { background: #f3f4f6; }
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--clr-text-secondary);
+  }
 }
-.nivel-bar-bajo.active  { background: #dbeafe; color: #1e40af; font-weight: 700; }
-.nivel-bar-medio.active { background: #d1fae5; color: #065f46; font-weight: 700; }
-.nivel-bar-alto.active  { background: #fef3c7; color: #92400e; font-weight: 700; }
+
+.nivel-bar-bajo.active {
+  background: var(--clr-blue-dim);
+  color: var(--clr-blue);
+  font-weight: 700;
+}
+
+.nivel-bar-medio.active {
+  background: var(--clr-success-bg);
+  color: var(--clr-success-text);
+  font-weight: 700;
+}
+
+.nivel-bar-alto.active {
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning-text);
+  font-weight: 700;
+}
 
 // Estilo unificado de AgroNexa con borde superior verde foresta
 .form-card {
-  border-top: 4px solid #2d6a4f !important;
-  
+  border-top: 4px solid var(--clr-brand-500) !important;
+
   .section-title {
-    color: #2d6a4f !important;
+    color: var(--clr-brand-500) !important;
     font-size: 14.5px;
     font-weight: 700;
     text-transform: uppercase;
@@ -255,13 +324,12 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 20px;
-    
+
     &::before {
-      background: #2d6a4f !important;
+      background: var(--clr-brand-500) !important;
       width: 4px;
       height: 14px;
       border-radius: 2px;
     }
   }
 }
-
