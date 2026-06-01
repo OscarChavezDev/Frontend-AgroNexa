@@ -3,7 +3,14 @@
   min-height: 100vh;
   background-color: var(--clr-bg-page);
   color: var(--clr-text-primary);
-  overflow-x: hidden;
+}
+
+.landing-bg-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
 }
 
 // ── CONTAINER ──────────────────────────────────────────────────────────────
