@@ -7,7 +7,9 @@ export const endpoint = {
   // AUTH
   AUTH_REGISTER:            'auth/register',
   AUTH_LOGIN:               'auth/login',
+  AUTH_GOOGLE:              'auth/google',
   AUTH_ME:                  'auth/me',
+
 
   // USUARIOS
   USERS_ME:                 'users/me',

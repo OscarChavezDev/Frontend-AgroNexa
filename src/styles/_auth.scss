@@ -281,3 +281,36 @@
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+// ── Google Sign-in styles ──────────────────────────────────────────────────────
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--clr-text-muted);
+  font-size: 13px;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--clr-border-soft);
+  }
+
+  span {
+    padding: 0 10px;
+    font-weight: 500;
+  }
+}
+
+.google-signin-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  width: 100%;
+  
+  iframe {
+    width: 100% !important;
+  }
+}
+

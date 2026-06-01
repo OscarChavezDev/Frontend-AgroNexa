@@ -38,6 +38,18 @@ export class AuthService {
     );
   }
 
+  loginWithGoogle(idToken: string): Observable<ApiResponse<User>> {
+    return this.api.post<ApiResponse<LoginResponse>>(endpoint.AUTH_GOOGLE, { idToken }).pipe(
+      tap(res => {
+        if (res.success && res.data) {
+          localStorage.setItem('token', res.data.token);
+        }
+      }),
+      switchMap(() => this.me())
+    );
+  }
+
+
   me(): Observable<ApiResponse<User>> {
     return this.api.get<ApiResponse<User>>(endpoint.AUTH_ME).pipe(
       tap(res => {

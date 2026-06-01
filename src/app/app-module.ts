@@ -25,6 +25,7 @@ import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
+import { LandingComponent } from './pages/landing/landing.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.co
     PerfilComponent,
     AdminDashboardComponent,
     AdminUsuariosComponent,
+    LandingComponent,
   ],
   imports: [
     BrowserModule,
