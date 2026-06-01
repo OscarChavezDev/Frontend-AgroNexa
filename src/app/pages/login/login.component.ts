@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 
 declare const google: any;
 
@@ -21,7 +22,8 @@ export class LoginComponent implements AfterViewInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private analyticsService: AnalyticsService
   ) {
     this.form = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
@@ -57,6 +59,7 @@ export class LoginComponent implements AfterViewInit {
       next: (res) => {
         try {
           const rol = res.data?.rol;
+          this.analyticsService.trackEvent('login', { method: 'google', role: rol });
           if (rol === 'admin') {
             this.router.navigate(['/admin']);
           } else {
@@ -87,6 +90,7 @@ export class LoginComponent implements AfterViewInit {
       next: (res) => {
         try {
           const rol = res.data?.rol;
+          this.analyticsService.trackEvent('login', { method: 'email', role: rol });
           if (rol === 'admin') {
             this.router.navigate(['/admin']);
           } else {

@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 
 declare const google: any;
 
@@ -28,7 +29,8 @@ export class RegisterComponent implements AfterViewInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private analyticsService: AnalyticsService
   ) {
     this.form = this.fb.group({
       nombre:   ['', Validators.required],
@@ -68,6 +70,7 @@ export class RegisterComponent implements AfterViewInit {
       next: (res) => {
         try {
           const rol = res.data?.rol;
+          this.analyticsService.trackEvent('sign_up', { method: 'google', role: rol });
           if (rol === 'admin') {
             this.router.navigate(['/admin']);
           } else {
@@ -96,6 +99,7 @@ export class RegisterComponent implements AfterViewInit {
     this.cdr.detectChanges();
     this.authService.register(this.form.value).subscribe({
       next: () => {
+        this.analyticsService.trackEvent('sign_up', { method: 'email', role: this.form.value.rol });
         this.successMsg = 'Cuenta creada. Redirigiendo al login…';
         this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/login']), 1500);
