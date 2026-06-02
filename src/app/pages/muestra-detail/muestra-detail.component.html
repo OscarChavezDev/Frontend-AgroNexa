@@ -184,8 +184,32 @@
           <span>Se recomienda consultar con un agrónomo especialista para este caso</span>
         </div>
 
-        <!-- S1: Diagnóstico principal -->
-        <div class="card diag-principal-card">
+        <!-- S1a: Cultivo saludable -->
+        <div class="card diag-sano-card" *ngIf="esCultivoSano">
+          <div class="sano-header">
+            <div class="sano-icono">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="sano-texto">
+              <div class="sano-badges">
+                <span class="modelo-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  {{ diagnostico?.modelo_ia?.includes('llama') ? 'Groq IA' : 'IA' }}
+                </span>
+                <span class="confianza-badge confianza-badge--green">
+                  Confianza {{ resultadoGemini.diagnostico_principal.confianza | uppercase }}
+                </span>
+              </div>
+              <h2 class="sano-titulo">Tu cultivo luce saludable</h2>
+              <p class="sano-desc">{{ resultadoGemini.diagnostico_principal.descripcion }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- S1b: Diagnóstico con enfermedad -->
+        <div class="card diag-principal-card" *ngIf="!esCultivoSano">
           <div class="diag-header">
             <div class="diag-header-top">
               <span class="modelo-badge" [class.modelo-badge--local]="diagnostico?.modelo_ia === 'reglas-locales'">
@@ -196,11 +220,9 @@
                 Confianza {{ resultadoGemini.diagnostico_principal.confianza | uppercase }}
               </span>
             </div>
-
-            <!-- Aviso de fallback cuando Gemini no está disponible -->
             <div class="fallback-aviso" *ngIf="diagnostico?.modelo_ia === 'reglas-locales'">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              La IA no está disponible. Este resultado es un análisis aproximado basado en síntomas — <strong>no analiza la imagen</strong>. Contacta al administrador del sistema.
+              La IA no está disponible. Resultado aproximado basado en síntomas — <strong>no analiza la imagen</strong>. Contacta al administrador.
             </div>
             <h2 class="enfermedad-nombre">{{ resultadoGemini.diagnostico_principal.enfermedad }}</h2>
             <em class="nombre-cientifico" *ngIf="resultadoGemini.diagnostico_principal.nombre_cientifico">

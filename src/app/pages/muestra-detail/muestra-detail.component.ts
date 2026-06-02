@@ -179,4 +179,15 @@ export class MuestraDetailComponent implements OnInit {
     const map: Record<string, string> = { alto: 'red', moderado: 'amber', bajo: 'green' };
     return map[(this.diagnostico as any)?.resultado?.riesgo || ''] || 'gray';
   }
+
+  private readonly KEYWORDS_SANO = [
+    'ninguna', 'sin enfermedad', 'saludable', 'sano', 'planta sana', 'cultivo sano',
+    'no se observa', 'no se detecta', 'no presenta', 'no visible', 'no hay',
+    'sin patología', 'aparentemente sano', 'sin síntomas'
+  ];
+
+  get esCultivoSano(): boolean {
+    const nombre = (this.resultadoGemini?.diagnostico_principal?.enfermedad || '').toLowerCase();
+    return this.KEYWORDS_SANO.some(kw => nombre.includes(kw));
+  }
 }

@@ -640,6 +640,57 @@
 }
 
 // ── Diagnóstico principal ─────────────────────────────────────────────────────
+// ── Card cultivo saludable ──────────────────────────────────────────────────
+.diag-sano-card {
+  border-top: 4px solid #4ade80;
+  background: linear-gradient(135deg, rgba(74,222,128,.06) 0%, transparent 60%);
+}
+
+.sano-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.sano-icono {
+  width: 58px; height: 58px;
+  border-radius: var(--radius-lg);
+  background: rgba(74,222,128,.12);
+  border: 1.5px solid rgba(74,222,128,.25);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: #4ade80;
+}
+
+.sano-texto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sano-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sano-titulo {
+  font-size: 22px;
+  font-weight: 800;
+  color: #4ade80;
+  letter-spacing: -.4px;
+  margin: 0;
+}
+
+.sano-desc {
+  font-size: 14px;
+  color: var(--clr-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ── Card diagnóstico con enfermedad ────────────────────────────────────────
 .diag-principal-card {
   border-top: 4px solid #2d6a4f;
 }
