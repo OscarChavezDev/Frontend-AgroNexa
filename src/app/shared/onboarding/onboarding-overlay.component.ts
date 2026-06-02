@@ -126,11 +126,22 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Si el elemento está fuera del viewport (sidebar cerrada en móvil), abrirla
+    const layout = document.querySelector('.layout-wrapper');
+    const sidebarOpen = layout?.classList.contains('sidebar-open') ?? false;
+    const targetInSidebar = document.querySelector('.sidebar')?.contains(el) ?? false;
+
+    // Sidebar abierta pero target está en contenido principal → cerrarla
+    if (sidebarOpen && !targetInSidebar) {
+      (document.querySelector('.sidebar-overlay') as HTMLElement)?.click();
+      this.findTimer = setTimeout(() => this.tryHighlight(step), 450);
+      return;
+    }
+
+    // Target en sidebar pero sidebar cerrada (fuera de viewport) → abrirla
     const rect = el.getBoundingClientRect();
     const inViewport = rect.right > 0 && rect.left < window.innerWidth &&
                        rect.bottom > 0 && rect.top < window.innerHeight;
-    if (!inViewport) {
+    if (!inViewport && targetInSidebar) {
       const menuBtn = document.querySelector('.menu-toggle') as HTMLElement;
       if (menuBtn && this.findRetries < 6) {
         menuBtn.click();
