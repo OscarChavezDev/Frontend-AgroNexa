@@ -125,6 +125,18 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
       }
       return;
     }
+
+    // Si el elemento está oculto (sidebar cerrada en móvil), abrirla primero
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      const menuBtn = document.querySelector('.menu-toggle') as HTMLElement;
+      if (menuBtn && this.findRetries < 12) {
+        menuBtn.click();
+        this.findRetries++;
+        this.findTimer = setTimeout(() => this.tryHighlight(step), 450);
+      }
+      return;
+    }
     this.clearTarget();
     this.targetEl = el;
     el.classList.add('onboarding-target-active');
