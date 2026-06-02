@@ -9,10 +9,20 @@ export class DiagnosticosService {
   constructor(private api: ApiService) {}
 
   generar(muestraId: string): Observable<ApiResponse<Diagnostico>> {
-    return this.api.post<ApiResponse<Diagnostico>>(`${endpoint.DIAGNOSTICOS_GENERAR}/${muestraId}`);
+    return this.api.post<ApiResponse<Diagnostico>>(
+      `${endpoint.DIAGNOSTICOS_GENERAR}/${muestraId}`
+    );
+  }
+
+  regenerar(muestraId: string): Observable<ApiResponse<Diagnostico>> {
+    return this.api.post<ApiResponse<Diagnostico>>(
+      `${endpoint.DIAGNOSTICOS_REGENERAR}/${muestraId}`
+    );
   }
 
   obtener(id: string): Observable<ApiResponse<Diagnostico>> {
-    return this.api.get<ApiResponse<Diagnostico>>(`${endpoint.DIAGNOSTICO_BY_ID}/${id}`);
+    return this.api.get<ApiResponse<Diagnostico>>(
+      `${endpoint.DIAGNOSTICO_BY_ID}/${id}`
+    );
   }
 }

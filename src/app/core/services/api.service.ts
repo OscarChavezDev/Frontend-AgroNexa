@@ -35,8 +35,9 @@ export const endpoint = {
   MUESTRA_IMAGENES:         'muestras',       // + /{id}/imagenes
 
   // DIAGNÓSTICOS
-  DIAGNOSTICOS_GENERAR:     'diagnosticos/generar', // + /{muestraId}
-  DIAGNOSTICO_BY_ID:        'diagnosticos',         // + /{id}
+  DIAGNOSTICOS_GENERAR:     'diagnosticos/generar',   // + /{muestraId}
+  DIAGNOSTICOS_REGENERAR:   'diagnosticos/regenerar', // + /{muestraId}
+  DIAGNOSTICO_BY_ID:        'diagnosticos',            // + /{id}
 
   // IMÁGENES
   IMAGENES_UPLOAD:          'imagenes/upload',
