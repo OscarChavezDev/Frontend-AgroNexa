@@ -1,5 +1,6 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
@@ -25,6 +26,7 @@ import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
+import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overlay.component';
 
 @NgModule({
   declarations: [
@@ -43,9 +45,11 @@ import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.co
     PerfilComponent,
     AdminDashboardComponent,
     AdminUsuariosComponent,
+    OnboardingOverlayComponent,
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,

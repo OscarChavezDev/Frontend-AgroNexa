@@ -160,7 +160,7 @@
           </span>
           <h3>Sin diagnóstico aún</h3>
           <p>Genera un diagnóstico preliminar basado en los síntomas y datos registrados de tus sensores.</p>
-          <button class="btn-primary" [disabled]="generando" (click)="generarDiagnostico()">
+          <button class="btn-primary" id="onboarding-btn-generar-diagnostico" [disabled]="generando" (click)="generarDiagnostico()">
             <span *ngIf="!generando">Generar diagnóstico</span>
             <span *ngIf="generando" class="spinner"></span>
           </button>

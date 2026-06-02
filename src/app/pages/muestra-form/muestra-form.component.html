@@ -187,7 +187,7 @@
 
     <div class="form-actions">
       <a routerLink="/muestras" class="btn-outline">Cancelar</a>
-      <button type="submit" class="btn-primary" [disabled]="saving">
+      <button type="submit" class="btn-primary" id="onboarding-btn-guardar-muestra" [disabled]="saving">
         <span *ngIf="!saving">Registrar muestra{{ imagenes.length > 0 ? ' y subir ' + imagenes.length + ' imagen(es)' : '' }}</span>
         <span *ngIf="saving" class="spinner"></span>
       </button>

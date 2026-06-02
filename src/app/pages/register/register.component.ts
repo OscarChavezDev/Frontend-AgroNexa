@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { OnboardingService } from '../../core/services/onboarding.service';
 
 @Component({
   selector: 'app-register',
@@ -25,6 +26,7 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private onboarding: OnboardingService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
