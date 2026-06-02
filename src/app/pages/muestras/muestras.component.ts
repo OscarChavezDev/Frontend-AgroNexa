@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { MuestrasService } from '../../core/services/muestras.service';
+import { ParcelasService } from '../../core/services/parcelas.service';
 import { Muestra } from '../../core/models/muestra.model';
 
 @Component({
@@ -11,6 +13,7 @@ import { Muestra } from '../../core/models/muestra.model';
 })
 export class MuestrasComponent implements OnInit, OnDestroy {
   muestras: Muestra[] = [];
+  tieneParcelas: boolean | null = null;
   loading = true;
   errorMsg = '';
   filtroNivel = '';
@@ -23,6 +26,7 @@ export class MuestrasComponent implements OnInit, OnDestroy {
 
   constructor(
     private muestrasService: MuestrasService,
+    private parcelasService: ParcelasService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -47,19 +51,23 @@ export class MuestrasComponent implements OnInit, OnDestroy {
       }
     }, 5000);
 
-    this.sub = this.muestrasService.listar().subscribe({
-      next: (res) => {
+    this.sub = forkJoin({
+      muestras: this.muestrasService.listar().pipe(catchError(() => of({ data: [] }))),
+      parcelas: this.parcelasService.listar().pipe(catchError(() => of({ data: [] })))
+    }).subscribe({
+      next: ({ muestras, parcelas }) => {
         clearTimeout(this.timeout);
-        this.muestras = (res.data || []).sort((a: Muestra, b: Muestra) =>
+        this.muestras = ((muestras as any).data || []).sort((a: Muestra, b: Muestra) =>
           new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
         );
+        this.tieneParcelas = ((parcelas as any).data || []).length > 0;
         this.paginaActual = 1;
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: () => {
         clearTimeout(this.timeout);
-        this.errorMsg = err.error?.message || 'Error al cargar muestras';
+        this.errorMsg = 'Error al cargar datos';
         this.loading = false;
         this.cdr.detectChanges();
       }

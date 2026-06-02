@@ -60,7 +60,13 @@
 
           <div class="form-group">
             <label>Teléfono <span class="optional">(opcional)</span></label>
-            <input type="tel" formControlName="telefono" placeholder="999 999 999">
+            <input type="tel" formControlName="telefono" placeholder="999 999 999"
+              maxlength="9" inputmode="numeric"
+              [class.error]="f['telefono'].invalid && f['telefono'].touched"
+              (input)="soloDigitos($event)">
+            <span class="field-error" *ngIf="f['telefono'].invalid && f['telefono'].touched">
+              Ingresa exactamente 9 dígitos numéricos
+            </span>
           </div>
 
           <!-- Correo — solo lectura visual -->

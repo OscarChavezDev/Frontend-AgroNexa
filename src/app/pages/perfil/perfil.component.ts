@@ -35,7 +35,7 @@ export class PerfilComponent implements OnInit {
     this.form = this.fb.group({
       nombre:   ['', Validators.required],
       apellido: ['', Validators.required],
-      telefono: ['']
+      telefono: ['', Validators.pattern('^$|^[0-9]{9}$')]
     });
 
     this.passwordForm = this.fb.group({
@@ -111,6 +111,13 @@ export class PerfilComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  soloDigitos(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const limpio = input.value.replace(/[^0-9]/g, '').slice(0, 9);
+    input.value = limpio;
+    this.form.get('telefono')?.setValue(limpio, { emitEvent: false });
   }
 
   get f() { return this.form.controls; }

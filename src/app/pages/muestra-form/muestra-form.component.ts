@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -13,6 +13,8 @@ interface ImagenItem {
   preview: string;
   tipoImagen: string;
   descripcion: string;
+  validando: boolean;
+  validacion: { relevante: boolean; motivo: string } | null;
 }
 
 @Component({
@@ -33,6 +35,7 @@ export class MuestraFormComponent implements OnInit {
     'brotes deformados', 'marchitez', 'caida de frutos', 'hongos visibles'
   ];
   sintomasSeleccionados: string[] = [];
+  sinSintomaVisible = false;
 
   partesAfectadas = ['hoja', 'fruto', 'tallo', 'raiz', 'flor', 'planta_completa'];
   nivelesAfectacion = ['leve', 'moderado', 'severo'];
@@ -40,6 +43,7 @@ export class MuestraFormComponent implements OnInit {
 
   imagenes: ImagenItem[] = [];
   loadingParcelas = true;
+  parcelaDropdownAbierto = false;
 
   sensorMode: 'visual' | 'exacto' = 'visual';
 
@@ -101,8 +105,17 @@ export class MuestraFormComponent implements OnInit {
   }
 
   toggleSintoma(s: string) {
+    // Deactivate "sin síntoma" when a real symptom is selected
+    this.sinSintomaVisible = false;
     const idx = this.sintomasSeleccionados.indexOf(s);
     idx >= 0 ? this.sintomasSeleccionados.splice(idx, 1) : this.sintomasSeleccionados.push(s);
+  }
+
+  toggleSinSintoma() {
+    this.sinSintomaVisible = !this.sinSintomaVisible;
+    if (this.sinSintomaVisible) {
+      this.sintomasSeleccionados = [];
+    }
   }
 
   isSintomaSelected(s: string) { return this.sintomasSeleccionados.includes(s); }
@@ -111,11 +124,26 @@ export class MuestraFormComponent implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (!files) return;
     Array.from(files).forEach(file => {
+      const idx = this.imagenes.length;
       this.imagenes.push({
         file,
         preview: URL.createObjectURL(file),
-        tipoImagen: 'fruto',
-        descripcion: ''
+        tipoImagen: '',
+        descripcion: '',
+        validando: true,
+        validacion: null,
+      });
+      this.imagenesService.validar(file).subscribe({
+        next: (res) => {
+          this.imagenes[idx].validando = false;
+          this.imagenes[idx].validacion = res.data ?? null;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.imagenes[idx].validando = false;
+          this.imagenes[idx].validacion = { relevante: true, motivo: '' };
+          this.cdr.detectChanges();
+        }
       });
     });
     (event.target as HTMLInputElement).value = '';
@@ -125,8 +153,32 @@ export class MuestraFormComponent implements OnInit {
     this.imagenes.splice(index, 1);
   }
 
+  get imagenesValidando(): boolean {
+    return this.imagenes.some(img => img.validando);
+  }
+
+  get imagenesNoRelevantes(): ImagenItem[] {
+    return this.imagenes.filter(img => !img.validando && img.validacion?.relevante === false);
+  }
+
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+
+    if (this.imagenesValidando) {
+      this.errorMsg = 'Espera a que terminen de verificarse todas las imágenes.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (this.imagenesNoRelevantes.length > 0) {
+      const n = this.imagenesNoRelevantes.length;
+      this.errorMsg = n === 1
+        ? 'Hay una imagen que no corresponde a cultivos o plantas. Elimínala antes de continuar.'
+        : `Hay ${n} imágenes que no corresponden a cultivos o plantas. Elimínalas antes de continuar.`;
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.saving = true;
     const v = this.form.value;
     let datosSensor: Record<string, number | null>;
@@ -152,7 +204,7 @@ export class MuestraFormComponent implements OnInit {
       parteAfectada: v.parteAfectada,
       nivelAfectacion: v.nivelAfectacion,
       observaciones: v.observaciones,
-      sintomas: this.sintomasSeleccionados,
+      sintomas: this.sinSintomaVisible ? [] : this.sintomasSeleccionados,
       datosSensor
     };
 
@@ -173,6 +225,28 @@ export class MuestraFormComponent implements OnInit {
       },
       error: (err) => { this.errorMsg = err.error?.message || 'Error al guardar'; this.saving = false; }
     });
+  }
+
+  get parcelaSeleccionada(): Parcela | undefined {
+    const id = this.form.get('parcelaId')?.value;
+    return id ? this.parcelas.find(p => p.id === id) : undefined;
+  }
+
+  seleccionarParcela(p: Parcela): void {
+    this.form.patchValue({ parcelaId: p.id });
+    this.parcelaDropdownAbierto = false;
+    this.cdr.detectChanges();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!(event.target as HTMLElement).closest('.parcela-selector')) {
+      this.parcelaDropdownAbierto = false;
+    }
+  }
+
+  formatTipo(t: string): string {
+    return t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
   get f() { return this.form.controls; }

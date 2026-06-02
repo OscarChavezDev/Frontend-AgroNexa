@@ -148,7 +148,14 @@
 
             <div class="form-group">
               <label for="reg-tel">Teléfono <span class="optional">(opcional)</span></label>
-              <input id="reg-tel" type="tel" formControlName="telefono" placeholder="999 999 999" autocomplete="tel">
+              <input id="reg-tel" type="tel" formControlName="telefono" placeholder="999 999 999"
+                maxlength="9" inputmode="numeric"
+                [class.error]="f['telefono'].invalid && f['telefono'].touched"
+                (input)="soloDigitos($event)"
+                autocomplete="tel">
+              @if (f['telefono'].invalid && f['telefono'].touched) {
+                <span class="field-error">Ingresa exactamente 9 dígitos numéricos</span>
+              }
             </div>
 
             <div class="step-actions step-actions--single">

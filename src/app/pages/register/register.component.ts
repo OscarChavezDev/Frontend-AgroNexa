@@ -86,7 +86,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
       nombre:   ['', Validators.required],
       apellido: ['', Validators.required],
       correo:   ['', [Validators.required, Validators.email]],
-      telefono: [''],
+      telefono: ['', Validators.pattern('^$|^[0-9]{9}$')],
       password: ['', [Validators.required, Validators.minLength(6)]],
       rol:      ['productor', Validators.required]
     });
@@ -239,6 +239,13 @@ export class RegisterComponent implements AfterViewInit, OnInit {
         this.loading = false;
       }
     });
+  }
+
+  soloDigitos(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const limpio = input.value.replace(/[^0-9]/g, '').slice(0, 9);
+    input.value = limpio;
+    this.form.get('telefono')?.setValue(limpio, { emitEvent: false });
   }
 
   get f() { return this.form.controls; }

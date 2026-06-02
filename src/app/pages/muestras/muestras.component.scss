@@ -1,5 +1,56 @@
 @use '../../../styles/page' as *;
 
+// ── Advertencia sin parcelas ──────────────────────────────────────────────────
+.no-parcelas-alert {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(251,191,36,.06) 0%, rgba(251,191,36,.02) 100%);
+  border: 1.5px solid rgba(251, 191, 36, .3);
+  border-left: 4px solid #fbbf24;
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+
+.alert-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-md);
+  background: rgba(251, 191, 36, .12);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: #fbbf24;
+}
+
+.alert-content {
+  flex: 1;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--clr-text-primary);
+    margin: 0 0 6px;
+  }
+
+  p {
+    font-size: 13.5px;
+    color: var(--clr-text-secondary);
+    line-height: 1.6;
+    margin: 0 0 18px;
+  }
+}
+
+.alert-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 // ── Toolbar (filtros + page size) ─────────────────────────────────────────────
 .muestras-toolbar {
   display: flex;

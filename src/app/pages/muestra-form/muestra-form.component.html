@@ -14,12 +14,69 @@
       <h3 class="section-title">Parcela</h3>
       <div class="form-group">
         <label>Parcela *</label>
-        <select formControlName="parcelaId"
-                [disabled]="loadingParcelas"
-                [class.error]="f['parcelaId'].invalid && f['parcelaId'].touched">
-          <option value="">{{ loadingParcelas ? 'Cargando parcelas...' : 'Seleccionar parcela...' }}</option>
-          <option *ngFor="let p of parcelas" [value]="p.id">{{ p.nombre }} — {{ p.cultivo | titlecase }}</option>
-        </select>
+
+        <!-- Skeleton mientras carga -->
+        <div class="parcela-skeleton" *ngIf="loadingParcelas">
+          <div class="sk-parcela-trigger"></div>
+        </div>
+
+        <!-- Selector personalizado -->
+        <div class="parcela-selector" [class.open]="parcelaDropdownAbierto" *ngIf="!loadingParcelas">
+          <button type="button" class="parcela-trigger"
+            [class.has-value]="!!parcelaSeleccionada"
+            [class.error]="f['parcelaId'].invalid && f['parcelaId'].touched"
+            (click)="parcelaDropdownAbierto = !parcelaDropdownAbierto">
+
+            <ng-container *ngIf="parcelaSeleccionada; else sinSeleccion">
+              <div class="pt-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <div class="pt-info">
+                <span class="pt-name">{{ parcelaSeleccionada.nombre }}</span>
+                <span class="pt-cultivo">{{ parcelaSeleccionada.cultivo | titlecase }}</span>
+              </div>
+            </ng-container>
+            <ng-template #sinSeleccion>
+              <span class="pt-placeholder">Seleccionar parcela...</span>
+            </ng-template>
+
+            <svg class="pt-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"
+              [style.transform]="parcelaDropdownAbierto ? 'rotate(180deg)' : 'rotate(0)'"
+              style="transition: transform .2s ease; flex-shrink: 0">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div class="parcela-dropdown" *ngIf="parcelaDropdownAbierto">
+            <div class="parcela-empty" *ngIf="parcelas.length === 0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+              Sin parcelas registradas
+            </div>
+            <div class="parcela-option" *ngFor="let p of parcelas"
+              [class.selected]="f['parcelaId'].value === p.id"
+              (click)="seleccionarParcela(p)">
+              <div class="po-icon" [class.po-icon--active]="p.estado === 'activo'">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <div class="po-info">
+                <span class="po-name">{{ p.nombre }}</span>
+                <span class="po-meta">
+                  {{ p.cultivo | titlecase }}
+                  <ng-container *ngIf="p.areaAproximada"> · {{ p.areaAproximada }} {{ p.unidadArea }}</ng-container>
+                </span>
+              </div>
+              <svg *ngIf="f['parcelaId'].value === p.id" class="po-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
         <span class="field-error" *ngIf="f['parcelaId'].invalid && f['parcelaId'].touched">Requerido</span>
       </div>
     </div>
@@ -52,13 +109,26 @@
       <div class="form-group">
         <label>Síntomas visibles <span class="optional">(selecciona los que apliquen)</span></label>
         <div class="tags-grid">
+          <!-- Opción especial: Sin síntoma visible -->
+          <button type="button" class="tag tag--sin-sintoma"
+            [class.tag--selected]="sinSintomaVisible"
+            (click)="toggleSinSintoma()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            Sin síntoma visible
+          </button>
+          <!-- Síntomas normales -->
           <button type="button" *ngFor="let s of sintomasDisponibles" class="tag"
-            [class.tag--selected]="isSintomaSelected(s)" (click)="toggleSintoma(s)">
+            [class.tag--selected]="isSintomaSelected(s)"
+            [disabled]="sinSintomaVisible"
+            (click)="toggleSintoma(s)">
             {{ s }}
           </button>
         </div>
         <span class="selected-count" *ngIf="sintomasSeleccionados.length > 0">
           {{ sintomasSeleccionados.length }} síntoma(s) seleccionado(s)
+        </span>
+        <span class="selected-count selected-count--neutral" *ngIf="sinSintomaVisible">
+          La IA realizará el diagnóstico basado en parte afectada, nivel e imágenes
         </span>
       </div>
 
@@ -74,9 +144,12 @@
       <h3 class="section-title">Fotografías <span class="optional">(opcional)</span></h3>
       <p class="section-hint">Documenta visualmente la afectación del cultivo para un diagnóstico más preciso.</p>
 
-      <label class="upload-zone" for="file-upload-input">
-        <input type="file" id="file-upload-input" accept="image/*" multiple
-               (change)="onFilesSelected($event)" style="display:none">
+      <!-- Input compartido (fuera del label) -->
+      <input type="file" id="file-upload-input" accept="image/*" multiple
+             (change)="onFilesSelected($event)" style="display:none">
+
+      <!-- Zona grande — solo cuando NO hay imágenes -->
+      <label class="upload-zone" for="file-upload-input" *ngIf="imagenes.length === 0">
         <span class="upload-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
@@ -87,20 +160,62 @@
         <span class="upload-sub">JPG, PNG, WEBP · puedes agregar múltiples archivos</span>
       </label>
 
+      <!-- Grid con imágenes + botón compacto integrado -->
       <div class="imagenes-grid" *ngIf="imagenes.length > 0">
         <div class="imagen-item" *ngFor="let img of imagenes; let i = index">
           <div class="imagen-preview">
             <img [src]="img.preview" [alt]="'Imagen ' + (i + 1)">
             <button type="button" class="btn-remove-img" (click)="removeImagen(i)" title="Eliminar">✕</button>
+            <span class="imagen-num">{{ i + 1 }}</span>
+
+            <!-- Badge de validación IA -->
+            <div class="img-validation">
+              <!-- Cargando -->
+              <span class="img-val-badge img-val-badge--loading" *ngIf="img.validando" title="Verificando imagen...">
+                <span class="val-spinner"></span>
+              </span>
+              <!-- Válida -->
+              <span class="img-val-badge img-val-badge--ok" *ngIf="!img.validando && img.validacion?.relevante"
+                [title]="img.validacion?.motivo || 'Imagen válida'">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <!-- No relevante -->
+              <span class="img-val-badge img-val-badge--warn" *ngIf="!img.validando && img.validacion && !img.validacion.relevante"
+                [title]="img.validacion.motivo || 'Imagen no relacionada con cultivos'">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Advertencia detallada bajo la imagen si no es relevante -->
+          <div class="img-warn-detail" *ngIf="!img.validando && img.validacion && !img.validacion.relevante">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>{{ img.validacion.motivo || 'Esta imagen no parece estar relacionada con cultivos o plantas' }}</span>
           </div>
           <div class="imagen-meta">
-            <select [(ngModel)]="img.tipoImagen" [name]="'tipo-' + i">
-              <option *ngFor="let t of tiposImagen" [value]="t">{{ t | titlecase }}</option>
-            </select>
-            <input type="text" [(ngModel)]="img.descripcion" [name]="'desc-' + i"
-                   placeholder="Descripción...">
+            <div class="imagen-meta-field">
+              <span class="imagen-meta-label">Tipo de imagen</span>
+              <select [(ngModel)]="img.tipoImagen" [name]="'tipo-' + i"
+                [ngModelOptions]="{standalone: true}"
+                [class.placeholder-active]="!img.tipoImagen">
+                <option value="">Seleccionar tipo...</option>
+                <option *ngFor="let t of tiposImagen" [value]="t">{{ formatTipo(t) }}</option>
+              </select>
+            </div>
+            <div class="imagen-meta-field">
+              <span class="imagen-meta-label">Descripción <span class="optional">(opcional)</span></span>
+              <input type="text" [(ngModel)]="img.descripcion" [name]="'desc-' + i"
+                [ngModelOptions]="{standalone: true}"
+                placeholder="Ej: mancha en hoja superior...">
+            </div>
           </div>
         </div>
+
+        <!-- Botón compacto "Agregar más" dentro del grid -->
+        <label class="upload-add-more" for="file-upload-input">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Agregar más</span>
+        </label>
       </div>
     </div>
 
@@ -185,11 +300,33 @@
 
     <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
 
+    <!-- Aviso bloqueo por imágenes inválidas -->
+    <div class="img-block-banner" *ngIf="imagenesNoRelevantes.length > 0 || imagenesValidando">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span *ngIf="imagenesValidando">Verificando imágenes con IA, espera un momento...</span>
+      <span *ngIf="!imagenesValidando && imagenesNoRelevantes.length > 0">
+        {{ imagenesNoRelevantes.length === 1 ? '1 imagen no corresponde' : imagenesNoRelevantes.length + ' imágenes no corresponden' }}
+        a cultivos o plantas. Elimínalas para continuar.
+      </span>
+    </div>
+
     <div class="form-actions">
       <a routerLink="/muestras" class="btn-outline">Cancelar</a>
-      <button type="submit" class="btn-primary" [disabled]="saving">
-        <span *ngIf="!saving">Registrar muestra{{ imagenes.length > 0 ? ' y subir ' + imagenes.length + ' imagen(es)' : '' }}</span>
+      <button type="submit" class="btn-primary"
+        [disabled]="saving || imagenesValidando || imagenesNoRelevantes.length > 0"
+        [class.btn-blocked]="imagenesNoRelevantes.length > 0">
         <span *ngIf="saving" class="spinner"></span>
+        <ng-container *ngIf="!saving">
+          <svg *ngIf="imagenesNoRelevantes.length > 0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <span *ngIf="imagenesValidando">Verificando imágenes...</span>
+          <span *ngIf="!imagenesValidando && imagenesNoRelevantes.length > 0">Imágenes inválidas</span>
+          <span *ngIf="!imagenesValidando && imagenesNoRelevantes.length === 0">
+            Registrar muestra{{ imagenes.length > 0 ? ' y subir ' + imagenes.length + ' imagen(es)' : '' }}
+          </span>
+        </ng-container>
       </button>
     </div>
   </form>

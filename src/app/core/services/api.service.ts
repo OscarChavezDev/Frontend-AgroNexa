@@ -41,6 +41,7 @@ export const endpoint = {
 
   // IMÁGENES
   IMAGENES_UPLOAD:          'imagenes/upload',
+  IMAGENES_VALIDAR:         'imagenes/validar',
   IMAGEN_BY_ID:             'imagenes',       // + /{id}
 
   // SUSCRIPCIONES

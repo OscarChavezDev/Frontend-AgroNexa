@@ -28,8 +28,29 @@
     </div>
   </div>
 
-  <!-- Estado vacío -->
-  <div class="empty-state card" *ngIf="!loading && muestras.length === 0 && !errorMsg">
+  <!-- Advertencia: sin parcelas -->
+  <div class="no-parcelas-alert" *ngIf="!loading && tieneParcelas === false && !errorMsg">
+    <div class="alert-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <div class="alert-content">
+      <h3>Primero necesitas una parcela</h3>
+      <p>Las muestras se vinculan a una parcela. Crea tu primera parcela antes de registrar una muestra de campo.</p>
+      <div class="alert-actions">
+        <a routerLink="/parcelas/nueva" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Crear primera parcela
+        </a>
+        <a routerLink="/parcelas" class="btn-outline">Ver mis parcelas</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado vacío (tiene parcelas pero sin muestras) -->
+  <div class="empty-state card" *ngIf="!loading && tieneParcelas === true && muestras.length === 0 && !errorMsg">
     <div class="empty-icon">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
