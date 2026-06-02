@@ -1,5 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
+// ── Onboarding: outline pulsante en el elemento del paso actual ──────────────
+.onboarding-target-active {
+  outline: 3px solid #52b788 !important;
+  outline-offset: 5px !important;
+  border-radius: 8px !important;
+  animation: ob-pulse 2s ease-in-out infinite !important;
+}
+
+@keyframes ob-pulse {
+  0%, 100% { outline-color: #52b788; }
+  50%       { outline-color: #1b4332; outline-width: 4px; }
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 // ── Design Tokens ──────────────────────────────────────────────────────────
 :root {
   // Brand palette (keeps original hue, darker range)
@@ -103,7 +117,6 @@ body {
   font-size: 15px;
   line-height: 1.6;
   min-height: 100%;
-  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
