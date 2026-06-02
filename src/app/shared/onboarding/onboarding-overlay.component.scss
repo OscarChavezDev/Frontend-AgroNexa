@@ -1,3 +1,31 @@
+// ── Responsive ───────────────────────────────────────────────
+@media (max-width: 480px) {
+  .ob-tooltip {
+    width: calc(100vw - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    top: auto !important;
+    bottom: 16px !important;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .ob-guide-card {
+    width: calc(100vw - 24px);
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .ob-modal {
+    padding: 28px 24px 24px;
+    border-radius: 16px;
+  }
+
+  .ob-modal-title { font-size: 1.15rem; }
+  .ob-modal-desc  { font-size: 0.85rem; }
+}
+
 // ── Spotlight ─────────────────────────────────────────────────
 .ob-spotlight {
   position: fixed;
