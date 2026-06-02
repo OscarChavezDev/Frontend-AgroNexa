@@ -156,14 +156,9 @@
           </span>
           <h3>Diagnóstico IA</h3>
           <p>Analiza la imagen con inteligencia artificial para detectar enfermedades del cacao.</p>
-          <button class="btn-primary btn-ia" (click)="generarDiagnosticoIA()">
+          <button class="btn-primary btn-ia" id="onboarding-btn-generar-diagnostico" (click)="generarDiagnosticoIA()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             Analizar con Gemini IA
-          <h3>Sin diagnóstico aún</h3>
-          <p>Genera un diagnóstico preliminar basado en los síntomas y datos registrados de tus sensores.</p>
-          <button class="btn-primary" id="onboarding-btn-generar-diagnostico" [disabled]="generando" (click)="generarDiagnostico()">
-            <span *ngIf="!generando">Generar diagnóstico</span>
-            <span *ngIf="generando" class="spinner"></span>
           </button>
         </div>
       </div>
@@ -249,7 +244,7 @@
         </div>
 
         <!-- S3: Síntomas detectados -->
-        <div class="card sintomas-ia-card" *ngIf="resultadoGemini.sintomas_detectados?.length">
+        <div class="card sintomas-ia-card" *ngIf="resultadoGemini.sintomas_detectados.length">
           <h3 class="card-title">Síntomas detectados</h3>
           <ul class="sintomas-ia-list">
             <li *ngFor="let s of resultadoGemini.sintomas_detectados">
@@ -257,7 +252,7 @@
               {{ s }}
             </li>
           </ul>
-          <div class="factores-riesgo" *ngIf="resultadoGemini.factores_riesgo?.length">
+          <div class="factores-riesgo" *ngIf="resultadoGemini.factores_riesgo.length">
             <span class="detail-label" style="margin-top:12px;display:block">Factores de riesgo</span>
             <ul class="factores-list">
               <li *ngFor="let f of resultadoGemini.factores_riesgo">
@@ -269,7 +264,7 @@
         </div>
 
         <!-- S4: Diagnósticos diferenciales -->
-        <div class="card diferenciales-card" *ngIf="resultadoGemini.diagnosticos_diferenciales?.length">
+        <div class="card diferenciales-card" *ngIf="resultadoGemini.diagnosticos_diferenciales.length">
           <button class="diferenciales-toggle" (click)="mostrarDiferenciales = !mostrarDiferenciales">
             <h3 class="card-title" style="margin:0;border:none;padding:0">
               Diagnósticos diferenciales ({{ resultadoGemini.diagnosticos_diferenciales.length }})

@@ -23,8 +23,8 @@
         <span class="ob-tt-brand"><span class="ob-tt-dot"></span>AgroNexa</span>
         <span class="ob-tt-progress">{{ progressLabel }}</span>
       </div>
-      <h3 class="ob-tt-title">{{ currentStep?.title }}</h3>
-      <p class="ob-tt-desc">{{ currentStep?.description }}</p>
+      <h3 class="ob-tt-title">{{ currentStep.title }}</h3>
+      <p class="ob-tt-desc">{{ currentStep.description }}</p>
       <div class="ob-tt-footer">
         <button class="ob-btn-ghost" (click)="onSkip()">Saltar</button>
         <span class="ob-tt-hint">
@@ -46,8 +46,8 @@
       </div>
     </div>
     <div class="ob-card-body">
-      <p class="ob-card-title">{{ currentStep?.title }}</p>
-      <p class="ob-card-desc">{{ currentStep?.description }}</p>
+      <p class="ob-card-title">{{ currentStep.title }}</p>
+      <p class="ob-card-desc">{{ currentStep.description }}</p>
     </div>
   </div>
 
@@ -64,8 +64,8 @@
         </svg>
       </div>
 
-      <h2 class="ob-modal-title">{{ currentStep?.title }}</h2>
-      <p class="ob-modal-desc">{{ currentStep?.description }}</p>
+      <h2 class="ob-modal-title">{{ currentStep.title }}</h2>
+      <p class="ob-modal-desc">{{ currentStep.description }}</p>
 
       <div class="ob-modal-footer">
         <button *ngIf="currentStep.id !== 'complete'" class="ob-btn-ghost" (click)="onSkip()">Saltar guía</button>
