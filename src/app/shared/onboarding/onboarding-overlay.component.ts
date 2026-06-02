@@ -126,14 +126,16 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Si el elemento está oculto (sidebar cerrada en móvil), abrirla primero
+    // Si el elemento está fuera del viewport (sidebar cerrada en móvil), abrirla
     const rect = el.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
+    const inViewport = rect.right > 0 && rect.left < window.innerWidth &&
+                       rect.bottom > 0 && rect.top < window.innerHeight;
+    if (!inViewport) {
       const menuBtn = document.querySelector('.menu-toggle') as HTMLElement;
-      if (menuBtn && this.findRetries < 12) {
+      if (menuBtn && this.findRetries < 6) {
         menuBtn.click();
         this.findRetries++;
-        this.findTimer = setTimeout(() => this.tryHighlight(step), 450);
+        this.findTimer = setTimeout(() => this.tryHighlight(step), 500);
       }
       return;
     }
