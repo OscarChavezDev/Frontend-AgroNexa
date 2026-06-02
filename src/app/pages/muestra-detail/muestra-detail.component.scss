@@ -949,6 +949,11 @@
   }
 }
 
+.rec-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .rec-icon {
   flex-shrink: 0;
   width: 20px;
