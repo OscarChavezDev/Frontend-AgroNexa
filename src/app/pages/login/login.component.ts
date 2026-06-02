@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectorRef, AfterViewInit, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -25,6 +25,7 @@ export class LoginComponent implements AfterViewInit {
     private onboarding: OnboardingService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
     private analyticsService: AnalyticsService
   ) {
     this.form = this.fb.group({
@@ -34,51 +35,49 @@ export class LoginComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initializeGoogleSignIn();
+    this.waitForGoogleAndInit();
+  }
+
+  private waitForGoogleAndInit(attempts = 0): void {
+    if (typeof google !== 'undefined') {
+      this.initializeGoogleSignIn();
+    } else if (attempts < 20) {
+      setTimeout(() => this.waitForGoogleAndInit(attempts + 1), 250);
+    }
   }
 
   private initializeGoogleSignIn(): void {
-    if (typeof google !== 'undefined') {
-      google.accounts.id.initialize({
-        client_id: '150252966514-r2cbcos1n2mhl871c3iu0ga2t1e9o5le.apps.googleusercontent.com',
-        callback: (response: any) => this.handleGoogleCredentialResponse(response)
-      });
+    google.accounts.id.initialize({
+      client_id: '150252966514-r2cbcos1n2mhl871c3iu0ga2t1e9o5le.apps.googleusercontent.com',
+      callback: (response: any) => this.ngZone.run(() => this.handleGoogleCredentialResponse(response))
+    });
 
-      google.accounts.id.renderButton(
-        document.getElementById('google-btn'),
-        { theme: 'outline', size: 'large', width: 320, logo_alignment: 'left' }
-      );
-    }
+    google.accounts.id.renderButton(
+      document.getElementById('google-btn'),
+      { theme: 'outline', size: 'large', width: 320, logo_alignment: 'left' }
+    );
   }
 
   private handleGoogleCredentialResponse(response: any): void {
     const idToken = response.credential;
     this.loading = true;
     this.errorMsg = '';
-    this.cdr.detectChanges();
 
     this.authService.loginWithGoogle(idToken).subscribe({
       next: (res) => {
-        try {
-          const rol = res.data?.rol;
-          this.analyticsService.trackEvent('login', { method: 'google', role: rol });
-          if (rol === 'admin') {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
-        } catch (e) {
-          console.error('Error handling login response:', e);
-          this.errorMsg = 'Error al procesar la sesión';
-          this.loading = false;
-        } finally {
-          this.cdr.detectChanges();
+        this.loading = false;
+        const rol = res.data?.rol;
+        this.analyticsService.trackEvent('login', { method: 'google', role: rol });
+        if (rol === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.onboarding.checkAndStart();
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (err) => {
         this.errorMsg = err.error?.message || 'Error al iniciar sesión con Google';
         this.loading = false;
-        this.cdr.detectChanges();
       }
     });
   }
