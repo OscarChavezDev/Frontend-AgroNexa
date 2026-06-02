@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { User } from '../../core/models/user.model';
@@ -26,6 +26,13 @@ export class MainLayoutComponent implements OnInit {
     if (!this.isAdmin) {
       this.onboarding.checkAndStart();
     }
+
+    // Cerrar sidebar al navegar en móviles
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.sidebarOpen = false;
+      }
+    });
   }
 
   toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; }

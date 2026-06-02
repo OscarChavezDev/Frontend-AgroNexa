@@ -1,9 +1,10 @@
-:host { display: block; height: 100vh; }
+:host { display: block; height: 100vh; height: 100dvh; }
 
 // ── Layout shell ────────────────────────────────────────────────────────────
 .layout-wrapper {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   background: var(--clr-bg-page);
 }
 
@@ -30,6 +31,8 @@
   z-index: 100;
   position: relative;
   border-right: 1px solid var(--clr-border);
+  overflow: hidden;
+  height: 100%;
 
   // Subtle top accent line
   &::before {
@@ -353,7 +356,12 @@
     position: fixed;
     top: 0; left: 0;
     height: 100vh;
+    height: 100dvh;
     transform: translateX(-100%);
+  }
+
+  .sidebar-footer {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
 
   .layout-wrapper.sidebar-open {
