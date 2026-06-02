@@ -179,12 +179,61 @@
   font-weight: 600;
   white-space: nowrap;
 
-  &--productor    { background: var(--clr-info-bg); color: var(--clr-info-text); border: 1px solid rgba(96, 165, 250, .2); }
-  &--asociacion   { background: var(--clr-purple-dim); color: var(--clr-purple); border: 1px solid rgba(167, 139, 250, .2); }
-  &--institucion  { background: var(--clr-warning-bg); color: var(--clr-warning-text); border: 1px solid rgba(251, 191, 36, .2); }
-  &--admin        { background: var(--clr-accent-dim); color: var(--clr-accent); border: 1px solid rgba(74, 222, 128, .2); }
+  &--productor                { background: var(--clr-info-bg); color: var(--clr-info-text); border: 1px solid rgba(96, 165, 250, .2); }
+  &--asociacion               { background: var(--clr-purple-dim); color: var(--clr-purple); border: 1px solid rgba(167, 139, 250, .2); }
+  &--institucion,
+  &--institucional            { background: var(--clr-warning-bg); color: var(--clr-warning-text); border: 1px solid rgba(251, 191, 36, .2); }
+  &--admin                    { background: var(--clr-accent-dim); color: var(--clr-accent); border: 1px solid rgba(74, 222, 128, .2); }
 }
 
+// ── Stat columns ─────────────────────────────────────────────────────────────
+.col-stat     { width: 90px; text-align: center; white-space: nowrap; }
+.col-activity { width: 120px; }
+
+.visit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,.05);
+  color: var(--clr-text-muted);
+  border: 1px solid var(--clr-border);
+
+  &--active {
+    background: rgba(74, 222, 128, .08);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, .25);
+  }
+}
+
+.cell-never { font-size: 13px; color: var(--clr-text-muted); }
+
+.activity-chips {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.act-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid;
+
+  &--parcelas    { background: rgba(96,165,250,.08);  color: #60a5fa; border-color: rgba(96,165,250,.2); }
+  &--muestras    { background: rgba(74,222,128,.08);  color: #4ade80; border-color: rgba(74,222,128,.2); }
+  &--diagnosticos{ background: rgba(251,191,36,.08);  color: #fbbf24; border-color: rgba(251,191,36,.2); }
+}
+
+// ── Plan chip ─────────────────────────────────────────────────────────────────
 .plan-chip {
   display: inline-flex;
   padding: 3px 10px;

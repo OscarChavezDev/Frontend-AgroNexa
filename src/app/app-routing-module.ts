@@ -19,6 +19,7 @@ import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
+import { AdminActividadComponent } from './pages/admin-actividad/admin-actividad.component';
 import { LandingComponent } from './pages/landing/landing.component';
 
 const routes: Routes = [
@@ -43,6 +44,7 @@ const routes: Routes = [
       { path: 'perfil', component: PerfilComponent },
       { path: 'admin', component: AdminDashboardComponent, canActivate: [AdminGuard] },
       { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [AdminGuard] },
+      { path: 'admin/actividad', component: AdminActividadComponent, canActivate: [AdminGuard] },
     ]
   },
   { path: '**', redirectTo: 'dashboard' }

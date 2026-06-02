@@ -25,6 +25,7 @@ import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
+import { AdminActividadComponent } from './pages/admin-actividad/admin-actividad.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overlay.component';
 
@@ -45,6 +46,7 @@ import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overl
     PerfilComponent,
     AdminDashboardComponent,
     AdminUsuariosComponent,
+    AdminActividadComponent,
     LandingComponent,
     OnboardingOverlayComponent,
   ],

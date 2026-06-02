@@ -362,5 +362,18 @@
   }
 
   .menu-toggle { display: flex; }
-  .content { padding: 20px 16px; }
+
+  .topbar { padding: 0 16px; }
+
+  .content {
+    padding: 16px 14px;
+    // Ensure content is scrollable and fills screen
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar { height: 52px; }
+  .content { padding: 14px 12px; }
+  .plan-badge { font-size: 11px; padding: 4px 10px; }
 }

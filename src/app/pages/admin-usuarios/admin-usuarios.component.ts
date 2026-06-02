@@ -35,7 +35,7 @@ export class AdminUsuariosComponent implements OnInit {
     { valor: '', etiqueta: 'Todos los roles' },
     { valor: 'productor', etiqueta: 'Productor' },
     { valor: 'asociacion', etiqueta: 'Asociación' },
-    { valor: 'institucion', etiqueta: 'Institución' }
+    { valor: 'institucional', etiqueta: 'Institución' }
   ];
 
   readonly estados = [
@@ -48,7 +48,7 @@ export class AdminUsuariosComponent implements OnInit {
   readonly rolLabels: Record<string, string> = {
     productor: 'Productor',
     asociacion: 'Asociación',
-    institucion: 'Institución',
+    institucional: 'Institución',
     admin: 'Administrador'
   };
 

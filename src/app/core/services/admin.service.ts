@@ -39,4 +39,8 @@ export class AdminService {
   eliminarUsuario(id: string): Observable<ApiResponse<{ id: string }>> {
     return this.api.delete<ApiResponse<{ id: string }>>(`${endpoint.ADMIN_USUARIO_BY_ID}/${id}`);
   }
+
+  parcelasUsuario(userId: string): Observable<ApiResponse<any[]>> {
+    return this.api.get<ApiResponse<any[]>>(`${endpoint.ADMIN_USUARIO_BY_ID}/${userId}/parcelas`);
+  }
 }

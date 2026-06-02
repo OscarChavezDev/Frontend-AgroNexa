@@ -4,11 +4,18 @@ export interface User {
   apellido: string;
   correo: string;
   telefono?: string;
-  rol: 'productor' | 'asociacion' | 'institucion' | 'admin';
+  rol: 'productor' | 'asociacion' | 'institucion' | 'institucional' | 'admin';
   plan: 'basico' | 'plus' | 'asociacion' | 'institucional';
   estado: 'activo' | 'inactivo' | 'suspendido';
   createdAt?: string;
   updatedAt?: string;
+  // Tracking fields
+  loginCount?: number;
+  lastLogin?: string;
+  // Activity stats (from admin aggregation)
+  totalParcelas?: number;
+  totalMuestras?: number;
+  totalDiagnosticos?: number;
 }
 
 export interface RegisterRequest {
@@ -30,6 +37,7 @@ export interface LoginResponse {
   token: string;
   rol: string;
   plan: string;
+  isNewUser?: boolean;
 }
 
 // El register devuelve solo el id creado

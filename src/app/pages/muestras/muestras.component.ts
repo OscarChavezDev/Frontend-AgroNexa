@@ -13,9 +13,10 @@ export class MuestrasComponent implements OnInit, OnDestroy {
   muestras: Muestra[] = [];
   loading = true;
   errorMsg = '';
+  filtroNivel = '';
 
   paginaActual = 1;
-  pageSize = 10;
+  pageSize = 6;
 
   private sub?: Subscription;
   private timeout?: ReturnType<typeof setTimeout>;
@@ -41,15 +42,14 @@ export class MuestrasComponent implements OnInit, OnDestroy {
     this.timeout = setTimeout(() => {
       if (this.loading) {
         this.loading = false;
-        this.errorMsg = 'No se pudo conectar con el servidor (Tiempo de espera agotado).';
+        this.errorMsg = 'No se pudo conectar con el servidor.';
         this.cdr.detectChanges();
       }
     }, 5000);
 
     this.sub = this.muestrasService.listar().subscribe({
-      next: (res) => { 
-        clearTimeout(this.timeout); 
-        console.log('Respuesta del backend (Muestras):', res);
+      next: (res) => {
+        clearTimeout(this.timeout);
         this.muestras = (res.data || []).sort((a: Muestra, b: Muestra) =>
           new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
         );
@@ -57,25 +57,39 @@ export class MuestrasComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => { 
-        clearTimeout(this.timeout); 
-        console.error('Error al obtener muestras:', err);
-        this.errorMsg = 'Error al cargar muestras'; 
-        this.loading = false; 
+      error: (err) => {
+        clearTimeout(this.timeout);
+        this.errorMsg = err.error?.message || 'Error al cargar muestras';
+        this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
 
+  setFiltro(nivel: string) {
+    this.filtroNivel = nivel;
+    this.paginaActual = 1;
+    this.cdr.detectChanges();
+  }
+
+  contarPorNivel(nivel: string): number {
+    return this.muestras.filter(m => (m.nivelAfectacion || 'leve') === nivel).length;
+  }
+
+  get muestrasFiltradas(): Muestra[] {
+    if (!this.filtroNivel) return this.muestras;
+    return this.muestras.filter(m => (m.nivelAfectacion || 'leve') === this.filtroNivel);
+  }
+
   get muestrasPaginadas(): Muestra[] {
     const size = +this.pageSize;
     const inicio = (this.paginaActual - 1) * size;
-    return this.muestras.slice(inicio, inicio + size);
+    return this.muestrasFiltradas.slice(inicio, inicio + size);
   }
 
-  get totalPaginas(): number { return Math.ceil(this.muestras.length / +this.pageSize); }
-  get rangoInicio(): number { return this.muestras.length === 0 ? 0 : (this.paginaActual - 1) * +this.pageSize + 1; }
-  get rangoFin(): number { return Math.min(this.paginaActual * +this.pageSize, this.muestras.length); }
+  get totalPaginas(): number { return Math.ceil(this.muestrasFiltradas.length / +this.pageSize); }
+  get rangoInicio(): number { return this.muestrasFiltradas.length === 0 ? 0 : (this.paginaActual - 1) * +this.pageSize + 1; }
+  get rangoFin(): number { return Math.min(this.paginaActual * +this.pageSize, this.muestrasFiltradas.length); }
 
   get paginas(): (number | null)[] {
     const total = this.totalPaginas;
@@ -110,7 +124,7 @@ export class MuestrasComponent implements OnInit, OnDestroy {
   }
 
   nivelClass(nivel: string | undefined): string {
-    const map: any = { severo: 'red', moderado: 'amber', leve: 'green' };
-    return map[nivel || ''] || 'gray';
+    const map: Record<string, string> = { severo: 'red', moderado: 'amber', leve: 'green' };
+    return map[nivel || ''] || 'green';
   }
 }

@@ -171,6 +171,7 @@
   padding: 48px 40px;
   position: relative;
   overflow: hidden;
+  overflow-y: auto;
 
   &::before {
     content: '';
@@ -183,17 +184,27 @@
   }
 
   @media (max-width: 768px) {
-    padding: 40px 24px;
+    padding: 32px 20px;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  @media (max-width: 400px) {
+    padding: 24px 16px;
   }
 }
 
 // ── Auth card ─────────────────────────────────────────────────────────────────
 .auth-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   position: relative;
   z-index: 1;
   animation: authSlideUp .45s cubic-bezier(.34, 1.56, .64, 1) both;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 // Mobile brand (hidden on desktop)

@@ -3,7 +3,6 @@
   <!-- ── Left: Brand panel ──────────────────────────────────────────── -->
   <div class="auth-left">
     <div class="auth-grid-pattern"></div>
-
     <div class="auth-left-content">
       <a routerLink="/" class="auth-brand-mark" style="text-decoration: none;">
         <div class="auth-brand-logo">
@@ -13,10 +12,18 @@
       </a>
 
       <h1 class="auth-headline">
-        Comienza a cuidar<br>tus <span class="highlight">cultivos hoy</span>
+        @if (isGoogleRoleMode) {
+          Un último<br>paso para <span class="highlight">comenzar</span>
+        } @else {
+          Comienza a cuidar<br>tus <span class="highlight">cultivos hoy</span>
+        }
       </h1>
       <p class="auth-tagline">
-        Crea tu cuenta gratuita y accede a diagnósticos inteligentes para tus parcelas agrícolas.
+        @if (isGoogleRoleMode) {
+          Cuéntanos cómo usarás AgroNexa para personalizar tu experiencia desde el primer día.
+        } @else {
+          Crea tu cuenta gratuita y accede a diagnósticos inteligentes para tus parcelas agrícolas.
+        }
       </p>
 
       <div class="auth-features">
@@ -31,7 +38,6 @@
             <div class="fi-sub">Sin tarjeta de crédito requerida</div>
           </div>
         </div>
-
         <div class="auth-feature-item">
           <div class="fi-icon fi-icon--teal">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -43,7 +49,6 @@
             <div class="fi-sub">Resultados en minutos, no días</div>
           </div>
         </div>
-
         <div class="auth-feature-item">
           <div class="fi-icon fi-icon--amber">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -69,117 +74,196 @@
         <div class="brand-logo-auth">
           <img src="assets/logo.svg" alt="AgroNexa" class="auth-logo-img">
         </div>
-        <h1>Crea tu cuenta</h1>
-        <p>Empieza a monitorear y diagnosticar tus cultivos</p>
+        @if (isGoogleRoleMode) {
+          <h1>¿Cómo usarás AgroNexa?</h1>
+          <p>Elige tu perfil para personalizar tu experiencia</p>
+        } @else {
+          <h1>Crea tu cuenta</h1>
+          <p>Empieza a monitorear y diagnosticar tus cultivos</p>
+        }
       </div>
 
       <!-- Desktop form header -->
       <div class="auth-form-header">
-        <h2>Crear cuenta</h2>
-        <p>Completa tus datos para comenzar</p>
+        @if (isGoogleRoleMode) {
+          <h2>¿Cómo usarás AgroNexa?</h2>
+          <p>Elige tu perfil para personalizar tu experiencia</p>
+        } @else {
+          <h2>Crear cuenta</h2>
+          <p>Completa tus datos para comenzar</p>
+        }
       </div>
+
+      <!-- Step indicator (only for normal registration) -->
+      @if (!isGoogleRoleMode) {
+        <div class="step-nav">
+          <div class="step-item" [class.active]="currentStep === 1" [class.done]="currentStep > 1">
+            <div class="step-dot">
+              @if (currentStep > 1) {
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              } @else { 1 }
+            </div>
+            <span class="step-label">Personal</span>
+          </div>
+          <div class="step-connector" [class.active]="currentStep > 1"></div>
+          <div class="step-item" [class.active]="currentStep === 2" [class.done]="currentStep > 2">
+            <div class="step-dot">
+              @if (currentStep > 2) {
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              } @else { 2 }
+            </div>
+            <span class="step-label">Acceso</span>
+          </div>
+          <div class="step-connector" [class.active]="currentStep > 2"></div>
+          <div class="step-item" [class.active]="currentStep === 3">
+            <div class="step-dot">3</div>
+            <span class="step-label">Tu perfil</span>
+          </div>
+        </div>
+      }
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="reg-nombre">Nombre <span class="req">*</span></label>
-            <input id="reg-nombre" type="text" formControlName="nombre" placeholder="Tu nombre"
-              [class.error]="f['nombre'].invalid && f['nombre'].touched" autocomplete="given-name">
-            @if (f['nombre'].invalid && f['nombre'].touched) {
-              <span class="field-error">Requerido</span>
-            }
-          </div>
-          <div class="form-group">
-            <label for="reg-apellido">Apellido <span class="req">*</span></label>
-            <input id="reg-apellido" type="text" formControlName="apellido" placeholder="Tu apellido"
-              [class.error]="f['apellido'].invalid && f['apellido'].touched" autocomplete="family-name">
-            @if (f['apellido'].invalid && f['apellido'].touched) {
-              <span class="field-error">Requerido</span>
-            }
-          </div>
-        </div>
+        <!-- ── Step 1: Datos personales ── -->
+        @if (currentStep === 1) {
+          <div class="step-content">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-nombre">Nombre <span class="req">*</span></label>
+                <input id="reg-nombre" type="text" formControlName="nombre" placeholder="Tu nombre"
+                  [class.error]="f['nombre'].invalid && f['nombre'].touched" autocomplete="given-name">
+                @if (f['nombre'].invalid && f['nombre'].touched) {
+                  <span class="field-error">Requerido</span>
+                }
+              </div>
+              <div class="form-group">
+                <label for="reg-apellido">Apellido <span class="req">*</span></label>
+                <input id="reg-apellido" type="text" formControlName="apellido" placeholder="Tu apellido"
+                  [class.error]="f['apellido'].invalid && f['apellido'].touched" autocomplete="family-name">
+                @if (f['apellido'].invalid && f['apellido'].touched) {
+                  <span class="field-error">Requerido</span>
+                }
+              </div>
+            </div>
 
-        <div class="form-group">
-          <label for="reg-correo">Correo electrónico <span class="req">*</span></label>
-          <input id="reg-correo" type="email" formControlName="correo" placeholder="correo@ejemplo.com"
-            [class.error]="f['correo'].invalid && f['correo'].touched" autocomplete="email">
-          @if (f['correo'].invalid && f['correo'].touched) {
-            <span class="field-error">
-              {{ f['correo'].hasError('required') ? 'Requerido' : 'Correo inválido' }}
-            </span>
-          }
-        </div>
+            <div class="form-group">
+              <label for="reg-tel">Teléfono <span class="optional">(opcional)</span></label>
+              <input id="reg-tel" type="tel" formControlName="telefono" placeholder="999 999 999" autocomplete="tel">
+            </div>
 
-        <div class="form-group">
-          <label for="reg-pw">Contraseña <span class="req">*</span></label>
-          <div class="input-with-toggle">
-            <input id="reg-pw" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-              placeholder="Mínimo 6 caracteres"
-              [class.error]="f['password'].invalid && f['password'].touched"
-              autocomplete="new-password">
-            <button type="button" class="toggle-pw" (click)="showPassword = !showPassword"
-              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-              @if (!showPassword) {
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                </svg>
-              } @else {
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
-                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
-                </svg>
+            <div class="step-actions step-actions--single">
+              <button type="button" class="btn-primary btn-full" (click)="nextStep()">
+                Siguiente
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+
+            <div class="auth-divider"><span>o regístrate con</span></div>
+            <div id="google-btn" class="google-signin-btn-container"></div>
+            @if (errorMsg) { <div class="error-banner" style="margin-top:12px">{{ errorMsg }}</div> }
+          </div>
+        }
+
+        <!-- ── Step 2: Correo y contraseña ── -->
+        @if (currentStep === 2) {
+          <div class="step-content">
+            <div class="form-group">
+              <label for="reg-correo">Correo electrónico <span class="req">*</span></label>
+              <input id="reg-correo" type="email" formControlName="correo" placeholder="correo@ejemplo.com"
+                [class.error]="f['correo'].invalid && f['correo'].touched" autocomplete="email">
+              @if (f['correo'].invalid && f['correo'].touched) {
+                <span class="field-error">
+                  {{ f['correo'].hasError('required') ? 'Requerido' : 'Correo inválido' }}
+                </span>
               }
-            </button>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-pw">Contraseña <span class="req">*</span></label>
+              <div class="input-with-toggle">
+                <input id="reg-pw" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                  placeholder="Mínimo 6 caracteres"
+                  [class.error]="f['password'].invalid && f['password'].touched"
+                  autocomplete="new-password">
+                <button type="button" class="toggle-pw" (click)="showPassword = !showPassword"
+                  [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                  @if (!showPassword) {
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  } @else {
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+                      <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (f['password'].invalid && f['password'].touched) {
+                <span class="field-error">Mínimo 6 caracteres</span>
+              }
+            </div>
+
+            @if (errorMsg) { <div class="error-banner">{{ errorMsg }}</div> }
+
+            <div class="step-actions">
+              <button type="button" class="btn-ghost" (click)="prevStep()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Atrás
+              </button>
+              <button type="button" class="btn-primary" (click)="nextStep()">
+                Siguiente
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
           </div>
-          @if (f['password'].invalid && f['password'].touched) {
-            <span class="field-error">Mínimo 6 caracteres</span>
-          }
-        </div>
+        }
 
-        <div class="form-group">
-          <label for="reg-tel">Teléfono <span class="optional">(opcional)</span></label>
-          <input id="reg-tel" type="tel" formControlName="telefono" placeholder="999 999 999" autocomplete="tel">
-        </div>
-
-        <div class="form-group">
-          <label>¿Cómo usarás AgroNexa? <span class="req">*</span></label>
-          <div class="rol-cards">
-            @for (r of roles; track r.value) {
-              <label class="rol-card" [class.selected]="f['rol'].value === r.value">
-                <input type="radio" formControlName="rol" [value]="r.value" style="display:none">
-                <span class="rol-icon" aria-hidden="true">{{ r.icon }}</span>
-                <span class="rol-name">{{ r.label }}</span>
-                <span class="rol-desc">{{ r.desc }}</span>
-              </label>
+        <!-- ── Step 3: Selección de rol ── -->
+        @if (currentStep === 3) {
+          <div class="step-content">
+            @if (!isGoogleRoleMode) {
+              <p class="step-hint">¿Cómo usarás AgroNexa? <span class="req">*</span></p>
             }
+
+            <div class="rol-cards">
+              @for (r of roles; track r.value) {
+                <label class="rol-card" [class.selected]="f['rol'].value === r.value">
+                  <input type="radio" formControlName="rol" [value]="r.value" style="display:none">
+                  <span class="rol-icon" aria-hidden="true">{{ r.icon }}</span>
+                  <span class="rol-name">{{ r.label }}</span>
+                  <span class="rol-desc">{{ r.desc }}</span>
+                </label>
+              }
+            </div>
+
+            @if (successMsg) { <div class="success-banner">{{ successMsg }}</div> }
+            @if (errorMsg) { <div class="error-banner">{{ errorMsg }}</div> }
+
+            <div class="step-actions" [class.step-actions--single]="isGoogleRoleMode">
+              @if (!isGoogleRoleMode) {
+                <button type="button" class="btn-ghost" (click)="prevStep()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  Atrás
+                </button>
+              }
+              <button type="submit" class="btn-primary" [class.btn-full]="isGoogleRoleMode" [disabled]="loading">
+                @if (!loading) {
+                  <span>{{ isGoogleRoleMode ? 'Continuar al dashboard' : 'Crear cuenta' }}</span>
+                } @else {
+                  <span class="spinner"></span>
+                }
+              </button>
+            </div>
           </div>
-        </div>
-
-        @if (successMsg) {
-          <div class="success-banner">{{ successMsg }}</div>
-        }
-        @if (errorMsg) {
-          <div class="error-banner">{{ errorMsg }}</div>
         }
 
-        <button type="submit" class="btn-primary btn-full" [disabled]="loading">
-          @if (!loading) {
-            <span>Crear cuenta</span>
-          } @else {
-            <span class="spinner"></span>
-          }
-        </button>
       </form>
 
-      <div class="auth-divider">
-        <span>o registrarse con</span>
-      </div>
-
-      <div id="google-btn" class="google-signin-btn-container"></div>
-
-      <p class="auth-link">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+      @if (!isGoogleRoleMode) {
+        <p class="auth-link">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+      }
     </div>
   </div>
 

@@ -43,10 +43,25 @@ export class AuthService {
       tap(res => {
         if (res.success && res.data) {
           localStorage.setItem('token', res.data.token);
+          if (res.data.isNewUser) {
+            localStorage.setItem('google_new_user', 'true');
+          } else {
+            localStorage.removeItem('google_new_user');
+          }
         }
       }),
       switchMap(() => this.me())
     );
+  }
+
+  updateProfile(data: Record<string, any>): Observable<ApiResponse<User>> {
+    return this.api.put<ApiResponse<any>>(endpoint.USERS_ME, data).pipe(
+      switchMap(() => this.me())
+    );
+  }
+
+  subscribeToPlan(planCode: string): Observable<ApiResponse<any>> {
+    return this.api.post<ApiResponse<any>>(endpoint.SUSCRIPCIONES, { plan: planCode });
   }
 
 

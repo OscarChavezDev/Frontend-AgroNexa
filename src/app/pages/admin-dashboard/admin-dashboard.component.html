@@ -4,13 +4,21 @@
       <h1>Panel de Administración</h1>
       <p class="subtitle">Estadísticas generales de la plataforma AgroNexa</p>
     </div>
-    <a routerLink="/admin/usuarios" class="btn-primary">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
-      </svg>
-      Gestionar usuarios
-    </a>
+    <div class="header-actions">
+      <a routerLink="/admin/actividad" class="btn-outline">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        Ver actividad
+      </a>
+      <a routerLink="/admin/usuarios" class="btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        Gestionar usuarios
+      </a>
+    </div>
   </div>
 
   <!-- Error -->
@@ -198,6 +206,91 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
             <span>Ratio diagnósticos/muestras: <strong>{{ (stats.diagnosticos / stats.muestras * 100).toFixed(0) }}%</strong></span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ranking top 10 — al final del dashboard -->
+    <div class="ranking-section">
+      <div class="card ranking-card">
+        <div class="card-header">
+          <h3>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#fbbf24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            Top 10 usuarios más activos
+          </h3>
+          <a routerLink="/admin/actividad" class="link-more">Ver todos →</a>
+        </div>
+
+        <!-- Skeleton -->
+        <div class="ranking-skeleton" *ngIf="loadingRanking">
+          <div class="sk-rank-row" *ngFor="let i of [1,2,3,4,5]">
+            <div class="sk sk-pos"></div>
+            <div class="sk sk-avatar"></div>
+            <div class="sk-info">
+              <div class="sk sk-name"></div>
+              <div class="sk sk-bar-sm"></div>
+            </div>
+            <div class="sk sk-score"></div>
+          </div>
+        </div>
+
+        <!-- Lista -->
+        <div class="ranking-list" *ngIf="!loadingRanking">
+          <div class="ranking-empty" *ngIf="rankingUsuarios.length === 0">
+            <p>Sin datos de actividad aún</p>
+          </div>
+          <div class="ranking-row" *ngFor="let u of rankingVisible; let i = index" [class.top3]="i < 3">
+            <div class="rank-pos" [class]="'rank-pos--' + medalClass(i + 1)">
+              <ng-container *ngIf="i < 3">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </ng-container>
+              <ng-container *ngIf="i >= 3">{{ i + 1 }}</ng-container>
+            </div>
+
+            <div class="rank-avatar">{{ u.nombre[0] }}{{ u.apellido[0] }}</div>
+
+            <div class="rank-info">
+              <span class="rank-name">{{ u.nombre }} {{ u.apellido }}</span>
+              <div class="rank-bar-wrap">
+                <div class="rank-bar">
+                  <div class="rank-fill" [style.width.%]="barWidth(u)" [class]="'rank-fill--' + medalClass(i + 1)"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rank-stats">
+              <span class="rank-stat" title="Visitas">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                {{ u.loginCount || 0 }}
+              </span>
+              <span class="rank-stat rank-stat--green" title="Diagnósticos">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                {{ u.totalDiagnosticos || 0 }}
+              </span>
+              <span class="rank-stat rank-stat--blue" title="Muestras">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5"/></svg>
+                {{ u.totalMuestras || 0 }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Acordeón -->
+          <button
+            class="ranking-toggle"
+            *ngIf="rankingUsuarios.length > RANKING_VISIBLE"
+            (click)="toggleRanking()"
+          >
+            <span>{{ rankingExpandido ? 'Ver menos' : 'Ver ' + (rankingUsuarios.length - RANKING_VISIBLE) + ' más' }}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              [style.transform]="rankingExpandido ? 'rotate(180deg)' : 'rotate(0deg)'"
+              style="transition: transform 0.25s ease">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>

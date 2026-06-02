@@ -66,9 +66,15 @@ export class LoginComponent implements AfterViewInit {
     this.authService.loginWithGoogle(idToken).subscribe({
       next: (res) => {
         this.loading = false;
+        const isNewUser = localStorage.getItem('google_new_user') === 'true';
+        localStorage.removeItem('google_new_user');
         const rol = res.data?.rol;
         this.analyticsService.trackEvent('login', { method: 'google', role: rol });
-        if (rol === 'admin') {
+
+        if (isNewUser) {
+          localStorage.setItem('agro_new_registration', 'true');
+          this.router.navigate(['/register'], { queryParams: { mode: 'selectRole' } });
+        } else if (rol === 'admin') {
           this.router.navigate(['/admin']);
         } else {
           this.onboarding.checkAndStart();
