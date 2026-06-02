@@ -80,7 +80,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 'diagnostico',
     showOnPattern: /^\/muestras\/(?!nueva)[^/]+/,
     targetSelector: '#onboarding-btn-generar-diagnostico',
-    tooltipPosition: 'left',
+    tooltipPosition: 'top',
     title: 'Paso 7 — ¡Obtén tu diagnóstico!',
     description: 'Haz clic en "Generar diagnóstico". Nuestra IA analizará los síntomas y te dará recomendaciones personalizadas.',
     nextAction: 'click'
@@ -126,6 +126,8 @@ export class OnboardingService {
   checkAndStart(): void {
     if (this.isActive) return;
     if (localStorage.getItem(this.doneKey) === 'true') return;
+    if (localStorage.getItem('agro_new_registration') !== 'true') return;
+    localStorage.removeItem('agro_new_registration');
     this.stepIndex$.next(0);
   }
 

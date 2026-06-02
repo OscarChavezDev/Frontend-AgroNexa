@@ -194,12 +194,12 @@
 .ob-btn-ghost {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.65);
+  color: #6b7280;
   font-size: 0.78rem;
   cursor: pointer;
   padding: 4px 0;
   transition: color .15s;
-  &:hover { color: #fff; }
+  &:hover { color: #374151; }
 }
 
 .ob-btn-close {

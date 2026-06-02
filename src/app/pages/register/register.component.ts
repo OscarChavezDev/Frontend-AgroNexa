@@ -71,6 +71,7 @@ export class RegisterComponent implements AfterViewInit {
         try {
           const rol = res.data?.rol;
           this.analyticsService.trackEvent('sign_up', { method: 'google', role: rol });
+          localStorage.setItem('agro_new_registration', 'true');
           if (rol === 'admin') {
             this.router.navigate(['/admin']);
           } else {
@@ -100,6 +101,7 @@ export class RegisterComponent implements AfterViewInit {
     this.authService.register(this.form.value).subscribe({
       next: () => {
         this.analyticsService.trackEvent('sign_up', { method: 'email', role: this.form.value.rol });
+        localStorage.setItem('agro_new_registration', 'true');
         this.successMsg = 'Cuenta creada. Redirigiendo al login…';
         this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/login']), 1500);

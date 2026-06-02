@@ -51,7 +51,7 @@ export class MuestrasComponent implements OnInit, OnDestroy {
         clearTimeout(this.timeout); 
         console.log('Respuesta del backend (Muestras):', res);
         this.muestras = (res.data || []).sort((a: Muestra, b: Muestra) =>
-          new Date(a.createdAt || '').getTime() - new Date(b.createdAt || '').getTime()
+          new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
         );
         this.paginaActual = 1;
         this.loading = false;
