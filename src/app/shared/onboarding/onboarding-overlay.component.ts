@@ -28,6 +28,7 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
   private targetEl: Element | null = null;
   private targetClickFn: (() => void) | null = null;
   private findTimer: any = null;
+  private autoTimer: any = null;
   private findRetries = 0;
 
   constructor(
@@ -78,6 +79,7 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
     this.clearTarget();
     this.removeBlocker();
     clearTimeout(this.findTimer);
+    clearTimeout(this.autoTimer);
   }
 
   get progressLabel(): string { return this.onboarding.progressLabel; }
@@ -166,6 +168,14 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
       };
       el.addEventListener('click', this.targetClickFn as EventListener, { once: true });
     }
+
+    if (step.autoAdvanceMs) {
+      clearTimeout(this.autoTimer);
+      this.autoTimer = setTimeout(() => {
+        this.ngZone.run(() => this.onboarding.advance());
+      }, step.autoAdvanceMs);
+    }
+
     this.cdr.detectChanges();
   }
 
@@ -194,6 +204,7 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
 
   private clearTarget(): void {
     clearTimeout(this.findTimer);
+    clearTimeout(this.autoTimer);
     if (this.targetEl) {
       this.targetEl.classList.remove('onboarding-target-active');
       if (this.targetClickFn) {

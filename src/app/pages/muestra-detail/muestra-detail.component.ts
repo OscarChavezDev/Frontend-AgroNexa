@@ -89,10 +89,6 @@ export class MuestraDetailComponent implements OnInit {
         const data = res.data as any;
         if (data && 'diagnostico' in data && data.diagnostico === null) {
           this.diagnostico = null;
-          // Auto-analizar si la muestra acaba de ser creada
-          if (this.creadoExito) {
-            setTimeout(() => this.generarDiagnosticoIA(), 600);
-          }
         } else {
           this.diagnostico = data || null;
         }

@@ -10,6 +10,7 @@ export interface OnboardingStep {
   title: string;
   description: string;
   nextAction: 'button' | 'navigate' | 'click';
+  autoAdvanceMs?: number;
 }
 
 export const ONBOARDING_STEPS: OnboardingStep[] = [
@@ -82,8 +83,9 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     targetSelector: '#onboarding-btn-generar-diagnostico',
     tooltipPosition: 'top',
     title: 'Paso 7 — ¡Obtén tu diagnóstico!',
-    description: 'Haz clic en "Generar diagnóstico". Nuestra IA analizará los síntomas y te dará recomendaciones personalizadas.',
-    nextAction: 'click'
+    description: 'Haz clic en "Generar diagnóstico" para que la IA analice los síntomas y te dé recomendaciones personalizadas.',
+    nextAction: 'navigate',
+    autoAdvanceMs: 3000
   },
   {
     id: 'complete',
