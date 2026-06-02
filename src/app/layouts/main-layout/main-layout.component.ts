@@ -23,7 +23,9 @@ export class MainLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onboarding.checkAndStart();
+    if (!this.isAdmin) {
+      this.onboarding.checkAndStart();
+    }
   }
 
   toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; }
