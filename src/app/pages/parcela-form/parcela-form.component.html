@@ -30,6 +30,13 @@
             <option *ngFor="let c of cultivoOpciones" [value]="c">{{ c | titlecase }}</option>
           </select>
           <span class="field-error" *ngIf="f['cultivo'].invalid && f['cultivo'].touched">Requerido</span>
+          
+          <div *ngIf="form.get('cultivo')?.value === 'otro'" style="margin-top: 10px;">
+            <label style="font-size: 12px; margin-bottom: 4px;">Especificar otro cultivo *</label>
+            <input type="text" formControlName="otroCultivo" placeholder="Ej: Limón, Guanábana..."
+              [class.error]="f['otroCultivo'].invalid && f['otroCultivo'].touched">
+            <span class="field-error" *ngIf="f['otroCultivo'].invalid && f['otroCultivo'].touched" style="margin-top: 4px;">Requerido</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Área aproximada <span class="optional">(opcional)</span></label>

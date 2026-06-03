@@ -23,7 +23,7 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   private marker: any;
   private mapInitialized = false;
 
-  cultivoOpciones = ['cacao', 'café', 'maíz', 'papa', 'arroz', 'quinua', 'palto', 'mango', 'plátano', 'otro'];
+  cultivoOpciones = ['cacao', 'café', 'maíz', 'papa', 'arroz', 'quinua', 'palta', 'mango', 'plátano', 'otro'];
   sistemasOpciones = ['monocultivo', 'agroforestal', 'mixto', 'orgánico', 'otro'];
   showAvanzados = false;
 
@@ -38,6 +38,7 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       cultivo: ['', Validators.required],
+      otroCultivo: [''],
       variedad: [''],
       areaAproximada: [''],
       unidadArea: ['ha'],
@@ -52,6 +53,16 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.form.get('cultivo')?.valueChanges.subscribe(value => {
+      const otroControl = this.form.get('otroCultivo');
+      if (value === 'otro') {
+        otroControl?.setValidators([Validators.required]);
+      } else {
+        otroControl?.clearValidators();
+      }
+      otroControl?.updateValueAndValidity();
+    });
+
     this.route.paramMap.subscribe(params => {
       this.parcelaId = params.get('id') || '';
       this.isEdit = !!this.parcelaId && this.route.snapshot.url.some(s => s.path === 'editar');
@@ -162,6 +173,19 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
               lat: p.ubicacion?.lat,
               lng: p.ubicacion?.lng
             });
+
+            // Map cultivo value if it is 'palto' or a custom crop
+            let cultivoVal = p.cultivo ? p.cultivo.toLowerCase() : '';
+            if (cultivoVal === 'palto') {
+              cultivoVal = 'palta';
+            }
+
+            if (this.cultivoOpciones.includes(cultivoVal) && cultivoVal !== 'otro') {
+              this.form.patchValue({ cultivo: cultivoVal });
+            } else if (p.cultivo) {
+              this.form.patchValue({ cultivo: 'otro', otroCultivo: p.cultivo });
+            }
+
             setTimeout(() => this.waitForMapsAndInit(), 0);
           } else {
             this.errorMsg = 'No se encontraron datos de la parcela';
@@ -189,7 +213,14 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     this.saving = true;
     this.cdr.detectChanges();
     const { lat, lng, ...rest } = this.form.value;
-    const payload = { ...rest, ubicacion: { lat: +lat, lng: +lng } };
+
+    const finalCultivo = rest.cultivo === 'otro' ? rest.otroCultivo : rest.cultivo;
+    const payload = { 
+      ...rest, 
+      cultivo: finalCultivo, 
+      ubicacion: { lat: +lat, lng: +lng } 
+    };
+    delete (payload as any).otroCultivo;
 
     const onSuccess = () => this.router.navigate(['/parcelas']);
     const onError = (err: any) => {
