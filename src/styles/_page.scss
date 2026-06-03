@@ -122,6 +122,7 @@
   }
 
   .stat-info {
+    flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -130,11 +131,14 @@
   }
 
   .stat-value {
+    display: block;
+    max-width: 100%;
     font-size: 28px;
     font-weight: 800;
     font-family: 'Plus Jakarta Sans', sans-serif;
     line-height: 1.1;
-    letter-spacing: -.5px;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .stat-label {
@@ -191,8 +195,30 @@
     border-color: rgba(167, 139, 250, .12);
     &::before { background: radial-gradient(circle, rgba(167, 139, 250, .22) 0%, transparent 70%); }
     .stat-icon { background: rgba(167, 139, 250, .12); color: #a78bfa; }
-    .stat-value { color: #a78bfa; }
+    .stat-value {
+      color: #a78bfa;
+      font-size: clamp(18px, 1.8vw, 28px);
+      line-height: 1.15;
+    }
     &:hover { border-color: rgba(167, 139, 250, .28); box-shadow: 0 4px 20px rgba(167, 139, 250, .08), var(--shadow-md); }
+  }
+
+  &--teal {
+    background: linear-gradient(135deg, var(--clr-bg-card) 0%, rgba(45, 212, 191, .05) 100%);
+    border-color: rgba(45, 212, 191, .12);
+    &::before { background: radial-gradient(circle, rgba(45, 212, 191, .22) 0%, transparent 70%); }
+    .stat-icon { background: rgba(45, 212, 191, .12); color: #2dd4bf; }
+    .stat-value { color: #2dd4bf; }
+    &:hover { border-color: rgba(45, 212, 191, .28); box-shadow: 0 4px 20px rgba(45, 212, 191, .08), var(--shadow-md); }
+  }
+
+  &--red {
+    background: linear-gradient(135deg, var(--clr-bg-card) 0%, rgba(248, 113, 113, .05) 100%);
+    border-color: rgba(248, 113, 113, .12);
+    &::before { background: radial-gradient(circle, rgba(248, 113, 113, .22) 0%, transparent 70%); }
+    .stat-icon { background: rgba(248, 113, 113, .12); color: #f87171; }
+    .stat-value { color: #f87171; }
+    &:hover { border-color: rgba(248, 113, 113, .28); box-shadow: 0 4px 20px rgba(248, 113, 113, .08), var(--shadow-md); }
   }
 }
 
@@ -640,3 +666,9 @@ select {
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 480px) {
+  .stat-card--purple {
+    grid-column: 1 / -1;
+  }
+}

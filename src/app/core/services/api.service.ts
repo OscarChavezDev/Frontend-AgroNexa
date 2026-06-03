@@ -22,6 +22,9 @@ export const endpoint = {
   ADMIN_USUARIO_BY_ID:      'admin/usuarios', // + /{id}
   ADMIN_USUARIO_ESTADO:     'admin/usuarios', // + /{id}/estado
   ADMIN_ESTADISTICAS:       'admin/estadisticas',
+  ADMIN_ACTIVIDAD_TEMPORAL: 'admin/estadisticas/actividad',
+  ADMIN_USUARIO_HISTORIAL:  'admin/usuarios',   // + /{id}/historial
+  ADMIN_SESIONES:           'admin/sesiones',
 
   // PARCELAS
   PARCELAS:                 'parcelas',

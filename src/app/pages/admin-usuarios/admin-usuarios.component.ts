@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
-import { AdminService } from '../../core/services/admin.service';
+import { AdminService, HistorialEntry } from '../../core/services/admin.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -19,6 +19,9 @@ export class AdminUsuariosComponent implements OnInit {
   filtroRol = '';
   filtroEstado = '';
 
+  ordenPor: 'createdAt' | '' = 'createdAt';
+  ordenDesc = true;
+
   paginaActual = 1;
   pageSize = 10;
 
@@ -30,6 +33,14 @@ export class AdminUsuariosComponent implements OnInit {
   modalAbierto = false;
   usuarioSeleccionado: User | null = null;
   nuevoEstado = '';
+
+  // Modal historial de estado
+  historialModalAbierto = false;
+  historialUsuario: User | null = null;
+  historialEntradas: HistorialEntry[] = [];
+  loadingHistorial = false;
+
+  readonly INACTIVIDAD_DIAS = 14;
 
   readonly roles = [
     { valor: '', etiqueta: 'Todos los roles' },
@@ -111,6 +122,7 @@ export class AdminUsuariosComponent implements OnInit {
 
   aplicarFiltros() {
     let resultado = [...this.usuarios];
+
     if (this.busqueda.trim()) {
       const term = this.busqueda.toLowerCase().trim();
       resultado = resultado.filter(u =>
@@ -119,8 +131,30 @@ export class AdminUsuariosComponent implements OnInit {
         u.correo.toLowerCase().includes(term)
       );
     }
+
+    // Ordenar
+    resultado.sort((a, b) => {
+      const va = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const vb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return this.ordenDesc ? vb - va : va - vb;
+    });
+
     this.usuariosFiltrados = resultado;
     this.paginaActual = 1;
+  }
+
+  ordenar(campo: 'createdAt') {
+    if (this.ordenPor === campo) {
+      this.ordenDesc = !this.ordenDesc;
+    } else {
+      this.ordenPor = campo;
+      this.ordenDesc = true;
+    }
+    this.aplicarFiltros();
+  }
+
+  isSortedBy(campo: string): boolean {
+    return this.ordenPor === campo;
   }
 
   getNumero(u: User): number {
@@ -188,6 +222,50 @@ export class AdminUsuariosComponent implements OnInit {
     this.modalAbierto = false;
     this.usuarioSeleccionado = null;
     this.nuevoEstado = '';
+  }
+
+  verHistorial(u: User) {
+    this.historialUsuario = u;
+    this.historialModalAbierto = true;
+    this.historialEntradas = [];
+    this.loadingHistorial = true;
+    this.cdr.detectChanges();
+
+    this.adminService.historialUsuario(u.id!).subscribe({
+      next: (res) => {
+        this.historialEntradas = res.data || [];
+        this.loadingHistorial = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadingHistorial = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cerrarHistorialModal() {
+    this.historialModalAbierto = false;
+    this.historialUsuario = null;
+    this.historialEntradas = [];
+  }
+
+  tipoHistorialLabel(tipo: string): string {
+    const map: Record<string, string> = {
+      inactivado_automatico:   'Inactivado automáticamente',
+      reactivado_automatico:   'Reactivado automáticamente',
+      activado_manual:         'Activado manualmente',
+      inactivado_manual:       'Inactivado manualmente',
+      suspendido_manual:       'Suspendido manualmente',
+    };
+    return map[tipo] || tipo;
+  }
+
+  tipoHistorialClass(tipo: string): string {
+    if (tipo.includes('inactivado')) return 'historial-chip--inactivo';
+    if (tipo.includes('reactivado') || tipo.includes('activado')) return 'historial-chip--activo';
+    if (tipo.includes('suspendido')) return 'historial-chip--suspendido';
+    return '';
   }
 
   confirmarCambioEstado() {

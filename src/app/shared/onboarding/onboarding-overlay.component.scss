@@ -286,3 +286,57 @@
   gap: 10px;
   align-items: center;
 }
+
+// ── Feedback step ─────────────────────────────────────────────────────────────
+.ob-modal-icon--feedback {
+  background: rgba(74, 222, 128, .1);
+  color: #4ade80;
+}
+
+.ob-feedback-area {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.ob-feedback-input {
+  width: 100%;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: var(--radius-md, 8px);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13.5px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  resize: none;
+  transition: border-color .15s;
+  box-sizing: border-box;
+
+  &::placeholder { color: rgba(255,255,255,.3); }
+  &:focus {
+    outline: none;
+    border-color: rgba(74,222,128,.4);
+  }
+}
+
+.ob-feedback-hint {
+  display: block;
+  font-size: 11px;
+  color: rgba(255,255,255,.3);
+  margin-top: 4px;
+  text-align: right;
+}
+
+.ob-feedback-sent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(74,222,128,.08);
+  border: 1px solid rgba(74,222,128,.2);
+  border-radius: var(--radius-md, 8px);
+  font-size: 13.5px;
+  color: #4ade80;
+  font-weight: 600;
+}

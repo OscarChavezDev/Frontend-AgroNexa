@@ -17,6 +17,13 @@ interface ImagenItem {
   validacion: { relevante: boolean; motivo: string } | null;
 }
 
+interface ParteAfectadaOption {
+  value: string;
+  label: string;
+  icon: string;
+  iconPath?: string;
+}
+
 @Component({
   selector: 'app-muestra-form',
   templateUrl: './muestra-form.component.html',
@@ -37,7 +44,14 @@ export class MuestraFormComponent implements OnInit {
   sintomasSeleccionados: string[] = [];
   sinSintomaVisible = false;
 
-  partesAfectadas = ['hoja', 'fruto', 'tallo', 'raiz', 'flor', 'planta_completa'];
+  partesAfectadas: ParteAfectadaOption[] = [
+    { value: 'hoja', label: 'Hoja', icon: '', iconPath: '/icons/hoja.svg' },
+    { value: 'fruto', label: 'Fruto', icon: '', iconPath: '/icons/fruto.svg' },
+    { value: 'tallo', label: 'Tallo', icon: '', iconPath: '/icons/tallo.svg' },
+    { value: 'raiz', label: 'Raiz', icon: '', iconPath: '/icons/raiz.svg' },
+    { value: 'flor', label: 'Flor', icon: '', iconPath: '/icons/flor.svg' },
+    { value: 'planta_completa', label: 'Planta completa', icon: '', iconPath: '/icons/planta-completa.svg' }
+  ];
   nivelesAfectacion = ['leve', 'moderado', 'severo'];
   tiposImagen = ['hoja', 'fruto', 'tallo', 'planta_completa', 'suelo'];
 
@@ -274,6 +288,19 @@ export class MuestraFormComponent implements OnInit {
 
   formatTipo(t: string): string {
     return t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  seleccionarParteAfectada(parte: string) {
+    this.form.patchValue({ parteAfectada: parte });
+    this.form.get('parteAfectada')?.markAsTouched();
+  }
+
+  isParteAfectadaSeleccionada(parte: string): boolean {
+    return this.form.get('parteAfectada')?.value === parte;
+  }
+
+  trackParteAfectada(_: number, parte: ParteAfectadaOption) {
+    return parte.value;
   }
 
   get f() { return this.form.controls; }

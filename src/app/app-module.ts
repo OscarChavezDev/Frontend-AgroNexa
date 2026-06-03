@@ -26,8 +26,11 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
 import { AdminActividadComponent } from './pages/admin-actividad/admin-actividad.component';
+import { AdminSesionesComponent } from './pages/admin-sesiones/admin-sesiones.component';
+import { AdminRecomendacionesComponent } from './pages/admin-recomendaciones/admin-recomendaciones.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overlay.component';
+import { NotificacionesComponent } from './shared/notificaciones/notificaciones.component';
 
 @NgModule({
   declarations: [
@@ -47,8 +50,11 @@ import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overl
     AdminDashboardComponent,
     AdminUsuariosComponent,
     AdminActividadComponent,
+    AdminSesionesComponent,
+    AdminRecomendacionesComponent,
     LandingComponent,
     OnboardingOverlayComponent,
+    NotificacionesComponent,
   ],
   imports: [
     BrowserModule,

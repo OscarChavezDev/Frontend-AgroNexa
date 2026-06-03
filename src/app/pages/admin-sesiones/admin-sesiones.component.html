@@ -1,0 +1,241 @@
+<section class="sesiones-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="page-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="page-title">Reingresos de Usuarios</h1>
+        <p class="page-subtitle">Usuarios que volvieron a iniciar sesi&oacute;n tras un per&iacute;odo de inactividad</p>
+      </div>
+    </div>
+    <button class="btn-refresh" (click)="cargar()" [disabled]="loading" aria-label="Actualizar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [class.spin]="loading">
+        <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      Actualizar
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" *ngIf="!loading">
+    <div class="stat-card stat-card--blue">
+      <div class="stat-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalReingresos }}</span>
+        <span class="stat-label">Total reingresos</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--green">
+      <div class="stat-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ usuariosUnicos }}</span>
+        <span class="stat-label">Usuarios &uacute;nicos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-panel" *ngIf="!loading && !errorMsg">
+
+    <div class="filter-row">
+      <span class="filter-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        Per&iacute;odo
+      </span>
+      <div class="period-chips">
+        <button class="chip" [class.chip--active]="periodoActivo === 'todo'" (click)="setPeriodo('todo')" id="filtro-todo">Todo</button>
+        <button class="chip" [class.chip--active]="periodoActivo === 'hoy'" (click)="setPeriodo('hoy')" id="filtro-hoy">Hoy</button>
+        <button class="chip" [class.chip--active]="periodoActivo === 'semana'" (click)="setPeriodo('semana')" id="filtro-semana">&Uacute;ltimos 7 d&iacute;as</button>
+        <button class="chip" [class.chip--active]="periodoActivo === 'mes'" (click)="setPeriodo('mes')" id="filtro-mes">&Uacute;ltimos 30 d&iacute;as</button>
+        <button class="chip" [class.chip--active]="periodoActivo === 'personalizado'" (click)="setPeriodo('personalizado')" id="filtro-personalizado">Personalizado</button>
+      </div>
+    </div>
+
+    <div class="filter-row filter-row--dates" [class.filter-row--visible]="periodoActivo === 'personalizado'">
+      <span class="filter-label">Rango</span>
+      <div class="date-range">
+        <div class="date-field">
+          <label for="fecha-desde" class="date-label">Desde</label>
+          <input
+            type="date"
+            id="fecha-desde"
+            class="date-input"
+            [(ngModel)]="fechaDesde"
+            (change)="onFechaChange()"
+            [max]="fechaHasta || ''"
+          />
+        </div>
+        <span class="date-separator">-</span>
+        <div class="date-field">
+          <label for="fecha-hasta" class="date-label">Hasta</label>
+          <input
+            type="date"
+            id="fecha-hasta"
+            class="date-input"
+            [(ngModel)]="fechaHasta"
+            (change)="onFechaChange()"
+            [min]="fechaDesde || ''"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-row filter-row--search">
+      <div class="search-box">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar por nombre o correo..."
+          [(ngModel)]="busqueda"
+          (ngModelChange)="onBusquedaChange()"
+          id="busqueda-sesiones"
+        />
+        <button
+          class="search-clear"
+          *ngIf="busqueda"
+          (click)="busqueda = ''; onBusquedaChange()"
+          aria-label="Limpiar b&uacute;squeda"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="filter-actions">
+        <span class="results-count">
+          <strong>{{ sesionesFiltradas.length }}</strong> evento{{ sesionesFiltradas.length !== 1 ? 's' : '' }}
+        </span>
+        <button
+          class="btn-clear-filters"
+          *ngIf="hayFiltrosActivos"
+          (click)="limpiarFiltros()"
+          id="btn-limpiar-filtros"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando reingresos...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" *ngIf="errorMsg && !loading">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>{{ errorMsg }}</p>
+    <button class="btn-retry" (click)="cargar()">Reintentar</button>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!loading && !errorMsg && sesionesFiltradas.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+    </div>
+    <h3>Sin reingresos registrados</h3>
+    <p *ngIf="!hayFiltrosActivos">A&uacute;n no hay usuarios que hayan vuelto a iniciar sesi&oacute;n tras inactividad autom&aacute;tica.</p>
+    <p *ngIf="hayFiltrosActivos">No se encontraron resultados con los filtros aplicados.</p>
+    <button class="btn-retry" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">Quitar filtros</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container" *ngIf="!loading && !errorMsg && sesionesFiltradas.length > 0">
+    <table class="sesiones-table" aria-label="Tabla de reingresos de usuarios">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Qued&oacute; inactivo</th>
+          <th>Tiempo sin acceso</th>
+          <th>Volvi&oacute; el</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of sesionesPaginadas" class="table-row">
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">{{ iniciales(s) }}</div>
+              <span class="user-name">{{ s.nombre }} {{ s.apellido }}</span>
+            </div>
+          </td>
+          <td class="td-correo">{{ s.correo }}</td>
+          <td>
+            <span class="rol-badge" [class]="'rol-' + s.rol">{{ rolLabel(s.rol) }}</span>
+          </td>
+          <td class="td-fecha">
+            <ng-container *ngIf="s.fechaInactivacion">
+              <span class="fecha-value">{{ s.fechaInactivacion | date:'dd/MM/yyyy' }}</span>
+              <span class="hora-value">{{ s.fechaInactivacion | date:'HH:mm' }}</span>
+            </ng-container>
+            <span *ngIf="!s.fechaInactivacion" class="sin-dato">Sin registro</span>
+          </td>
+          <td class="td-dias">
+            <span class="dias-badge" [class]="diasClass(s.diasInactivo)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ diasLabel(s.diasInactivo) }}
+            </span>
+          </td>
+          <td class="td-fecha">
+            <span class="fecha-value">{{ s.fecha | date:'dd/MM/yyyy' }}</span>
+            <span class="hora-value">{{ s.fecha | date:'HH:mm' }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalPaginas > 1">
+    <span class="pagination-info">{{ rangoInicio }}-{{ rangoFin }} de {{ sesionesFiltradas.length }}</span>
+    <div class="pagination-controls">
+      <button class="page-btn" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1" aria-label="Anterior">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <ng-container *ngFor="let p of paginas">
+        <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p!)">{{ p }}</button>
+        <span *ngIf="p === null" class="page-ellipsis">...</span>
+      </ng-container>
+      <button class="page-btn" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas" aria-label="Siguiente">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+</section>

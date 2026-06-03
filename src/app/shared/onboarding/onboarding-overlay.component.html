@@ -55,21 +55,56 @@
   <div *ngIf="isModal" class="ob-backdrop">
     <div class="ob-modal">
 
-      <div class="ob-modal-icon" [class.ob-modal-icon--done]="currentStep.id === 'complete'">
+      <div class="ob-modal-icon"
+           [class.ob-modal-icon--done]="currentStep.id === 'complete'"
+           [class.ob-modal-icon--feedback]="currentStep.id === 'feedback'">
         <svg *ngIf="currentStep.id === 'welcome'" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
         <svg *ngIf="currentStep.id === 'complete'" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
         </svg>
+        <svg *ngIf="currentStep.id === 'feedback'" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
       </div>
 
       <h2 class="ob-modal-title">{{ currentStep.title }}</h2>
       <p class="ob-modal-desc">{{ currentStep.description }}</p>
 
+      <!-- Textarea de feedback -->
+      <div class="ob-feedback-area" *ngIf="currentStep.hasFeedback">
+        <ng-container *ngIf="!feedbackEnviado">
+          <textarea
+            class="ob-feedback-input"
+            placeholder="Escribe tu sugerencia o recomendación aquí..."
+            [(ngModel)]="feedbackTexto"
+            rows="3"
+            maxlength="500">
+          </textarea>
+          <span class="ob-feedback-hint">{{ feedbackTexto.length }}/500 · puedes omitirlo</span>
+        </ng-container>
+        <div class="ob-feedback-sent" *ngIf="feedbackEnviado">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>¡Gracias! Tu recomendación fue enviada.</span>
+        </div>
+      </div>
+
       <div class="ob-modal-footer">
-        <button *ngIf="currentStep.id !== 'complete'" class="ob-btn-ghost" (click)="onSkip()">Saltar guía</button>
-        <button class="ob-btn-primary ob-btn-lg" (click)="onNext()">
+        <button *ngIf="currentStep.id !== 'complete' && currentStep.id !== 'feedback'" class="ob-btn-ghost" (click)="onSkip()">Saltar guía</button>
+
+        <!-- Botón para paso feedback -->
+        <ng-container *ngIf="currentStep.id === 'feedback'">
+          <button class="ob-btn-ghost" (click)="onNext()" *ngIf="!feedbackEnviando && !feedbackEnviado">Omitir</button>
+          <button class="ob-btn-primary ob-btn-lg" (click)="enviarFeedback()" [disabled]="feedbackEnviando || feedbackEnviado">
+            <span class="spinner" *ngIf="feedbackEnviando"></span>
+            <span *ngIf="!feedbackEnviando && !feedbackEnviado">Enviar y continuar</span>
+            <span *ngIf="feedbackEnviado">Enviado ✓</span>
+          </button>
+        </ng-container>
+
+        <!-- Botón normal -->
+        <button *ngIf="currentStep.id !== 'feedback'" class="ob-btn-primary ob-btn-lg" (click)="onNext()">
           {{ currentStep.id === 'complete' ? 'Explorar AgroNexa' : 'Comenzar tour' }}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>

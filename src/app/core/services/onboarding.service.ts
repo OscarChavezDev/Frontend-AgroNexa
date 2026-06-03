@@ -11,6 +11,7 @@ export interface OnboardingStep {
   description: string;
   nextAction: 'button' | 'navigate' | 'click';
   autoAdvanceMs?: number;
+  hasFeedback?: boolean;
 }
 
 export const ONBOARDING_STEPS: OnboardingStep[] = [
@@ -86,6 +87,14 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     description: 'Haz clic en "Generar diagnóstico" para que la IA analice los síntomas y te dé recomendaciones personalizadas.',
     nextAction: 'navigate',
     autoAdvanceMs: 3000
+  },
+  {
+    id: 'feedback',
+    showOnPattern: /^\/muestras\/(?!nueva)[^/]+/,
+    title: '¿Tienes alguna sugerencia?',
+    description: 'Cuéntanos qué mejorarías o qué te ha parecido la plataforma. Tu opinión nos ayuda a crecer. (Opcional)',
+    nextAction: 'button',
+    hasFeedback: true
   },
   {
     id: 'complete',

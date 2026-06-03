@@ -83,6 +83,26 @@
           </span>
           <span class="nav-label">Actividad</span>
         </a>
+
+        <a routerLink="/admin/sesiones" routerLinkActive="active" class="nav-item nav-item--admin">
+          <span class="nav-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+          </span>
+          <span class="nav-label">Reingresos</span>
+        </a>
+
+        <a routerLink="/admin/recomendaciones" routerLinkActive="active" class="nav-item nav-item--admin">
+          <span class="nav-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Recomendaciones</span>
+        </a>
       </ng-container>
 
     </nav>
@@ -114,6 +134,7 @@
         <span></span><span></span><span></span>
       </button>
       <div class="topbar-right">
+        <app-notificaciones></app-notificaciones>
         <span class="plan-badge" *ngIf="currentUser">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>

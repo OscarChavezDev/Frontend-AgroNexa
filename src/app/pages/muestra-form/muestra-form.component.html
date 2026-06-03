@@ -88,10 +88,22 @@
       <div class="form-row">
         <div class="form-group">
           <label>Parte afectada *</label>
-          <select formControlName="parteAfectada" [class.error]="f['parteAfectada'].invalid && f['parteAfectada'].touched">
-            <option value="">Seleccionar...</option>
-            <option *ngFor="let p of partesAfectadas" [value]="p">{{ p | titlecase }}</option>
-          </select>
+
+          <div class="parte-selector" [class.error]="f['parteAfectada'].invalid && f['parteAfectada'].touched">
+            <button
+              type="button"
+              class="parte-option"
+              *ngFor="let parte of partesAfectadas; trackBy: trackParteAfectada"
+              [class.is-active]="isParteAfectadaSeleccionada(parte.value)"
+              (click)="seleccionarParteAfectada(parte.value)">
+              <span class="parte-option__icon">
+                <img *ngIf="parte.iconPath; else parteEmoji" [src]="parte.iconPath" [alt]="parte.label">
+                <ng-template #parteEmoji><span aria-hidden="true">{{ parte.icon }}</span></ng-template>
+              </span>
+              <span class="parte-option__label">{{ parte.label }}</span>
+            </button>
+          </div>
+
           <span class="field-error" *ngIf="f['parteAfectada'].invalid && f['parteAfectada'].touched">Requerido</span>
         </div>
         <div class="form-group">

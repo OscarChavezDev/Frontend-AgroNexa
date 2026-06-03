@@ -12,6 +12,7 @@ export interface User {
   // Tracking fields
   loginCount?: number;
   lastLogin?: string;
+  inactivadoAuto?: boolean;
   // Activity stats (from admin aggregation)
   totalParcelas?: number;
   totalMuestras?: number;
@@ -38,6 +39,7 @@ export interface LoginResponse {
   rol: string;
   plan: string;
   isNewUser?: boolean;
+  wasReactivated?: boolean;
 }
 
 // El register devuelve solo el id creado

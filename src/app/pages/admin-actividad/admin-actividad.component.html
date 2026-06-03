@@ -92,9 +92,7 @@
       <div class="page-size-selector">
         <span>Mostrar</span>
         <select [(ngModel)]="pageSize" (change)="paginaActual = 1" id="act-page-size">
-          <option [value]="10">10</option>
-          <option [value]="15">15</option>
-          <option [value]="25">25</option>
+          <option [value]="10">10</option><option [value]="15">15</option><option [value]="25">25</option>
         </select>
         <span>por página</span>
       </div>
@@ -159,7 +157,7 @@
             </td>
             <td>
               <div class="user-cell">
-                <div class="user-avatar">{{ u.nombre?.[0] }}{{ u.apellido?.[0] }}</div>
+                <div class="user-avatar">{{ u.nombre[0] }}{{ u.apellido[0] }}</div>
                 <div class="user-info">
                   <span class="user-name">{{ u.nombre }} {{ u.apellido }}</span>
                   <span class="user-email">{{ u.correo }}</span>

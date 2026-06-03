@@ -17,7 +17,7 @@ export class AdminActividadComponent implements OnInit {
   ordenDesc = true;
 
   paginaActual = 1;
-  pageSize = 15;
+  pageSize = 10;
 
   // Modal detalle de parcelas
   modalAbierto = false;

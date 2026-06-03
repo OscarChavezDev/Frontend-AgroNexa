@@ -1,0 +1,52 @@
+<div class="notif-wrapper" *ngIf="auth.isAdmin">
+  <!-- Campana -->
+  <button class="notif-bell" (click)="toggle()" [class.notif-bell--active]="abierto" aria-label="Notificaciones">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 01-3.46 0"/>
+    </svg>
+    <span class="notif-badge" *ngIf="noLeidos > 0">{{ noLeidos > 99 ? '99+' : noLeidos }}</span>
+  </button>
+
+  <!-- Dropdown -->
+  <div class="notif-dropdown" *ngIf="abierto">
+    <div class="notif-header">
+      <span class="notif-title">Notificaciones</span>
+      <button class="notif-mark-all" (click)="leerTodos()" *ngIf="noLeidos > 0">
+        Marcar todo como leído
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="notif-loading" *ngIf="cargando">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Vacío -->
+    <div class="notif-empty" *ngIf="!cargando && mensajes.length === 0">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 01-3.46 0"/>
+      </svg>
+      <p>Sin notificaciones</p>
+    </div>
+
+    <!-- Lista -->
+    <div class="notif-list" *ngIf="!cargando && mensajes.length > 0">
+      <div class="notif-item" *ngFor="let m of mensajes"
+           [class.notif-item--unread]="!m.leido"
+           (click)="leer(m)">
+        <div class="notif-avatar">{{ m.nombre[0] }}{{ m.apellido[0] }}</div>
+        <div class="notif-body">
+          <div class="notif-top">
+            <span class="notif-name">{{ m.nombre }} {{ m.apellido }}</span>
+            <span class="notif-chip" [class]="tipoClass(m.tipo)">{{ tipoLabel(m.tipo) }}</span>
+          </div>
+          <p class="notif-msg">{{ m.mensaje }}</p>
+          <span class="notif-time">{{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="notif-dot" *ngIf="!m.leido"></div>
+      </div>
+    </div>
+  </div>
+</div>
