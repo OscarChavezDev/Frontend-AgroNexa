@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -42,6 +42,8 @@ export class MuestraFormComponent implements OnInit {
   tiposImagen = ['hoja', 'fruto', 'tallo', 'planta_completa', 'suelo'];
 
   imagenes: ImagenItem[] = [];
+  hayImagenesInvalidas = false;
+  hayImagenesValidando  = false;
   loadingParcelas = true;
   parcelaDropdownAbierto = false;
 
@@ -78,7 +80,8 @@ export class MuestraFormComponent implements OnInit {
     private imagenesService: ImagenesService,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {
     this.form = this.fb.group({
       parcelaId: ['', Validators.required],
@@ -124,25 +127,38 @@ export class MuestraFormComponent implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (!files) return;
     Array.from(files).forEach(file => {
-      const idx = this.imagenes.length;
-      this.imagenes.push({
+      const item: ImagenItem = {
         file,
         preview: URL.createObjectURL(file),
         tipoImagen: '',
         descripcion: '',
         validando: true,
         validacion: null,
-      });
+      };
+
+      // (change) del input ya está dentro de la zona — actualización directa
+      this.imagenes = [...this.imagenes, item];
+      this.hayImagenesValidando = true;
+      this.cdr.detectChanges(); // muestra el spinner inmediatamente
+
       this.imagenesService.validar(file).subscribe({
         next: (res) => {
-          this.imagenes[idx].validando = false;
-          this.imagenes[idx].validacion = res.data ?? null;
-          this.cdr.detectChanges();
+          this.zone.run(() => {
+            if (this.imagenes.includes(item)) {
+              item.validando  = false;
+              item.validacion = res.data ?? null;
+              this.sincronizarEstadoImagenes();
+            }
+          });
         },
         error: () => {
-          this.imagenes[idx].validando = false;
-          this.imagenes[idx].validacion = { relevante: true, motivo: '' };
-          this.cdr.detectChanges();
+          this.zone.run(() => {
+            if (this.imagenes.includes(item)) {
+              item.validando  = false;
+              item.validacion = { relevante: true, motivo: '' };
+              this.sincronizarEstadoImagenes();
+            }
+          });
         }
       });
     });
@@ -150,13 +166,24 @@ export class MuestraFormComponent implements OnInit {
   }
 
   removeImagen(index: number) {
-    this.imagenes.splice(index, 1);
+    // Este método viene de un (click), ya está dentro de la zona de Angular.
+    // No usar zone.run() aquí — causaría ciclos anidados que difieren el render.
+    this.imagenes = this.imagenes.filter((_, i) => i !== index);
+    this.errorMsg = '';
+    this.hayImagenesValidando = this.imagenes.some(img => img.validando);
+    this.hayImagenesInvalidas = this.imagenes.some(img => !img.validando && img.validacion?.relevante === false);
+    this.cdr.detectChanges();
   }
 
-  get imagenesValidando(): boolean {
-    return this.imagenes.some(img => img.validando);
+  // Usado solo desde callbacks HTTP (fuera del ciclo de eventos de Angular)
+  private sincronizarEstadoImagenes() {
+    this.imagenes = [...this.imagenes]; // nueva ref: fuerza re-evaluación del *ngFor
+    this.hayImagenesValidando = this.imagenes.some(img => img.validando);
+    this.hayImagenesInvalidas = this.imagenes.some(img => !img.validando && img.validacion?.relevante === false);
+    this.cdr.detectChanges();
   }
 
+  get imagenesValidando(): boolean  { return this.hayImagenesValidando; }
   get imagenesNoRelevantes(): ImagenItem[] {
     return this.imagenes.filter(img => !img.validando && img.validacion?.relevante === false);
   }
