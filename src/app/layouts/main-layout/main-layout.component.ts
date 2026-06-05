@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { OnboardingService } from '../../core/services/onboarding.service';
+import { MensajesService } from '../../core/services/mensajes.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -14,12 +15,46 @@ export class MainLayoutComponent implements OnInit {
   sidebarOpen = false;
   currentUser: User | null = null;
 
+  // Feedback / recomendaciones
+  feedbackAbierto = false;
+  feedbackTexto = '';
+  feedbackEnviando = false;
+  feedbackEnviado = false;
+
   constructor(
     private authService: AuthService,
     private onboarding: OnboardingService,
+    private mensajesService: MensajesService,
+    private cdr: ChangeDetectorRef,
     private router: Router
   ) {
     this.authService.currentUser$.subscribe(u => this.currentUser = u);
+  }
+
+  abrirFeedback() { this.feedbackAbierto = true; }
+
+  cerrarFeedback() {
+    this.feedbackAbierto = false;
+    this.feedbackTexto = '';
+    this.feedbackEnviado = false;
+  }
+
+  enviarFeedback() {
+    if (!this.feedbackTexto.trim()) return;
+    this.feedbackEnviando = true;
+    this.mensajesService.enviar(this.feedbackTexto).subscribe({
+      next: () => {
+        this.feedbackEnviado = true;
+        this.feedbackEnviando = false;
+        this.feedbackTexto = '';
+        this.cdr.detectChanges();
+        setTimeout(() => this.cerrarFeedback(), 2000);
+      },
+      error: () => {
+        this.feedbackEnviando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   ngOnInit(): void {

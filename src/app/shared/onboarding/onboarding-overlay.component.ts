@@ -6,7 +6,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { OnboardingService, OnboardingStep } from '../../core/services/onboarding.service';
-import { MensajesService } from '../../core/services/mensajes.service';
 
 interface Rect { top: number; left: number; width: number; height: number; }
 interface TPos { top?: string; left?: string; }
@@ -25,11 +24,6 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
   spotlight: Rect = { top: 0, left: 0, width: 0, height: 0 };
   tooltipPos: TPos = {};
 
-  // Feedback
-  feedbackTexto   = '';
-  feedbackEnviado = false;
-  feedbackEnviando = false;
-
   private subs = new Subscription();
   private targetEl: Element | null = null;
   private targetClickFn: (() => void) | null = null;
@@ -41,8 +35,7 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
     private onboarding: OnboardingService,
     private router: Router,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef,
-    private mensajesService: MensajesService
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -237,21 +230,4 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
 
   onNext(): void { this.onboarding.advance(); }
   onSkip(): void { this.onboarding.skip(); }
-
-  enviarFeedback(): void {
-    if (!this.feedbackTexto.trim()) { this.onboarding.advance(); return; }
-    this.feedbackEnviando = true;
-    this.mensajesService.enviar(this.feedbackTexto).subscribe({
-      next: () => {
-        this.feedbackEnviado  = true;
-        this.feedbackEnviando = false;
-        this.cdr.detectChanges();
-        setTimeout(() => this.onboarding.advance(), 1200);
-      },
-      error: () => {
-        this.feedbackEnviando = false;
-        this.onboarding.advance(); // avanzan igual si hay error
-      }
-    });
-  }
 }

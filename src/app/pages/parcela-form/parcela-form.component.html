@@ -29,14 +29,21 @@
             class="cultivo-option"
             *ngFor="let cultivo of cultivoOpciones; trackBy: trackCultivo"
             [class.is-active]="isCultivoSeleccionado(cultivo)"
+            [class.is-disabled]="cultivo.key !== 'cacao'"
+            [disabled]="cultivo.key !== 'cacao'"
             (click)="seleccionarCultivo(cultivo.value)">
             <span class="cultivo-option__icon" aria-hidden="true">
               <img *ngIf="cultivo.iconPath; else cultivoEmoji" [src]="cultivo.iconPath" [alt]="cultivo.label">
               <ng-template #cultivoEmoji>{{ cultivo.icon }}</ng-template>
             </span>
             <span class="cultivo-option__label">{{ cultivo.label }}</span>
+            <span class="cultivo-option__soon" *ngIf="cultivo.key !== 'cacao'">Pr&oacute;ximamente</span>
           </button>
         </div>
+        <p class="cultivo-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Por ahora el diagn&oacute;stico con IA est&aacute; optimizado para <strong>cacao</strong>. Pronto m&aacute;s cultivos.
+        </p>
 
         <span class="field-error" *ngIf="f['cultivo'].invalid && f['cultivo'].touched">Requerido</span>
 

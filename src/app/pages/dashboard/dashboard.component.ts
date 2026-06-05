@@ -5,7 +5,6 @@ import { Muestra } from '../../core/models/muestra.model';
 import { Parcela } from '../../core/models/parcela.model';
 import { User } from '../../core/models/user.model';
 import { AuthService } from '../../core/services/auth.service';
-import { MensajesService } from '../../core/services/mensajes.service';
 import { MuestrasService } from '../../core/services/muestras.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 
@@ -23,48 +22,13 @@ export class DashboardComponent implements OnInit {
   loadingMuestras = true;
   mostrarMensajeReingreso = false;
 
-  feedbackAbierto = false;
-  feedbackTexto = '';
-  feedbackEnviando = false;
-  feedbackEnviado = false;
-
   constructor(
     private authService: AuthService,
     private parcelasService: ParcelasService,
     private muestrasService: MuestrasService,
-    private mensajesService: MensajesService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {}
-
-  abrirFeedback() {
-    this.feedbackAbierto = true;
-  }
-
-  cerrarFeedback() {
-    this.feedbackAbierto = false;
-    this.feedbackTexto = '';
-    this.feedbackEnviado = false;
-  }
-
-  enviarFeedback() {
-    if (!this.feedbackTexto.trim()) return;
-
-    this.feedbackEnviando = true;
-    this.mensajesService.enviar(this.feedbackTexto).subscribe({
-      next: () => {
-        this.feedbackEnviado = true;
-        this.feedbackEnviando = false;
-        this.feedbackTexto = '';
-        this.cdr.detectChanges();
-        setTimeout(() => this.cerrarFeedback(), 2000);
-      },
-      error: () => {
-        this.feedbackEnviando = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
 
   ngOnInit() {
     this.user = this.authService.currentUser;

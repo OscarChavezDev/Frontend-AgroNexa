@@ -24,7 +24,7 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   private marker: any;
   private mapInitialized = false;
 
-  cultivoOpciones: CultivoOption[] = CULTIVO_OPTIONS;
+  cultivoOpciones: CultivoOption[] = CULTIVO_OPTIONS.filter(opt => opt.key === 'cacao');
   sistemasOpciones = ['monocultivo', 'agroforestal', 'mixto', 'org\u00E1nico', 'otro'];
   showAvanzados = false;
 
@@ -38,7 +38,7 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   ) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
-      cultivo: ['', Validators.required],
+      cultivo: ['cacao', Validators.required],
       otroCultivo: [''],
       variedad: [''],
       areaAproximada: [''],
@@ -218,14 +218,8 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
               lng: parcela.ubicacion?.lng
             });
 
-            const cultivoVal = normalizeCultivo(parcela.cultivo);
-            const selectedCultivo = this.cultivoOpciones.find((option) => option.key === cultivoVal);
-
-            if (selectedCultivo && cultivoVal !== 'otro') {
-              this.form.patchValue({ cultivo: selectedCultivo.value });
-            } else if (parcela.cultivo) {
-              this.form.patchValue({ cultivo: 'otro', otroCultivo: parcela.cultivo });
-            }
+            // Enforce cacao
+            this.form.patchValue({ cultivo: 'cacao' });
 
             setTimeout(() => this.waitForMapsAndInit(), 0);
           } else {
@@ -268,13 +262,11 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
 
     const { lat, lng, ...rest } = this.form.value;
-    const finalCultivo = normalizeCultivo(rest.cultivo) === 'otro' ? rest.otroCultivo : rest.cultivo;
     const payload = {
       ...rest,
-      cultivo: finalCultivo,
+      cultivo: 'cacao',
       ubicacion: { lat: +lat, lng: +lng }
     };
-
     delete (payload as any).otroCultivo;
 
     const onSuccess = () => this.router.navigate(['/parcelas']);

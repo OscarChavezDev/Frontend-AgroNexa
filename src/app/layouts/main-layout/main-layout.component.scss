@@ -250,6 +250,30 @@
   }
 }
 
+.btn-feedback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  background: rgba(74, 222, 128, .08);
+  border: 1px solid rgba(74, 222, 128, .22);
+  border-radius: var(--radius-md);
+  color: #4ade80;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+
+  svg { flex-shrink: 0; }
+
+  &:hover {
+    background: rgba(74, 222, 128, .14);
+    border-color: rgba(74, 222, 128, .4);
+  }
+}
+
 .btn-logout {
   display: flex;
   align-items: center;
@@ -270,6 +294,180 @@
     background: rgba(248, 113, 113, .1);
     border-color: rgba(248, 113, 113, .28);
     color: var(--clr-red);
+  }
+}
+
+// ── Modal de recomendación / feedback ─────────────────────────────────────────
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fbFadeIn .15s ease;
+}
+
+@keyframes fbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.feedback-modal {
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border-strong);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: 100%;
+  max-width: 440px;
+  animation: fbSlideUp .2s cubic-bezier(.4, 0, .2, 1);
+}
+
+@keyframes fbSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedback-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--clr-text-primary);
+    margin: 0;
+  }
+}
+
+.feedback-close {
+  width: 30px; height: 30px;
+  border: none; background: none;
+  color: var(--clr-text-muted);
+  cursor: pointer; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s, color .12s;
+  &:hover { background: rgba(255, 255, 255, .08); color: var(--clr-text-primary); }
+}
+
+.feedback-hint {
+  font-size: 13.5px;
+  color: var(--clr-text-secondary);
+  margin: 0 0 14px;
+}
+
+.feedback-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  color: var(--clr-text-primary);
+  font-family: inherit;
+  font-size: 13.5px;
+  line-height: 1.55;
+  padding: 10px 14px;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color .15s;
+
+  &::placeholder { color: var(--clr-text-muted); }
+  &:focus { outline: none; border-color: rgba(74, 222, 128, .4); }
+  &:disabled { opacity: .5; }
+}
+
+.feedback-counter {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: var(--clr-text-muted);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.fb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, transform .1s ease, box-shadow .15s ease, opacity .15s ease;
+
+  svg { flex-shrink: 0; }
+
+  &:active { transform: translateY(1px); }
+
+  // Cancelar — ghost
+  &--ghost {
+    background: transparent;
+    border: 1px solid var(--clr-border-strong);
+    color: var(--clr-text-secondary);
+
+    &:hover {
+      background: rgba(255, 255, 255, .05);
+      border-color: var(--clr-text-muted);
+      color: var(--clr-text-primary);
+    }
+  }
+
+  // Enviar — primario verde
+  &--send {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    border: 1px solid transparent;
+    color: #052e16;
+    box-shadow: 0 4px 14px rgba(74, 222, 128, .28);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 20px rgba(74, 222, 128, .42);
+      filter: brightness(1.05);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+      box-shadow: none;
+      filter: grayscale(.3);
+    }
+
+    .spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(5, 46, 22, .35);
+      border-top-color: #052e16;
+      border-radius: 50%;
+      animation: fbSpin .6s linear infinite;
+    }
+  }
+}
+
+@keyframes fbSpin { to { transform: rotate(360deg); } }
+
+.feedback-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  text-align: center;
+
+  p {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4ade80;
+    margin: 0;
   }
 }
 
