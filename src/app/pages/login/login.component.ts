@@ -113,11 +113,29 @@ export class LoginComponent implements AfterViewInit {
         }
       },
       error: (err) => {
-        this.errorMsg = err.error?.message || 'Credenciales incorrectas';
+        this.errorMsg = this.mensajeErrorLogin(err);
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
+  }
+
+  /** Traduce el error HTTP a un mensaje claro (distingue red/CORS de credenciales). */
+  private mensajeErrorLogin(err: any): string {
+    // status 0 = la petición no llegó a completarse: sin conexión, servidor caído o bloqueo CORS.
+    if (err?.status === 0) {
+      return 'No se pudo conectar con el servidor. Revisa tu conexión o inténtalo más tarde.';
+    }
+    if (err?.status === 401) {
+      return 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+    }
+    if (err?.status === 403) {
+      return err.error?.message || 'Tu cuenta no tiene acceso. Contacta al administrador.';
+    }
+    if (err?.status >= 500) {
+      return 'El servidor tuvo un problema. Inténtalo de nuevo en unos minutos.';
+    }
+    return err?.error?.message || 'No se pudo iniciar sesión. Inténtalo de nuevo.';
   }
 
   get f() { return this.form.controls; }
