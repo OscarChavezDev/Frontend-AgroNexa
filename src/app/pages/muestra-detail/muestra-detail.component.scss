@@ -757,12 +757,32 @@
   &--gray  { background: #f3f4f6; color: #6b7280; }
 }
 
+.enfermedad-titulo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .enfermedad-nombre {
   font-size: 24px;
   font-weight: 800;
   color: var(--clr-neutral-100);
   margin: 0;
   line-height: 1.2;
+}
+
+.prob-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
 }
 
 .nombre-cientifico {
@@ -776,6 +796,83 @@
   color: var(--clr-neutral-300);
   line-height: 1.6;
   margin: 0;
+}
+
+// ── Probabilidad por enfermedad ───────────────────────────────────────────────
+.probabilidades-card {
+  border-top: 4px solid #e11d48;
+  .card-title { color: #be123c; }
+}
+
+.prob-ayuda {
+  font-size: 12.5px;
+  color: #6b7280;
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.prob-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.prob-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.prob-row-nombre {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--clr-neutral-200);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prob-row--principal .prob-row-nombre {
+  font-weight: 800;
+  color: var(--clr-neutral-100);
+}
+
+.prob-row-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.prob-row-pct {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--clr-neutral-100);
+  flex-shrink: 0;
+}
+
+.prob-bar-track {
+  height: 9px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+.prob-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #fca5a5;
+  transition: width 0.5s ease;
+}
+
+.prob-bar-fill--principal {
+  background: linear-gradient(90deg, #e11d48, #be123c);
 }
 
 // ── Severidad ─────────────────────────────────────────────────────────────────

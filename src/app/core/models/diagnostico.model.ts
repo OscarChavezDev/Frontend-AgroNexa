@@ -3,6 +3,7 @@
 export interface DiagnosticoPrincipal {
   enfermedad: string;
   nombre_cientifico?: string;
+  probabilidad?: string;
   confianza: 'alta' | 'media' | 'baja';
   descripcion: string;
 }

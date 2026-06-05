@@ -190,4 +190,39 @@ export class MuestraDetailComponent implements OnInit {
     const nombre = (this.resultadoGemini?.diagnostico_principal?.enfermedad || '').toLowerCase();
     return this.KEYWORDS_SANO.some(kw => nombre.includes(kw));
   }
+
+  /** Ranking de enfermedades probables (principal + diferenciales) ordenado por % desc. */
+  get probabilidades(): { enfermedad: string; probabilidad: string; valor: number; principal: boolean }[] {
+    const r = this.resultadoGemini;
+    if (!r) return [];
+
+    const parse = (p?: string): number => {
+      const m = (p || '').match(/\d+(\.\d+)?/);
+      return m ? parseFloat(m[0]) : 0;
+    };
+
+    const lista: { enfermedad: string; probabilidad: string; valor: number; principal: boolean }[] = [];
+
+    const principal = r.diagnostico_principal;
+    if (principal?.enfermedad) {
+      lista.push({
+        enfermedad: principal.enfermedad,
+        probabilidad: principal.probabilidad || '',
+        valor: parse(principal.probabilidad),
+        principal: true,
+      });
+    }
+
+    for (const d of r.diagnosticos_diferenciales || []) {
+      if (!d?.enfermedad) continue;
+      lista.push({
+        enfermedad: d.enfermedad,
+        probabilidad: d.probabilidad || '',
+        valor: parse(d.probabilidad),
+        principal: false,
+      });
+    }
+
+    return lista.sort((a, b) => b.valor - a.valor);
+  }
 }

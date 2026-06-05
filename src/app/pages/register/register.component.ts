@@ -1,6 +1,8 @@
 import { Component, ChangeDetectorRef, AfterViewInit, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap, catchError } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 
@@ -20,6 +22,10 @@ export class RegisterComponent implements AfterViewInit, OnInit {
   showPassword = false;
   currentStep = 1;
   isGoogleRoleMode = false;
+
+  // Verificación de correo en vivo
+  correoVerificando = false;
+  correoDisponible = false;
 
   roles = [
     { value: 'productor',   icon: '🌾', label: 'Productor',    desc: 'Agricultor individual' },
@@ -98,6 +104,41 @@ export class RegisterComponent implements AfterViewInit, OnInit {
       this.isGoogleRoleMode = true;
       this.currentStep = 3;
     }
+    this.watchCorreoDisponibilidad();
+  }
+
+  /** Verifica en vivo (con debounce) si el correo ya está registrado. */
+  private watchCorreoDisponibilidad(): void {
+    const ctrl = this.form.get('correo');
+    if (!ctrl) return;
+
+    ctrl.valueChanges.pipe(
+      map((v: string) => (v || '').trim().toLowerCase()),
+      distinctUntilChanged(),
+      tap(() => { this.correoDisponible = false; this.correoVerificando = false; }),
+      debounceTime(500),
+      switchMap((correo: string) => {
+        // No consultamos si el correo está vacío o es sintácticamente inválido.
+        if (!correo || ctrl.hasError('required') || ctrl.hasError('email')) {
+          return of(null);
+        }
+        this.correoVerificando = true;
+        this.cdr.detectChanges();
+        return this.authService.checkEmail(correo).pipe(catchError(() => of(null)));
+      })
+    ).subscribe((res) => {
+      this.correoVerificando = false;
+      if (res?.data) {
+        if (res.data.disponible === false) {
+          // Marca el control como inválido para bloquear el avance.
+          ctrl.setErrors({ ...(ctrl.errors || {}), taken: true });
+          this.correoDisponible = false;
+        } else {
+          this.correoDisponible = true;
+        }
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -168,6 +209,8 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     } else if (this.currentStep === 2) {
       this.form.get('correo')?.markAsTouched();
       this.form.get('password')?.markAsTouched();
+      // Espera a que termine la verificación de disponibilidad del correo.
+      if (this.correoVerificando) return;
       if (this.form.get('correo')?.invalid || this.form.get('password')?.invalid) return;
       this.currentStep = 3;
     } else if (this.currentStep === 3 && this.isGoogleRoleMode) {
@@ -226,17 +269,27 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading = true;
     this.errorMsg = '';
+    this.successMsg = '';
     this.authService.register(this.form.value).subscribe({
       next: () => {
         this.analyticsService.trackEvent('sign_up', { method: 'email', role: this.form.value.rol });
         localStorage.setItem('agro_new_registration', 'true');
+        this.loading = false;
         this.successMsg = 'Cuenta creada. Redirigiendo al login…';
         this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err) => {
-        this.errorMsg = err.error?.message || 'Error al crear la cuenta';
+        const status = err.status;
+        if (status === 409) {
+          this.errorMsg = 'Este correo ya está registrado. ¿Ya tienes cuenta? Inicia sesión.';
+        } else if (status === 500) {
+          this.errorMsg = 'Error interno del servidor. Inténtalo más tarde.';
+        } else {
+          this.errorMsg = err.error?.message || 'Error al crear la cuenta. Verifica los datos.';
+        }
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -9,9 +9,7 @@
 
   <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
   <div class="error-banner" *ngIf="errorMsg && !analizandoIA">{{ errorMsg }}</div>
-  <div class="success-banner" *ngIf="creadoExito">
-    ¡Muestra registrada! Iniciando análisis con IA...
-  </div>
+
 
   <div *ngIf="!loading && muestra" class="detail-layout">
 
@@ -138,8 +136,8 @@
             </svg>
           </div>
           <h3>Analizando con IA</h3>
-          <p>Gemini está examinando la imagen y los datos de la muestra...</p>
-          <p class="loading-sub">Esto puede tomar 10–20 segundos</p>
+          <p>La IA está examinando la imagen en detalle y los datos de la muestra...</p>
+          <p class="loading-sub">Esto puede tomar 20–40 segundos (doble análisis para mayor precisión)</p>
           <div class="ai-dots">
             <span></span><span></span><span></span>
           </div>
@@ -224,11 +222,37 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               La IA no está disponible. Resultado aproximado basado en síntomas — <strong>no analiza la imagen</strong>. Contacta al administrador.
             </div>
-            <h2 class="enfermedad-nombre">{{ resultadoGemini.diagnostico_principal.enfermedad }}</h2>
+            <div class="enfermedad-titulo-row">
+              <h2 class="enfermedad-nombre">{{ resultadoGemini.diagnostico_principal.enfermedad }}</h2>
+              <span class="prob-badge" *ngIf="resultadoGemini.diagnostico_principal.probabilidad">
+                {{ resultadoGemini.diagnostico_principal.probabilidad }}
+              </span>
+            </div>
             <em class="nombre-cientifico" *ngIf="resultadoGemini.diagnostico_principal.nombre_cientifico">
               {{ resultadoGemini.diagnostico_principal.nombre_cientifico }}
             </em>
             <p class="enfermedad-desc">{{ resultadoGemini.diagnostico_principal.descripcion }}</p>
+          </div>
+        </div>
+
+        <!-- S1c: Probabilidad por enfermedad (ranking principal + diferenciales) -->
+        <div class="card probabilidades-card" *ngIf="!esCultivoSano && probabilidades.length">
+          <h3 class="card-title">Probabilidad por enfermedad</h3>
+          <p class="prob-ayuda">El análisis no es 100% certero. Estas son las enfermedades más probables según la imagen:</p>
+          <div class="prob-list">
+            <div class="prob-row" *ngFor="let p of probabilidades" [class.prob-row--principal]="p.principal">
+              <div class="prob-row-head">
+                <span class="prob-row-nombre">
+                  {{ p.enfermedad }}
+                  <span class="prob-row-tag" *ngIf="p.principal">Principal</span>
+                </span>
+                <span class="prob-row-pct">{{ p.probabilidad || (p.valor + '%') }}</span>
+              </div>
+              <div class="prob-bar-track">
+                <div class="prob-bar-fill" [class.prob-bar-fill--principal]="p.principal"
+                     [style.width.%]="p.valor"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -363,12 +387,6 @@
         <!-- Regenerar y notas -->
         <div class="card regen-card">
           <div class="regen-content">
-            <div>
-              <span class="modelo-info">Modelo: {{ diagnostico?.modelo_ia || 'Gemini IA' }}</span>
-              <span class="fecha-analisis" *ngIf="diagnostico?.fecha_analisis">
-                · {{ diagnostico!.fecha_analisis | date:'dd/MM/yyyy HH:mm' }}
-              </span>
-            </div>
             <button class="btn-outline-regen" (click)="regenerarDiagnosticoIA()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
               Segunda opinión

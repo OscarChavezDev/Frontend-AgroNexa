@@ -177,10 +177,25 @@
             <div class="form-group">
               <label for="reg-correo">Correo electrónico <span class="req">*</span></label>
               <input id="reg-correo" type="email" formControlName="correo" placeholder="correo@ejemplo.com"
-                [class.error]="f['correo'].invalid && f['correo'].touched" autocomplete="email">
-              @if (f['correo'].invalid && f['correo'].touched) {
+                [class.error]="f['correo'].invalid && f['correo'].touched"
+                [class.valid]="correoDisponible" autocomplete="email">
+
+              @if (correoVerificando) {
+                <span class="field-checking">
+                  <span class="spinner-inline"></span> Verificando disponibilidad…
+                </span>
+              } @else if (f['correo'].hasError('taken')) {
+                <span class="field-error">
+                  Este correo ya está registrado. Usa otro o <a routerLink="/login">inicia sesión</a>.
+                </span>
+              } @else if (f['correo'].invalid && f['correo'].touched) {
                 <span class="field-error">
                   {{ f['correo'].hasError('required') ? 'Requerido' : 'Correo inválido' }}
+                </span>
+              } @else if (correoDisponible) {
+                <span class="field-ok">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Correo disponible
                 </span>
               }
             </div>

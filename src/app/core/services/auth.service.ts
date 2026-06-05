@@ -44,6 +44,12 @@ export class AuthService {
     return this.api.post<ApiResponse<RegisterResponse>>(endpoint.AUTH_REGISTER, data);
   }
 
+  // Verifica si un correo está disponible para registrarse (validación en vivo)
+  checkEmail(correo: string): Observable<ApiResponse<{ correo: string; disponible: boolean }>> {
+    const path = `${endpoint.AUTH_CHECK_EMAIL}?correo=${encodeURIComponent(correo)}`;
+    return this.api.get<ApiResponse<{ correo: string; disponible: boolean }>>(path);
+  }
+
   // El backend devuelve { token, rol, plan } — luego llama /me para obtener el usuario completo
   login(data: LoginRequest): Observable<ApiResponse<User>> {
     return this.api.post<ApiResponse<LoginResponse>>(endpoint.AUTH_LOGIN, data).pipe(
