@@ -467,6 +467,10 @@
     align-items: stretch;
   }
 
+  .search-box {
+    flex-basis: auto;
+  }
+
   .rec-card__status {
     align-items: flex-start;
   }

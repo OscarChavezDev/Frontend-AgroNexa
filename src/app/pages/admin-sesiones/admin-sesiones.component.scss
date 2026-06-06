@@ -393,13 +393,14 @@
   background: rgba(15, 23, 42, 0.5);
   border: 1px solid rgba(51, 65, 85, 0.6);
   border-radius: 16px;
-  overflow: hidden;
+  overflow-x: auto;
   width: 100%;
   box-sizing: border-box;
 }
 
 .sesiones-table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 0.875rem;
@@ -438,7 +439,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  min-width: 0;
+  min-width: 150px;
 }
 
 .user-avatar {
@@ -461,7 +462,7 @@
   font-weight: 500;
   color: #e2e8f0;
   white-space: normal;
-  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* ── Badges ── */
@@ -480,12 +481,6 @@
 }
 
 .td-fecha { white-space: nowrap; }
-.td-correo {
-  color: #64748b;
-  font-size: 0.82rem;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
 
 .fecha-value {
   display: block;
@@ -637,7 +632,7 @@
   .filter-row--search,
   .filter-actions,
   .pagination { width: 100%; }
-  .td-correo, .td-motivo { display: none; }
+  .td-motivo { display: none; }
   .date-input { min-width: 130px; }
   .sesiones-table {
     table-layout: auto;
