@@ -91,11 +91,11 @@
                     {{ diagnostico?.modelo_ia?.includes('llama') ? 'Groq IA' : 'IA' }}
                   </span>
                   <span class="confianza-badge confianza-badge--green">
-                    Confianza {{ resultadoGemini?.diagnostico_principal?.confianza | uppercase }}
+                    Confianza {{ resultadoGemini.diagnostico_principal.confianza | uppercase }}
                   </span>
                 </div>
                 <h2 class="sano-titulo">Tu cultivo luce saludable</h2>
-                <p class="sano-desc">{{ resultadoGemini?.diagnostico_principal?.descripcion }}</p>
+                <p class="sano-desc">{{ resultadoGemini.diagnostico_principal.descripcion }}</p>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@
                   {{ diagnostico?.modelo_ia === 'reglas-locales' ? 'Análisis local' : (diagnostico?.modelo_ia?.includes('llama') ? 'Groq IA' : 'IA') }}
                 </span>
                 <span class="confianza-badge confianza-badge--{{ confianzaClass }}">
-                  Confianza {{ resultadoGemini?.diagnostico_principal?.confianza | uppercase }}
+                  Confianza {{ resultadoGemini.diagnostico_principal.confianza | uppercase }}
                 </span>
               </div>
               <div class="fallback-aviso" *ngIf="diagnostico?.modelo_ia === 'reglas-locales'">
@@ -117,15 +117,15 @@
                 La IA no está disponible. Resultado aproximado basado en síntomas — <strong>no analiza la imagen</strong>. Contacta al administrador.
               </div>
               <div class="enfermedad-titulo-row">
-                <h2 class="enfermedad-nombre">{{ resultadoGemini?.diagnostico_principal?.enfermedad }}</h2>
-                <span class="prob-badge" *ngIf="resultadoGemini?.diagnostico_principal?.probabilidad">
-                  {{ resultadoGemini?.diagnostico_principal?.probabilidad }}
+                <h2 class="enfermedad-nombre">{{ resultadoGemini.diagnostico_principal.enfermedad }}</h2>
+                <span class="prob-badge" *ngIf="resultadoGemini.diagnostico_principal.probabilidad">
+                  {{ resultadoGemini.diagnostico_principal.probabilidad }}
                 </span>
               </div>
-              <em class="nombre-cientifico" *ngIf="resultadoGemini?.diagnostico_principal?.nombre_cientifico">
-                {{ resultadoGemini?.diagnostico_principal?.nombre_cientifico }}
+              <em class="nombre-cientifico" *ngIf="resultadoGemini.diagnostico_principal.nombre_cientifico">
+                {{ resultadoGemini.diagnostico_principal.nombre_cientifico }}
               </em>
-              <p class="enfermedad-desc">{{ resultadoGemini?.diagnostico_principal?.descripcion }}</p>
+              <p class="enfermedad-desc">{{ resultadoGemini.diagnostico_principal.descripcion }}</p>
             </div>
           </div>
 
@@ -206,9 +206,9 @@
               <div class="semaforo-bar">
                 <div class="semaforo-track">
                   <div class="semaforo-fill semaforo-fill--{{ severidadClass }}"
-                       [style.width]="resultadoGemini?.severidad?.nivel === 'leve' ? '25%' :
-                                      resultadoGemini?.severidad?.nivel === 'moderado' ? '50%' :
-                                      resultadoGemini?.severidad?.nivel === 'severo' ? '75%' : '100%'">
+                       [style.width]="resultadoGemini.severidad.nivel === 'leve' ? '25%' :
+                                      resultadoGemini.severidad.nivel === 'moderado' ? '50%' :
+                                      resultadoGemini.severidad.nivel === 'severo' ? '75%' : '100%'">
                   </div>
                 </div>
                 <div class="semaforo-labels">
@@ -218,15 +218,15 @@
               <div class="severidad-meta">
                 <div class="sev-item">
                   <span class="sev-label">Nivel</span>
-                  <span class="sev-value sev-nivel--{{ severidadClass }}">{{ resultadoGemini?.severidad?.nivel | titlecase }}</span>
+                  <span class="sev-value sev-nivel--{{ severidadClass }}">{{ resultadoGemini.severidad.nivel | titlecase }}</span>
                 </div>
                 <div class="sev-item">
                   <span class="sev-label">Área afectada</span>
-                  <span class="sev-value">{{ resultadoGemini?.severidad?.porcentaje_afectacion }}</span>
+                  <span class="sev-value">{{ resultadoGemini.severidad.porcentaje_afectacion }}</span>
                 </div>
                 <div class="sev-item">
                   <span class="sev-label">Etapa</span>
-                  <span class="sev-value">{{ resultadoGemini?.severidad?.etapa | titlecase }}</span>
+                  <span class="sev-value">{{ resultadoGemini.severidad.etapa | titlecase }}</span>
                 </div>
               </div>
             </div>
@@ -271,7 +271,7 @@
               </ul>
               <p class="rec-monitoreo" *ngIf="pestanaRec === 'monitoreo'">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span>{{ resultadoGemini?.recomendaciones?.monitoreo }}</span>
+                <span>{{ resultadoGemini.recomendaciones.monitoreo }}</span>
               </p>
             </div>
           </div>

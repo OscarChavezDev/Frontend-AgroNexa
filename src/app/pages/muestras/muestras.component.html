@@ -330,109 +330,40 @@
         {{ getNombreParcela(m.parcelaId) }}
       </span>
     </div>
-    <!-- Grid de tarjetas -->
-    <div class="muestras-grid" *ngIf="!loading && muestrasPaginadas.length > 0">
-      <div class="muestra-card" *ngFor="let m of muestrasPaginadas">
 
-        <div class="muestra-card__header">
-          <div class="parte-info">
-            <div class="parte-icon parte-icon--{{ (m.parteAfectada || 'otro') | lowercase }}">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path
-                  d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14" />
-              </svg>
-            </div>
-            <div>
-              <h3>{{ m.parteAfectada | titlecase }}</h3>
-              <span class="fecha-label">{{ m.createdAt | date:'dd MMM yyyy' }}</span>
-            </div>
-          </div>
-          <span class="nivel-badge nivel-badge--{{ nivelClass(m.nivelAfectacion) }}">
-            {{ m.nivelAfectacion || 'leve' }}
-          </span>
-        </div>
-
-        <div class="muestra-card__body">
-          <div class="sintomas-label" *ngIf="m.sintomas?.length">Síntomas detectados:</div>
-          <div class="sintomas-chips" *ngIf="m.sintomas?.length">
-            <span class="sintoma-chip" *ngFor="let s of (m.sintomas || []).slice(0, 2)">{{ s }}</span>
-            <span class="sintoma-chip sintoma-chip--more" *ngIf="(m.sintomas?.length || 0) > 2">
-              +{{ (m.sintomas?.length || 0) - 2 }} más
-            </span>
-          </div>
-          <p class="no-sintomas" *ngIf="!m.sintomas?.length">Sin síntomas registrados</p>
-
-          <div class="estado-row" *ngIf="m.estado">
-            <span class="estado-dot estado-dot--{{ m.estado }}"></span>
-            <span class="estado-text">{{ m.estado | titlecase }}</span>
-          </div>
-        </div>
-
-        <div class="muestra-card__actions">
-          <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            Ver detalle
-          </a>
-          <button class="btn-danger-sm" (click)="eliminar(m.id!)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-            </svg>
-            Eliminar
-          </button>
-        </div>
+    <div class="muestra-card__body">
+      <div class="sintomas-label" *ngIf="m.sintomas?.length">Síntomas detectados:</div>
+      <div class="sintomas-chips" *ngIf="m.sintomas?.length">
+        <span class="sintoma-chip" *ngFor="let s of (m.sintomas || []).slice(0, 2)">{{ s }}</span>
+        <span class="sintoma-chip sintoma-chip--more" *ngIf="(m.sintomas?.length || 0) > 2">
+          +{{ (m.sintomas?.length || 0) - 2 }} más
+        </span>
       </div>
-</ng-template>
+      <p class="no-sintomas" *ngIf="!m.sintomas?.length">Sin síntomas registrados</p>
 
-<div class="muestra-card__actions">
-  <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-    Ver diagnóstico
-  </a>
-  <button class="btn-danger-sm" (click)="eliminar(m.id!)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-    </svg>
-    Eliminar
-  </button>
-</div>
-</div>
-</div>
+      <div class="estado-row" *ngIf="m.estado">
+        <span class="estado-dot estado-dot--{{ m.estado }}"></span>
+        <span class="estado-text">{{ m.estado | titlecase }}</span>
+      </div>
+    </div>
 
-<!-- Paginación -->
-<div class="pagination-bar" *ngIf="!loading && totalPaginas > 1">
-  <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ muestrasFiltradas.length }}</span>
-  <div class="page-controls">
-    <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" title="Anterior">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-        stroke-linecap="round">
-        <polyline points="15 18 9 12 15 6" />
-      </svg>
-    </button>
-    <ng-container *ngFor="let p of paginas">
-      <span *ngIf="p === null" class="page-ellipsis">…</span>
-      <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p
-        }}</button>
-    </ng-container>
-    <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)"
-      title="Siguiente">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-        stroke-linecap="round">
-        <polyline points="9 18 15 12 9 6" />
-      </svg>
-    </button>
+    <div class="muestra-card__actions">
+      <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+        Ver detalle
+      </a>
+      <button class="btn-danger-sm" (click)="eliminar(m.id!)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+        </svg>
+        Eliminar
+      </button>
+    </div>
   </div>
-</div>
-</div>
+</ng-template>
