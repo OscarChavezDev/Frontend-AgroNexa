@@ -41,19 +41,31 @@
   </ng-container>
 
   <!-- ══ PASOS DE FORMULARIO (tarjeta fija, sin oscurecer) ══ -->
-  <div *ngIf="!isModal && !currentStep.targetSelector" class="ob-guide-card">
-    <div class="ob-card-header">
-      <span class="ob-tt-brand"><span class="ob-tt-dot"></span>AgroNexa</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="ob-tt-progress">{{ progressLabel }}</span>
-        <button class="ob-btn-close" (click)="onSkip()">×</button>
+  <ng-container *ngIf="!isModal && !currentStep.targetSelector">
+
+    <!-- Tarjeta guía: se oculta mientras el usuario rellena un campo -->
+    <div *ngIf="!formFocused" class="ob-guide-card">
+      <div class="ob-card-header">
+        <span class="ob-tt-brand"><span class="ob-tt-dot"></span>AgroNexa</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="ob-tt-progress">{{ progressLabel }}</span>
+          <button class="ob-btn-close" (click)="onSkip()">×</button>
+        </div>
+      </div>
+      <div class="ob-card-body">
+        <p class="ob-card-title">{{ currentStep.title }}</p>
+        <p class="ob-card-desc">{{ currentStep.description }}</p>
       </div>
     </div>
-    <div class="ob-card-body">
-      <p class="ob-card-title">{{ currentStep.title }}</p>
-      <p class="ob-card-desc">{{ currentStep.description }}</p>
-    </div>
-  </div>
+
+    <!-- Mini-pastilla: aparece al escribir; no estorba y reabre la guía -->
+    <button *ngIf="formFocused" class="ob-guide-mini" (click)="showGuide()" type="button">
+      <span class="ob-tt-dot"></span>
+      Ver guía
+      <span class="ob-guide-mini-prog" *ngIf="progressLabel">{{ progressLabel }}</span>
+    </button>
+
+  </ng-container>
 
   <!-- ══ MODAL CENTRAL (bienvenida / completado) ══ -->
   <div *ngIf="isModal" class="ob-backdrop">

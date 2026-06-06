@@ -557,6 +557,16 @@
 
 .pagination-info { font-size: 0.8rem; color: #475569; }
 
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 500;
+  select { width: auto; padding: 4px 10px; font-size: 0.8rem; min-width: unset; }
+}
+
 .pagination-controls {
   display: flex;
   align-items: center;

@@ -4,6 +4,7 @@ import { catchError, of } from 'rxjs';
 import { MuestrasService } from '../../core/services/muestras.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { Muestra } from '../../core/models/muestra.model';
+import { Parcela } from '../../core/models/parcela.model';
 
 @Component({
   selector: 'app-muestras',
@@ -13,13 +14,20 @@ import { Muestra } from '../../core/models/muestra.model';
 })
 export class MuestrasComponent implements OnInit, OnDestroy {
   muestras: Muestra[] = [];
+  parcelas: Parcela[] = [];
   tieneParcelas: boolean | null = null;
   loading = true;
   errorMsg = '';
+
+  // Filtros
   filtroNivel = '';
+  filtroParcela = '';          // '' = todas las parcelas
+
+  // Vista
+  vistaAgrupada = false;       // false = lista plana, true = agrupada por parcela
 
   paginaActual = 1;
-  pageSize = 6;
+  pageSize = 10;
 
   private sub?: Subscription;
   private timeout?: ReturnType<typeof setTimeout>;
@@ -60,7 +68,8 @@ export class MuestrasComponent implements OnInit, OnDestroy {
         this.muestras = ((muestras as any).data || []).sort((a: Muestra, b: Muestra) =>
           new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
         );
-        this.tieneParcelas = ((parcelas as any).data || []).length > 0;
+        this.parcelas = (parcelas as any).data || [];
+        this.tieneParcelas = this.parcelas.length > 0;
         this.paginaActual = 1;
         this.loading = false;
         this.cdr.detectChanges();
@@ -74,25 +83,69 @@ export class MuestrasComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── Filtros ──────────────────────────────────────────────────────────────────
+
   setFiltro(nivel: string) {
     this.filtroNivel = nivel;
     this.paginaActual = 1;
     this.cdr.detectChanges();
   }
 
-  contarPorNivel(nivel: string): number {
-    return this.muestras.filter(m => (m.nivelAfectacion || 'leve') === nivel).length;
+  setFiltroParcela(parcelaId: string) {
+    this.filtroParcela = parcelaId;
+    this.paginaActual = 1;
+    this.cdr.detectChanges();
   }
 
+  toggleVista() {
+    this.vistaAgrupada = !this.vistaAgrupada;
+    this.cdr.detectChanges();
+  }
+
+  contarPorNivel(nivel: string): number {
+    return this.muestras.filter(m =>
+      (m.nivelAfectacion || 'leve') === nivel &&
+      (!this.filtroParcela || m.parcelaId === this.filtroParcela)
+    ).length;
+  }
+
+  contarPorParcela(parcelaId: string): number {
+    return this.muestras.filter(m => m.parcelaId === parcelaId).length;
+  }
+
+  getNombreParcela(parcelaId: string): string {
+    return this.parcelas.find(p => p.id === parcelaId)?.nombre || 'Parcela desconocida';
+  }
+
+  // ── Computed ─────────────────────────────────────────────────────────────────
+
   get muestrasFiltradas(): Muestra[] {
-    if (!this.filtroNivel) return this.muestras;
-    return this.muestras.filter(m => (m.nivelAfectacion || 'leve') === this.filtroNivel);
+    return this.muestras.filter(m => {
+      const nivelOk = !this.filtroNivel || (m.nivelAfectacion || 'leve') === this.filtroNivel;
+      const parcelaOk = !this.filtroParcela || m.parcelaId === this.filtroParcela;
+      return nivelOk && parcelaOk;
+    });
   }
 
   get muestrasPaginadas(): Muestra[] {
     const size = +this.pageSize;
     const inicio = (this.paginaActual - 1) * size;
     return this.muestrasFiltradas.slice(inicio, inicio + size);
+  }
+
+  /** Agrupa las muestras filtradas por parcela */
+  get gruposPorParcela(): { parcela: Parcela | null; nombre: string; muestras: Muestra[] }[] {
+    const grupos = new Map<string, Muestra[]>();
+    for (const m of this.muestrasFiltradas) {
+      const pid = m.parcelaId || '_sin_parcela';
+      if (!grupos.has(pid)) grupos.set(pid, []);
+      grupos.get(pid)!.push(m);
+    }
+    return Array.from(grupos.entries()).map(([pid, ms]) => ({
+      parcela: this.parcelas.find(p => p.id === pid) ?? null,
+      nombre: this.parcelas.find(p => p.id === pid)?.nombre ?? 'Sin parcela',
+      muestras: ms
+    }));
   }
 
   get totalPaginas(): number { return Math.ceil(this.muestrasFiltradas.length / +this.pageSize); }

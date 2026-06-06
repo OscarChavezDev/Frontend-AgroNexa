@@ -43,6 +43,15 @@
           <span class="nav-label">Muestras</span>
         </a>
 
+        <button type="button" class="nav-item nav-item--btn" (click)="abrirFeedback()">
+          <span class="nav-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dejar recomendación</span>
+        </button>
+
         <a routerLink="/planes" routerLinkActive="active" class="nav-item">
           <span class="nav-icon" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -119,13 +128,8 @@
         </svg>
       </a>
 
-      <!-- Botón de recomendación (visible desde cualquier página) -->
-      <button id="onboarding-btn-feedback" class="btn-feedback" (click)="abrirFeedback()" *ngIf="!isAdmin" aria-label="Dejar una recomendación">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-        </svg>
-        Deja tu recomendación
-      </button>
+
+
 
       <button class="btn-logout" (click)="logout()" aria-label="Cerrar sesión">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -148,7 +152,8 @@
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
-          Plan {{ currentUser.plan | titlecase }}
+          <span class="plan-badge-label">Plan</span>
+          <span class="plan-badge-value">{{ currentUser.plan | titlecase }}</span>
         </span>
       </div>
     </header>

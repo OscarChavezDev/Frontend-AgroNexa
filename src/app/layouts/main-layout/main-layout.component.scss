@@ -165,6 +165,16 @@
   margin-top: 4px;
 }
 
+// Botón que se ve como enlace de navegación (abre modal, no navega)
+.nav-item--btn {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
 // ── Admin nav ─────────────────────────────────────────────────────────────────
 .nav-item--admin {
   &.active {
@@ -582,4 +592,5 @@
   .topbar { height: 52px; }
   .content { padding: 14px 12px; }
   .plan-badge { font-size: 11px; padding: 4px 10px; }
+  .plan-badge-value { display: none; }
 }

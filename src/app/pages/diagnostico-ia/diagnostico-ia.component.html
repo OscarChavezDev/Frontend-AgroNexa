@@ -1,0 +1,333 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Diagnóstico con IA</h1>
+      <p class="subtitle" *ngIf="muestra">
+        {{ muestra.parteAfectada | titlecase }} · {{ muestra.createdAt | date:'dd/MM/yyyy HH:mm' }}
+      </p>
+    </div>
+    <button class="btn-outline" (click)="volverAMuestra()">← Volver a la muestra</button>
+  </div>
+
+  <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
+  <div class="error-banner" *ngIf="errorMsg && !analizandoIA">{{ errorMsg }}</div>
+
+  <div *ngIf="!loading" class="diagnostico-page-layout">
+
+    <!-- ─── Estado: Analizando ─────────────────────────────────────────── -->
+    <div class="card ai-loading-card" *ngIf="analizandoIA">
+      <div class="ai-loading-content">
+        <div class="ai-pulse-ring">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10"/>
+            <path d="M12 6v6l4 2"/>
+            <circle cx="19" cy="5" r="3" fill="#52b788" stroke="none"/>
+          </svg>
+        </div>
+        <h3>Analizando con IA</h3>
+        <p>La IA está examinando la imagen en detalle y los datos de la muestra...</p>
+        <p class="loading-sub">Esto puede tomar 20–40 segundos (doble análisis para mayor precisión)</p>
+        <div class="ai-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Estado: Sin diagnóstico ───────────────────────────────────── -->
+    <div class="card diagnostico-empty-card" *ngIf="!analizandoIA && !diagnostico">
+      <div class="diagnostico-empty">
+        <span class="empty-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+        </span>
+        <h3>Sin diagnóstico aún</h3>
+        <p>Genera un diagnóstico con inteligencia artificial para detectar enfermedades en el cultivo de cacao.</p>
+        <button class="btn-primary btn-ia" id="btn-generar-diagnostico" (click)="generarDiagnosticoIA()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Generar diagnóstico
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── Estado: Error ──────────────────────────────────────────────── -->
+    <div class="card error-card" *ngIf="!analizandoIA && diagnostico && esError">
+      <div class="error-content">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <h3>Error en el análisis</h3>
+        <p>No se pudo completar el análisis con IA. Presiona "Reintentar" para intentar de nuevo.</p>
+        <button class="btn-primary" (click)="regenerarDiagnosticoIA()">Reintentar análisis</button>
+      </div>
+    </div>
+
+    <!-- ─── Diagnóstico completo ────────────────────────────────────────── -->
+    <ng-container *ngIf="!analizandoIA && esGemini && resultadoGemini">
+
+      <!-- Banner especialista -->
+      <div class="especialista-banner" *ngIf="resultadoGemini.requiere_asistencia_tecnica">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Se recomienda consultar con un agrónomo especialista para este caso</span>
+      </div>
+
+      <div class="diag-grid">
+
+        <!-- ── Columna principal ── -->
+        <div class="diag-col-main">
+
+          <!-- S1a: Cultivo saludable -->
+          <div class="card diag-sano-card" *ngIf="esCultivoSano">
+            <div class="sano-header">
+              <div class="sano-icono">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <div class="sano-texto">
+                <div class="sano-badges">
+                  <span class="modelo-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    {{ diagnostico?.modelo_ia?.includes('llama') ? 'Groq IA' : 'IA' }}
+                  </span>
+                  <span class="confianza-badge confianza-badge--green">
+                    Confianza {{ resultadoGemini?.diagnostico_principal?.confianza | uppercase }}
+                  </span>
+                </div>
+                <h2 class="sano-titulo">Tu cultivo luce saludable</h2>
+                <p class="sano-desc">{{ resultadoGemini?.diagnostico_principal?.descripcion }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- S1b: Diagnóstico con enfermedad -->
+          <div class="card diag-principal-card" *ngIf="!esCultivoSano">
+            <div class="diag-header">
+              <div class="diag-header-top">
+                <span class="modelo-badge" [class.modelo-badge--local]="diagnostico?.modelo_ia === 'reglas-locales'">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  {{ diagnostico?.modelo_ia === 'reglas-locales' ? 'Análisis local' : (diagnostico?.modelo_ia?.includes('llama') ? 'Groq IA' : 'IA') }}
+                </span>
+                <span class="confianza-badge confianza-badge--{{ confianzaClass }}">
+                  Confianza {{ resultadoGemini?.diagnostico_principal?.confianza | uppercase }}
+                </span>
+              </div>
+              <div class="fallback-aviso" *ngIf="diagnostico?.modelo_ia === 'reglas-locales'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                La IA no está disponible. Resultado aproximado basado en síntomas — <strong>no analiza la imagen</strong>. Contacta al administrador.
+              </div>
+              <div class="enfermedad-titulo-row">
+                <h2 class="enfermedad-nombre">{{ resultadoGemini?.diagnostico_principal?.enfermedad }}</h2>
+                <span class="prob-badge" *ngIf="resultadoGemini?.diagnostico_principal?.probabilidad">
+                  {{ resultadoGemini?.diagnostico_principal?.probabilidad }}
+                </span>
+              </div>
+              <em class="nombre-cientifico" *ngIf="resultadoGemini?.diagnostico_principal?.nombre_cientifico">
+                {{ resultadoGemini?.diagnostico_principal?.nombre_cientifico }}
+              </em>
+              <p class="enfermedad-desc">{{ resultadoGemini?.diagnostico_principal?.descripcion }}</p>
+            </div>
+          </div>
+
+          <!-- S1c: Probabilidades -->
+          <div class="card probabilidades-card" *ngIf="!esCultivoSano && probabilidades.length">
+            <h3 class="card-title">Probabilidad por enfermedad</h3>
+            <p class="prob-ayuda">El análisis no es 100% certero. Estas son las enfermedades más probables según la imagen:</p>
+            <div class="prob-list">
+              <div class="prob-row" *ngFor="let p of probabilidades" [class.prob-row--principal]="p.principal">
+                <div class="prob-row-head">
+                  <span class="prob-row-nombre">
+                    {{ p.enfermedad }}
+                    <span class="prob-row-tag" *ngIf="p.principal">Principal</span>
+                  </span>
+                  <span class="prob-row-pct">{{ p.probabilidad || (p.valor + '%') }}</span>
+                </div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill" [class.prob-bar-fill--principal]="p.principal"
+                       [style.width.%]="p.valor"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- S3: Síntomas detectados -->
+          <div class="card sintomas-ia-card" *ngIf="resultadoGemini.sintomas_detectados.length">
+            <h3 class="card-title">Síntomas detectados</h3>
+            <ul class="sintomas-ia-list">
+              <li *ngFor="let s of resultadoGemini.sintomas_detectados">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ s }}
+              </li>
+            </ul>
+            <div class="factores-riesgo" *ngIf="resultadoGemini.factores_riesgo.length">
+              <span class="detail-label" style="margin-top:12px;display:block">Factores de riesgo</span>
+              <ul class="factores-list">
+                <li *ngFor="let f of resultadoGemini.factores_riesgo">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                  {{ f }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- S4: Diagnósticos diferenciales -->
+          <div class="card diferenciales-card" *ngIf="resultadoGemini.diagnosticos_diferenciales.length">
+            <button class="diferenciales-toggle" (click)="mostrarDiferenciales = !mostrarDiferenciales">
+              <h3 class="card-title" style="margin:0;border:none;padding:0">
+                Diagnósticos diferenciales ({{ resultadoGemini.diagnosticos_diferenciales.length }})
+              </h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round"
+                   [style.transform]="mostrarDiferenciales ? 'rotate(180deg)' : 'rotate(0deg)'"
+                   style="transition: transform 0.25s; flex-shrink:0">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="diferenciales-list" *ngIf="mostrarDiferenciales">
+              <div class="diferencial-item" *ngFor="let d of resultadoGemini.diagnosticos_diferenciales">
+                <div class="dif-header">
+                  <span class="dif-nombre">{{ d.enfermedad }}</span>
+                  <span class="dif-prob">{{ d.probabilidad }}</span>
+                </div>
+                <p class="dif-razon">{{ d.razon }}</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Columna lateral ── -->
+        <div class="diag-col-side">
+
+          <!-- S2: Severidad -->
+          <div class="card severidad-card">
+            <h3 class="card-title">Severidad</h3>
+            <div class="severidad-content">
+              <div class="semaforo-bar">
+                <div class="semaforo-track">
+                  <div class="semaforo-fill semaforo-fill--{{ severidadClass }}"
+                       [style.width]="resultadoGemini?.severidad?.nivel === 'leve' ? '25%' :
+                                      resultadoGemini?.severidad?.nivel === 'moderado' ? '50%' :
+                                      resultadoGemini?.severidad?.nivel === 'severo' ? '75%' : '100%'">
+                  </div>
+                </div>
+                <div class="semaforo-labels">
+                  <span>Leve</span><span>Moderado</span><span>Severo</span><span>Crítico</span>
+                </div>
+              </div>
+              <div class="severidad-meta">
+                <div class="sev-item">
+                  <span class="sev-label">Nivel</span>
+                  <span class="sev-value sev-nivel--{{ severidadClass }}">{{ resultadoGemini?.severidad?.nivel | titlecase }}</span>
+                </div>
+                <div class="sev-item">
+                  <span class="sev-label">Área afectada</span>
+                  <span class="sev-value">{{ resultadoGemini?.severidad?.porcentaje_afectacion }}</span>
+                </div>
+                <div class="sev-item">
+                  <span class="sev-label">Etapa</span>
+                  <span class="sev-value">{{ resultadoGemini?.severidad?.etapa | titlecase }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- S5: Recomendaciones -->
+          <div class="card recomendaciones-card">
+            <h3 class="card-title">Recomendaciones</h3>
+            <div class="rec-tabs">
+              <button class="rec-tab" [class.active]="pestanaRec === 'inmediatas'" (click)="pestanaRec = 'inmediatas'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Inmediatas
+              </button>
+              <button class="rec-tab" [class.active]="pestanaRec === 'tratamiento'" (click)="pestanaRec = 'tratamiento'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5"/></svg>
+                Tratamiento
+              </button>
+              <button class="rec-tab" [class.active]="pestanaRec === 'prevencion'" (click)="pestanaRec = 'prevencion'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Prevención
+              </button>
+              <button class="rec-tab" [class.active]="pestanaRec === 'monitoreo'" (click)="pestanaRec = 'monitoreo'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Monitoreo
+              </button>
+            </div>
+            <div class="rec-content">
+              <ul class="rec-list" *ngIf="pestanaRec === 'inmediatas'">
+                <li *ngFor="let r of resultadoGemini.recomendaciones.acciones_inmediatas">
+                  <span class="rec-icon rec-icon--urgente">!</span><span class="rec-text">{{ r }}</span>
+                </li>
+              </ul>
+              <ul class="rec-list" *ngIf="pestanaRec === 'tratamiento'">
+                <li *ngFor="let r of resultadoGemini.recomendaciones.tratamiento">
+                  <span class="rec-icon rec-icon--trat">+</span><span class="rec-text">{{ r }}</span>
+                </li>
+              </ul>
+              <ul class="rec-list" *ngIf="pestanaRec === 'prevencion'">
+                <li *ngFor="let r of resultadoGemini.recomendaciones.prevencion">
+                  <span class="rec-icon rec-icon--prev">✓</span><span class="rec-text">{{ r }}</span>
+                </li>
+              </ul>
+              <p class="rec-monitoreo" *ngIf="pestanaRec === 'monitoreo'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>{{ resultadoGemini?.recomendaciones?.monitoreo }}</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- S6: Aviso legal -->
+          <div class="aviso-legal">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Este diagnóstico es una orientación generada por inteligencia artificial. Para casos severos, consulte con un ingeniero agrónomo o técnico especializado.
+          </div>
+
+          <!-- Regenerar -->
+          <div class="card regen-card">
+            <div class="regen-content">
+              <button class="btn-outline-regen" (click)="regenerarDiagnosticoIA()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Segunda opinión
+              </button>
+            </div>
+            <div class="notas-adicionales" *ngIf="resultadoGemini.notas_adicionales">
+              <span class="detail-label">Notas</span>
+              <p>{{ resultadoGemini.notas_adicionales }}</p>
+            </div>
+          </div>
+
+          <!-- Consultar especialista -->
+          <div class="card especialista-card">
+            <h3 class="card-title">
+              <span class="title-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              Asesoría Profesional
+            </h3>
+            <div *ngIf="!consultaEnviada">
+              <p>¿Deseas una opinión profesional? Solicita la revisión de un ingeniero agrónomo especialista.</p>
+              <button class="btn-primary btn-specialist" [disabled]="solicitandoConsulta" (click)="consultarEspecialista()">
+                <span *ngIf="!solicitandoConsulta">Consultar especialista</span>
+                <span *ngIf="solicitandoConsulta" class="spinner"></span>
+              </button>
+            </div>
+            <div *ngIf="consultaEnviada" class="specialist-success">
+              <span class="success-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </span>
+              <h4>¡Solicitud Enviada!</h4>
+              <p>Un agrónomo especialista revisará esta muestra y se pondrá en contacto contigo.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>

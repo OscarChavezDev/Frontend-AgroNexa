@@ -384,6 +384,16 @@
   font-size: .82rem;
 }
 
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  color: #64748b;
+  font-weight: 500;
+  select { width: auto; padding: 4px 10px; font-size: .82rem; min-width: unset; }
+}
+
 .pagination-controls {
   gap: .4rem;
 }

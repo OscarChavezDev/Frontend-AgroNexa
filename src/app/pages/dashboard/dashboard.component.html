@@ -98,21 +98,7 @@
       </div>
     </div>
 
-    <!-- Plan -->
-    <div class="stat-card stat-card--purple">
-      <div class="stat-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ user?.plan | titlecase }}</span>
-        <span class="stat-label">Plan actual</span>
-        <a routerLink="/planes" class="stat-trend stat-upgrade">
-          Ver planes &rarr;
-        </a>
-      </div>
-    </div>
+
 
   </div>
 
@@ -207,8 +193,21 @@
         <div class="item-list">
           @for (m of ultimasMuestras; track m.id) {
             <a [routerLink]="['/muestras', m.id]" class="item-row">
-              <div class="item-icon">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <div class="item-icon item-icon--{{ (m.parteAfectada || 'otro') | lowercase }}" [ngSwitch]="(m.parteAfectada || 'otro') | lowercase">
+                <!-- Fruto -->
+                <img *ngSwitchCase="'fruto'" src="/icons/fruto.svg" width="20" height="20" alt="Fruto">
+                <!-- Hoja -->
+                <img *ngSwitchCase="'hoja'" src="/icons/hoja.svg" width="20" height="20" alt="Hoja">
+                <!-- Tallo -->
+                <img *ngSwitchCase="'tallo'" src="/icons/tallo.svg" width="20" height="20" alt="Tallo">
+                <!-- Raíz -->
+                <img *ngSwitchCase="'raíz'" src="/icons/raiz.svg" width="20" height="20" alt="Raíz">
+                <img *ngSwitchCase="'raiz'" src="/icons/raiz.svg" width="20" height="20" alt="Raíz">
+                <!-- Flor -->
+                <img *ngSwitchCase="'flor'" src="/icons/flor.svg" width="20" height="20" alt="Flor">
+                <img *ngSwitchCase="'planta_completa'" src="/icons/planta-completa.svg" width="20" height="20" alt="Planta completa">
+                <!-- Default (otro) -->
+                <svg *ngSwitchDefault width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
                 </svg>
               </div>
