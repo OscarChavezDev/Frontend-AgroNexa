@@ -1,6 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SuscripcionesService } from '../../core/services/suscripciones.service';
 import { Plan, Suscripcion } from '../../core/models/suscripcion.model';
+import { MensajesService } from '../../core/services/mensajes.service';
+import { PopupService } from '../../shared/services/popup.service';
+
 
 @Component({
   selector: 'app-planes',
@@ -11,16 +14,25 @@ import { Plan, Suscripcion } from '../../core/models/suscripcion.model';
 export class PlanesComponent implements OnInit {
   planes: Plan[] = [];
   suscripcionActual: Suscripcion | null = null;
+  planesInteresados: Set<string> = new Set();
   loading = true;
   procesando = '';
   mensaje = '';
 
   constructor(
     private suscripcionesService: SuscripcionesService,
+    private mensajesService: MensajesService,
+    private popupService: PopupService,
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() { this.cargar(); }
+  ngOnInit() {
+    this.cargar();
+    const guardados = localStorage.getItem('planes_interesados');
+    if (guardados) {
+      this.planesInteresados = new Set(JSON.parse(guardados));
+    }
+  }
 
   cargar() {
     this.loading = true;
@@ -47,26 +59,49 @@ export class PlanesComponent implements OnInit {
   }
 
   suscribirse(plan: Plan) {
+    if (plan.codigo === 'asociacion' || plan.codigo === 'institucional') {
+      this.procesando = plan.codigo;
+      this.cdr.detectChanges();
+      
+      const texto = `Hola, estoy interesado en el plan ${plan.nombre}. Me gustaría recibir más información.`;
+      
+      this.mensajesService.enviar(texto).subscribe({
+        next: () => {
+          this.planesInteresados.add(plan.codigo);
+          localStorage.setItem('planes_interesados', JSON.stringify(Array.from(this.planesInteresados)));
+          this.popupService.success('Mensaje enviado', 'Pronto nos pondremos en contacto contigo.');
+          this.procesando = '';
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.popupService.error('Error', 'No se pudo enviar el mensaje. Intenta más tarde.');
+          this.procesando = '';
+          this.cdr.detectChanges();
+        }
+      });
+      return;
+    }
+
     if (!confirm(`¿Suscribirse al plan ${plan.nombre}?`)) return;
     this.procesando = plan.codigo;
     this.cdr.detectChanges();
     this.suscripcionesService.suscribirse(plan.codigo).subscribe({
       next: (res) => {
         this.suscripcionActual = res.data || null;
-        this.mensaje = `Plan ${plan.nombre} activado correctamente`;
+        this.popupService.success('¡Plan Activado!', `El plan ${plan.nombre} se activó correctamente.`);
         this.procesando = '';
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.mensaje = '';
-          this.cdr.detectChanges();
-        }, 3000);
       },
       error: (err) => {
-        this.mensaje = err.error?.message || 'Error al cambiar plan';
+        this.popupService.error('Error', err.error?.message || 'Error al cambiar plan');
         this.procesando = '';
         this.cdr.detectChanges();
       }
     });
+  }
+
+  esInteresado(codigo: string): boolean {
+    return this.planesInteresados.has(codigo);
   }
 
   esPlanActual(codigo: string): boolean {

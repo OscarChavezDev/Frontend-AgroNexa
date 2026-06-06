@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CULTIVO_OPTIONS, CultivoOption, normalizeCultivo } from '../../core/constants/cultivos';
 import { ParcelasService } from '../../core/services/parcelas.service';
+import { PopupService } from '../../shared/services/popup.service';
 
 declare var google: any;
 
@@ -34,7 +35,8 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private popupService: PopupService
   ) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
@@ -269,7 +271,10 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     };
     delete (payload as any).otroCultivo;
 
-    const onSuccess = () => this.router.navigate(['/parcelas']);
+    const onSuccess = () => {
+      this.popupService.success('¡Parcela guardada!', 'Los datos de la parcela se registraron con éxito.');
+      this.router.navigate(['/parcelas']);
+    };
     const onError = (error: any) => {
       try {
         this.errorMsg = error.error?.message || 'Error al guardar';

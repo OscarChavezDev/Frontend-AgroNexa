@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { OnboardingService } from '../../core/services/onboarding.service';
+import { PopupService } from '../../shared/services/popup.service';
 
 declare const google: any;
 
@@ -26,7 +27,8 @@ export class LoginComponent implements AfterViewInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private popupService: PopupService
   ) {
     this.form = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
@@ -75,8 +77,10 @@ export class LoginComponent implements AfterViewInit {
           localStorage.setItem('agro_new_registration', 'true');
           this.router.navigate(['/register'], { queryParams: { mode: 'selectRole' } });
         } else if (rol === 'admin') {
+          this.popupService.success('¡Bienvenido!', 'Sesión de administrador iniciada correctamente.');
           this.router.navigate(['/admin']);
         } else {
+          this.popupService.success('¡Bienvenido!', 'Sesión iniciada correctamente.');
           this.onboarding.checkAndStart();
           this.router.navigate(['/dashboard']);
         }
@@ -99,8 +103,10 @@ export class LoginComponent implements AfterViewInit {
           const rol = res.data?.rol;
           this.analyticsService.trackEvent('login', { method: 'email', role: rol });
           if (rol === 'admin') {
+            this.popupService.success('¡Bienvenido!', 'Sesión de administrador iniciada correctamente.');
             this.router.navigate(['/admin']);
           } else {
+            this.popupService.success('¡Bienvenido!', 'Sesión iniciada correctamente.');
             this.onboarding.checkAndStart();
             this.router.navigate(['/dashboard']);
           }

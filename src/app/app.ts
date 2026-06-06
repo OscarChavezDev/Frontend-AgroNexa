@@ -5,7 +5,7 @@ import { AnalyticsService } from './core/services/analytics.service';
 
 @Component({
   selector: 'app-root',
-  template: '<router-outlet></router-outlet>',
+  template: '<router-outlet></router-outlet>\n             <app-popup></app-popup>',
   standalone: false,
   styleUrl: './app.scss'
 })

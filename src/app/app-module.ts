@@ -32,6 +32,7 @@ import { AdminRecomendacionesComponent } from './pages/admin-recomendaciones/adm
 import { LandingComponent } from './pages/landing/landing.component';
 import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overlay.component';
 import { NotificacionesComponent } from './shared/notificaciones/notificaciones.component';
+import { PopupComponent } from './shared/components/popup/popup.component';
 
 @NgModule({
   declarations: [
@@ -57,13 +58,14 @@ import { NotificacionesComponent } from './shared/notificaciones/notificaciones.
     LandingComponent,
     OnboardingOverlayComponent,
     NotificacionesComponent,
+    PopupComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    AppRoutingModule,
+    AppRoutingModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

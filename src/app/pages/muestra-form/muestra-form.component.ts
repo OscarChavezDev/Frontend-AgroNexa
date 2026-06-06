@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { MuestrasService } from '../../core/services/muestras.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { ImagenesService } from '../../core/services/imagenes.service';
+import { PopupService } from '../../shared/services/popup.service';
 import { Parcela } from '../../core/models/parcela.model';
 
 interface ImagenItem {
@@ -95,7 +96,8 @@ export class MuestraFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private zone: NgZone
+    private zone: NgZone,
+    private popupService: PopupService
   ) {
     this.form = this.fb.group({
       parcelaId: ['', Validators.required],
@@ -253,6 +255,7 @@ export class MuestraFormComponent implements OnInit {
       next: (res) => {
         const muestraId = res.data?.id || '';
         if (this.imagenes.length === 0 || !muestraId) {
+          this.popupService.success('¡Muestra registrada!', 'Iniciando diagnóstico con IA...');
           this.router.navigate(['/muestras', muestraId], { queryParams: { creado: 'true' } });
           return;
         }
@@ -261,6 +264,7 @@ export class MuestraFormComponent implements OnInit {
             .pipe(catchError(() => of(null)))
         );
         forkJoin(uploads$).subscribe(() => {
+          this.popupService.success('¡Muestra registrada!', 'Iniciando análisis con IA...');
           this.router.navigate(['/muestras', muestraId], { queryParams: { creado: 'true' } });
         });
       },
