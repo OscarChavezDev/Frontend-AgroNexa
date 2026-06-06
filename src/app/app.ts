@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AnalyticsService } from './core/services/analytics.service';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,8 @@ import { AnalyticsService } from './core/services/analytics.service';
 export class App implements OnInit {
   constructor(
     private router: Router,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private theme: ThemeService   // se instancia y aplica el tema guardado al arrancar
   ) {}
 
   ngOnInit() {

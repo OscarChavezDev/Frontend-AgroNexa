@@ -86,7 +86,7 @@
   font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
-  background: rgba(255,255,255,.07);
+  background: var(--clr-bg-input);
   color: var(--clr-text-muted);
 
   &--gold   { background: rgba(251,191,36,.15); color: #fbbf24; }
@@ -125,7 +125,7 @@
 
 .top-bar {
   height: 4px;
-  background: rgba(255,255,255,.06);
+  background: var(--clr-border-soft);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -241,7 +241,7 @@
 .act-bar-wrap {
   flex: 1;
   height: 8px;
-  background: rgba(255,255,255,.06);
+  background: var(--clr-border-soft);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -365,7 +365,7 @@
   position: absolute;
   left: 0; right: 0;
   height: 1px;
-  background: rgba(255,255,255,.06);
+  background: var(--clr-border);
   transform: translateY(50%);
 
   .grid-val {
@@ -419,7 +419,7 @@
   background: linear-gradient(180deg, #3b82f6, #60a5fa80);
   transition: height .5s cubic-bezier(.4,0,.2,1), background .2s;
 
-  &--zero { background: rgba(255,255,255,.05); min-height: 2px; }
+  &--zero { background: var(--clr-border-soft); min-height: 2px; }
 
   &--peak {
     background: linear-gradient(180deg, #60a5fa, #93c5fd);
@@ -506,7 +506,7 @@
   font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;
-  background: rgba(255,255,255,.06);
+  background: var(--clr-bg-input);
   color: var(--clr-text-muted);
   border: 1px solid var(--clr-border);
 
@@ -546,7 +546,7 @@
 
 .rank-bar {
   height: 5px;
-  background: rgba(255,255,255,.07);
+  background: var(--clr-border-soft);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -676,7 +676,7 @@
 .progress-value {
   font-size: 13px;
   font-weight: 700;
-  color: #ffffff; // ← era var(--clr-brand-700)
+  color: var(--clr-text-primary); // ← era var(--clr-brand-700)
 }
 }
 
@@ -736,7 +736,7 @@
 .metric-value {
   font-size: 14px;
   font-weight: 700;
-  color: #ffffff; // ← era var(--clr-brand-800)
+  color: var(--clr-text-primary); // ← era var(--clr-brand-800)
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
@@ -783,7 +783,7 @@
 .activity-value {
   font-size: 20px;
   font-weight: 800;
-  color: #ffffff; // ← era var(--clr-brand-800)
+  color: var(--clr-text-primary); // ← era var(--clr-brand-800)
   font-family: 'Plus Jakarta Sans', sans-serif;
   line-height: 1.1;
 }

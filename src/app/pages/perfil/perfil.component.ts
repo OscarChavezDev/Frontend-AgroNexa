@@ -129,10 +129,10 @@ export class PerfilComponent implements OnInit {
 
   get rolLabel(): string {
     const map: Record<string, string> = {
-      productor:  '🌾 Productor',
-      asociacion: '🤝 Asociación',
-      institucion:'🏛️ Institución',
-      admin:      '⚙️ Administrador',
+      productor:  'Productor',
+      asociacion: 'Asociación',
+      institucion:'Institución',
+      admin:      'Administrador',
     };
     return map[this.user?.rol || ''] || (this.user?.rol || '');
   }

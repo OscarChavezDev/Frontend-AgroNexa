@@ -84,7 +84,7 @@
   top: 0;
   width: 100%;
   z-index: 100;
-  background-color: rgba(12, 26, 18, 0.75);
+  background-color: var(--clr-bg-topbar);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--clr-border-soft);
@@ -125,6 +125,18 @@
   }
 }
 
+// Marca como botón (footer): vuelve arriba al pulsar
+.brand--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity var(--transition-fast);
+
+  &:hover { opacity: 0.85; }
+}
+
 .nav-links {
   display: flex;
   gap: 32px;
@@ -154,15 +166,36 @@
   gap: 16px;
 }
 
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--clr-bg-input);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--clr-accent);
+    border-color: var(--clr-accent-dim);
+    background: var(--clr-accent-dim);
+  }
+}
+
 // ── BUTTONS ────────────────────────────────────────────────────────────────
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #2d6a4f 0%, #1a3a24 100%);
+  background: var(--btn-primary-grad);
   border: 1px solid rgba(74, 222, 128, 0.25);
-  color: #ecfdf5;
+  color: var(--btn-primary-text);
   padding: 10px 20px;
   font-size: 14.5px;
   font-weight: 600;
@@ -173,12 +206,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   
   &:hover {
-    background: linear-gradient(135deg, #40916c 0%, #2d6a4f 100%);
+    background: var(--btn-primary-grad-hover);
     border-color: rgba(74, 222, 128, 0.4);
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(74, 222, 128, 0.15);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -200,7 +233,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--clr-bg-input);
   border: 1px solid var(--clr-border);
   color: var(--clr-text-secondary);
   padding: 10px 20px;
@@ -210,9 +243,9 @@
   text-decoration: none;
   cursor: pointer;
   transition: all var(--transition-base);
-  
+
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--clr-bg-card-hover);
     border-color: var(--clr-border-strong);
     color: var(--clr-text-primary);
     transform: translateY(-1px);
@@ -228,10 +261,36 @@
   background: none;
   border: none;
   cursor: pointer;
-  
+  white-space: nowrap;
+
   &:hover {
     color: var(--clr-text-primary);
   }
+}
+
+// ── Navbar compacto en móvil ──────────────────────────────────────────────
+@media (max-width: 560px) {
+  .nav-container { height: 62px; }
+
+  .brand {
+    gap: 9px;
+    .brand-logo { width: 32px; height: 32px; }
+    .brand-logo img { width: 19px; height: 19px; }
+    .brand-name { font-size: 16px; }
+  }
+
+  .nav-actions { gap: 9px; }
+
+  .btn-text { font-size: 12.5px; }
+
+  .nav-actions .btn-primary {
+    padding: 8px 13px;
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand .brand-name { display: none; } // solo el logo si no cabe
 }
 
 .btn-lg {
@@ -407,7 +466,7 @@
     flex-grow: 1;
     margin-left: 20px;
     margin-right: 36px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-bg-input);
     border-radius: var(--radius-xs);
     height: 20px;
     font-size: 10px;
@@ -440,7 +499,7 @@
   
   .ms-item {
     height: 14px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-border-strong);
     border-radius: 4px;
     
     &.active {
@@ -465,14 +524,14 @@
   .mb-title {
     width: 90px;
     height: 14px;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--clr-border-strong);
     border-radius: 4px;
   }
-  
+
   .mb-user {
     width: 24px;
     height: 24px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--clr-accent-dim);
     border-radius: 50%;
   }
 }
@@ -485,7 +544,7 @@
 }
 
 .mb-card {
-  background-color: rgba(255, 255, 255, 0.035);
+  background-color: var(--clr-bg-input);
   border: 1px solid var(--clr-border);
   border-radius: 8px;
   padding: 12px;
@@ -551,7 +610,7 @@
       
       .bar {
         flex: 1;
-        background-color: rgba(255, 255, 255, 0.08);
+        background-color: var(--clr-border-strong);
         border-radius: 2px;
         
         &.active {
@@ -727,7 +786,7 @@
 
 .step-card {
   position: relative;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--clr-bg-card);
   border: 1px solid var(--clr-border-soft);
   border-radius: var(--radius-lg);
   padding: 32px;
@@ -772,7 +831,7 @@
 
 // ── METRICS SECTION ────────────────────────────────────────────────────────
 .metrics-section {
-  background-color: rgba(7, 25, 17, 0.3);
+  background-color: var(--clr-bg-card);
   border-top: 1px solid var(--clr-border-soft);
   border-bottom: 1px solid var(--clr-border-soft);
   padding: 64px 0;
@@ -961,7 +1020,7 @@
 
 .cta-card {
   position: relative;
-  background: linear-gradient(155deg, #0a1f13 0%, #050d09 100%);
+  background: var(--clr-bg-card);
   border: 1px solid rgba(74, 222, 128, 0.15);
   border-radius: var(--radius-xl);
   padding: 64px;
@@ -1033,8 +1092,8 @@
 
 // ── FOOTER ─────────────────────────────────────────────────────────────────
 .footer {
-  background-color: #070e0a;
-  border-top: 1px solid var(--clr-border-soft);
+  background-color: var(--clr-bg-sidebar);
+  border-top: 1px solid var(--clr-border);
   padding: 64px 0 32px;
   position: relative;
   z-index: 2;

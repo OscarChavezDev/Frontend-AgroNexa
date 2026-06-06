@@ -201,8 +201,8 @@
   min-height: 58px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--clr-border);
+  background: var(--clr-bg-input);
   color: var(--clr-text-primary);
   cursor: pointer;
   text-align: left;
@@ -211,20 +211,20 @@
   &:hover {
     transform: translateY(-1px);
     border-color: rgba(74, 222, 128, 0.28);
-    background: rgba(74, 222, 128, 0.08);
+    background: var(--clr-accent-dim);
   }
 
   &.is-active {
     border-color: rgba(74, 222, 128, 0.55);
-    background: linear-gradient(180deg, rgba(16, 46, 25, 0.92), rgba(10, 29, 16, 0.96));
-    box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.16), 0 12px 24px rgba(0, 0, 0, 0.18);
+    background: var(--clr-accent-dim);
+    box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.16), var(--shadow-md);
   }
 
   &__icon {
     width: 34px;
     height: 34px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--clr-bg-input);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -310,9 +310,9 @@
   transition: all 0.2s;
 
   &--selected {
-    background: var(--clr-brand-500);
-    border-color: var(--clr-brand-500);
-    color: var(--clr-text-primary);
+    background: var(--chip-selected-bg);
+    border-color: var(--chip-selected-bg);
+    color: #ffffff;
     font-weight: 600;
   }
 

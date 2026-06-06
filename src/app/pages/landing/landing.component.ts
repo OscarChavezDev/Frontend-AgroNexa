@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-landing',
@@ -17,8 +18,16 @@ export class LandingComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
     private authService: AuthService,
+    private theme: ThemeService,
     private router: Router
   ) {}
+
+  get isDark(): boolean { return this.theme.isDark; }
+  toggleTheme(): void { this.theme.toggle(); }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   ngOnInit(): void {
     // SEO optimization

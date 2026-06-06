@@ -8,21 +8,22 @@ export interface CultivoOption {
 
 export const CULTIVO_OPTIONS: CultivoOption[] = [
   { key: 'cacao', value: 'cacao', label: 'Cacao', icon: '', iconPath: '/icons/cacao.svg' },
-  { key: 'maiz', value: 'ma\u00EDz', label: 'Ma\u00EDz', icon: '\uD83C\uDF3D' },
-  { key: 'papa', value: 'papa', label: 'Papa', icon: '\uD83E\uDD54' },
-  { key: 'arroz', value: 'arroz', label: 'Arroz', icon: '\uD83C\uDF5A' },
-  { key: 'quinua', value: 'quinua', label: 'Quinua', icon: '\uD83C\uDF3E' },
-  { key: 'palta', value: 'palta', label: 'Palta', icon: '\uD83E\uDD51' },
-  { key: 'mango', value: 'mango', label: 'Mango', icon: '\uD83E\uDD6D' },
-  { key: 'platano', value: 'pl\u00E1tano', label: 'Pl\u00E1tano', icon: '\uD83C\uDF4C' },
-  { key: 'otro', value: 'otro', label: 'Otro', icon: '\uD83C\uDF31' },
+  { key: 'maiz', value: 'ma\u00EDz', label: 'Ma\u00EDz', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'papa', value: 'papa', label: 'Papa', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'arroz', value: 'arroz', label: 'Arroz', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'quinua', value: 'quinua', label: 'Quinua', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'palta', value: 'palta', label: 'Palta', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'mango', value: 'mango', label: 'Mango', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'platano', value: 'pl\u00E1tano', label: 'Pl\u00E1tano', icon: '', iconPath: '/icons/planta-completa.svg' },
+  { key: 'otro', value: 'otro', label: 'Otro', icon: '', iconPath: '/icons/planta-completa.svg' },
 ];
 
 const CULTIVO_FALLBACK: CultivoOption = {
   key: 'otro',
   value: 'otro',
   label: 'Otro',
-  icon: '\uD83C\uDF31'
+  icon: '',
+  iconPath: '/icons/planta-completa.svg'
 };
 
 export function normalizeCultivo(value?: string | null): string {

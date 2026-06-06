@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap, catchError } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 declare const google: any;
 
@@ -28,9 +29,9 @@ export class RegisterComponent implements AfterViewInit, OnInit {
   correoDisponible = false;
 
   roles = [
-    { value: 'productor',   icon: '🌾', label: 'Productor',    desc: 'Agricultor individual' },
-    { value: 'asociacion',  icon: '🤝', label: 'Asociación',   desc: 'Grupo de productores' },
-    { value: 'institucion', icon: '🏛️', label: 'Institución',  desc: 'Entidad técnica o educativa' },
+    { value: 'productor',   icon: '', label: 'Productor',    desc: 'Agricultor individual' },
+    { value: 'asociacion',  icon: '', label: 'Asociación',   desc: 'Grupo de productores' },
+    { value: 'institucion', icon: '', label: 'Institución',  desc: 'Entidad técnica o educativa' },
   ];
 
   selectedPlan = 'basico';
@@ -86,7 +87,8 @@ export class RegisterComponent implements AfterViewInit, OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private theme: ThemeService
   ) {
     this.form = this.fb.group({
       nombre:   ['', Validators.required],
@@ -302,4 +304,7 @@ export class RegisterComponent implements AfterViewInit, OnInit {
   }
 
   get f() { return this.form.controls; }
+
+  get isDark(): boolean { return this.theme.isDark; }
+  toggleTheme(): void { this.theme.toggle(); }
 }

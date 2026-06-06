@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { OnboardingService } from '../../core/services/onboarding.service';
 import { MensajesService } from '../../core/services/mensajes.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -25,11 +26,15 @@ export class MainLayoutComponent implements OnInit {
     private authService: AuthService,
     private onboarding: OnboardingService,
     private mensajesService: MensajesService,
+    private theme: ThemeService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {
     this.authService.currentUser$.subscribe(u => this.currentUser = u);
   }
+
+  get isDark(): boolean { return this.theme.isDark; }
+  toggleTheme(): void { this.theme.toggle(); }
 
   abrirFeedback() { this.feedbackAbierto = true; }
 

@@ -82,11 +82,11 @@
   transition: all 0.2s ease;
   font-family: inherit;
 
-  &:hover { border-color: rgba(255,255,255,.25); color: var(--clr-text-primary); }
+  &:hover { border-color: var(--clr-border-strong); color: var(--clr-text-primary); }
 
   &.active {
-    background: rgba(255,255,255,.08);
-    border-color: rgba(255,255,255,.3);
+    background: var(--clr-accent-dim);
+    border-color: var(--clr-accent);
     color: var(--clr-text-primary);
   }
 
@@ -96,7 +96,7 @@
 }
 
 .nivel-count {
-  background: rgba(255,255,255,.1);
+  background: var(--clr-bg-card-hover);
   border-radius: var(--radius-full);
   padding: 1px 7px;
   font-size: 11px;
@@ -164,7 +164,7 @@
     gap: 10px;
     padding: 14px 20px;
     border-top: 1px solid var(--clr-border-soft);
-    background: rgba(0,0,0,0.15);
+    background: var(--clr-bg-card-hover);
     margin-top: auto;
     flex-wrap: wrap;
   }
@@ -392,9 +392,9 @@
     color: var(--clr-text-primary);
   }
   &.active {
-    background: var(--clr-accent);
-    border-color: var(--clr-accent);
-    color: #051a0a;
+    background: var(--clr-accent-dim);
+    border-color: var(--clr-accent-glow);
+    color: var(--clr-accent);
     font-weight: 700;
   }
   &:disabled { opacity: .35; cursor: not-allowed; }

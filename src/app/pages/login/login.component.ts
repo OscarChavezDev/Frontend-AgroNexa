@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { OnboardingService } from '../../core/services/onboarding.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { PopupService } from '../../shared/services/popup.service';
 
 declare const google: any;
@@ -28,7 +29,8 @@ export class LoginComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
     private analyticsService: AnalyticsService,
-    private popupService: PopupService
+    private popupService: PopupService,
+    private theme: ThemeService
   ) {
     this.form = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
@@ -145,5 +147,8 @@ export class LoginComponent implements AfterViewInit {
   }
 
   get f() { return this.form.controls; }
+
+  get isDark(): boolean { return this.theme.isDark; }
+  toggleTheme(): void { this.theme.toggle(); }
 }
 

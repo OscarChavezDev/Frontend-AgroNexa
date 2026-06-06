@@ -141,8 +141,9 @@
 .user-cell-avatar {
   width: 34px; height: 34px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--clr-brand-500), var(--clr-brand-600));
-  color: #fff;
+  background: var(--clr-accent-dim);
+  color: var(--clr-accent);
+  border: 1px solid var(--clr-accent-glow);
   display: flex; align-items: center; justify-content: center;
   font-size: 11.5px;
   font-weight: 700;
@@ -160,7 +161,7 @@
 .user-cell-name {
   font-size: 13.5px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--clr-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -217,7 +218,7 @@
   border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 700;
-  background: rgba(255,255,255,.05);
+  background: var(--clr-bg-input);
   color: var(--clr-text-muted);
   border: 1px solid var(--clr-border);
 
@@ -259,7 +260,7 @@
   border-radius: var(--radius-full);
   font-size: 11.5px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--clr-bg-input);
   color: var(--clr-text-secondary);
   border: 1px solid var(--clr-border);
 }
@@ -280,7 +281,7 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: .3px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--clr-bg-input);
   color: var(--clr-text-muted);
   border: 1px solid var(--clr-border);
 
@@ -559,7 +560,7 @@
   gap: 10px;
   padding: 16px 24px;
   border-top: 1px solid var(--clr-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--clr-bg-input);
 }
 
 // ── Animations ────────────────────────────────────────────────────────────────
@@ -580,7 +581,7 @@
   gap: 12px;
   padding: 12px 20px;
   border-top: 1px solid var(--clr-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--clr-bg-input);
   flex-wrap: wrap;
 }
 
@@ -648,10 +649,10 @@
   }
 
   &.active {
-    background: var(--clr-brand-500);
-    border-color: var(--clr-brand-500);
-    color: var(--clr-text-primary);
-    font-weight: 600;
+    background: var(--clr-accent-dim);
+    border-color: var(--clr-accent-glow);
+    color: var(--clr-accent);
+    font-weight: 700;
   }
 
   &:disabled {

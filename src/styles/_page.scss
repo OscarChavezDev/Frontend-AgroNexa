@@ -246,14 +246,14 @@
   &:last-child { border-bottom: none; }
 
   &:hover {
-    background: rgba(255, 255, 255, .04);
+    background: var(--clr-bg-input);
     .item-icon { background: var(--clr-accent-dim); color: var(--clr-accent); }
   }
 
   .item-icon {
     width: 36px; height: 36px;
     border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, .05);
+    background: var(--clr-bg-input);
     border: 1px solid var(--clr-border);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -286,13 +286,13 @@
   &--red    { background: var(--clr-error-bg);   color: var(--clr-error-text);   border: 1px solid rgba(248,113,113,.2); }
   &--amber  { background: var(--clr-warning-bg); color: var(--clr-warning-text); border: 1px solid rgba(251,191,36,.2); }
   &--blue   { background: var(--clr-info-bg);    color: var(--clr-info-text);    border: 1px solid rgba(96,165,250,.2); }
-  &--gray   { background: rgba(255,255,255,.06);  color: var(--clr-text-secondary); border: 1px solid var(--clr-border); }
+  &--gray   { background: var(--clr-bg-input);  color: var(--clr-text-secondary); border: 1px solid var(--clr-border); }
 }
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 .btn-primary {
-  background: linear-gradient(135deg, #3ecf6e 0%, #2ab55b 100%);
-  color: #031a09;
+  background: var(--btn-primary-grad);
+  color: var(--btn-primary-text);
   border: none;
   border-radius: var(--radius-md);
   padding: 10px 20px;
@@ -378,7 +378,7 @@
   &:hover {
     border-color: rgba(74, 222, 128, .4);
     color: var(--clr-text-primary);
-    background: rgba(255, 255, 255, .04);
+    background: var(--clr-bg-input);
   }
 }
 
@@ -555,7 +555,7 @@ input, select, textarea {
   }
 
   &:disabled {
-    background: rgba(255, 255, 255, .02);
+    background: var(--clr-bg-input);
     color: var(--clr-text-muted);
     cursor: not-allowed;
   }
@@ -645,7 +645,7 @@ select {
     text-transform: uppercase;
     letter-spacing: .7px;
     border-bottom: 1px solid var(--clr-border);
-    background: rgba(255, 255, 255, .02);
+    background: var(--clr-bg-input);
   }
 
   td {
@@ -657,7 +657,7 @@ select {
   }
 
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255, 255, 255, .025); }
+  tr:hover td { background: var(--clr-bg-input); }
 }
 
 .table-actions { display: flex; gap: 6px; }
