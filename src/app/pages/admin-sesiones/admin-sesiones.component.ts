@@ -21,7 +21,7 @@ export class AdminSesionesComponent implements OnInit {
   fechaHasta = '';
 
   paginaActual = 1;
-  pageSize = 15;
+  pageSize = 10;
 
   constructor(
     private adminService: AdminService,

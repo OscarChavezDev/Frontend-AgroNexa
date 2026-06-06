@@ -15,6 +15,7 @@ import { ParcelaDetailComponent } from './pages/parcela-detail/parcela-detail.co
 import { MuestrasComponent } from './pages/muestras/muestras.component';
 import { MuestraFormComponent } from './pages/muestra-form/muestra-form.component';
 import { MuestraDetailComponent } from './pages/muestra-detail/muestra-detail.component';
+import { DiagnosticoIaComponent } from './pages/diagnostico-ia/diagnostico-ia.component';
 import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
@@ -42,6 +43,7 @@ const routes: Routes = [
       { path: 'muestras', component: MuestrasComponent },
       { path: 'muestras/nueva', component: MuestraFormComponent },
       { path: 'muestras/:id', component: MuestraDetailComponent },
+      { path: 'muestras/:id/diagnostico', component: DiagnosticoIaComponent },
       { path: 'planes', component: PlanesComponent },
       { path: 'perfil', component: PerfilComponent },
       { path: 'admin', component: AdminDashboardComponent, canActivate: [AdminGuard] },

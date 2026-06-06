@@ -21,6 +21,7 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
   currentStep: OnboardingStep | null = null;
   isModal = false;
   tooltipReady = false;
+  formFocused = false;   // true mientras el usuario escribe en un campo (oculta la guía)
   spotlight: Rect = { top: 0, left: 0, width: 0, height: 0 };
   tooltipPos: TPos = {};
 
@@ -47,6 +48,7 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
           this.currentStep.id === 'welcome' ||
           this.currentStep.id === 'complete';
         this.tooltipReady = false;
+        this.formFocused = false;
         this.clearTarget();
         this.updateBlocker();
         if (this.isVisible && this.currentStep?.targetSelector) {
@@ -230,4 +232,45 @@ export class OnboardingOverlayComponent implements OnInit, OnDestroy {
 
   onNext(): void { this.onboarding.advance(); }
   onSkip(): void { this.onboarding.skip(); }
+
+  // ── Ocultar la guía mientras se rellenan campos (molesta en móvil) ──────────
+  private isFormField(el: EventTarget | Element | null): boolean {
+    const node = el as HTMLElement;
+    if (!node || !node.tagName) return false;
+    const tag = node.tagName.toUpperCase();
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || node.isContentEditable;
+  }
+
+  /** Solo nos interesa ocultar la guía en los pasos de formulario (tarjeta fija). */
+  private get esPasoFormulario(): boolean {
+    return this.isVisible && !this.isModal && !this.currentStep?.targetSelector;
+  }
+
+  @HostListener('document:focusin', ['$event'])
+  onFocusIn(e: FocusEvent): void {
+    if (!this.esPasoFormulario) return;
+    if (this.isFormField(e.target)) {
+      this.formFocused = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  @HostListener('document:focusout')
+  onFocusOut(): void {
+    if (!this.esPasoFormulario && !this.formFocused) return;
+    // Espera a que el foco se asiente; si ya no hay un campo enfocado, reaparece la guía.
+    setTimeout(() => {
+      if (!this.isFormField(document.activeElement)) {
+        this.formFocused = false;
+        this.cdr.detectChanges();
+      }
+    }, 120);
+  }
+
+  /** Reabre la guía manualmente (cierra el teclado quitando el foco del campo). */
+  showGuide(): void {
+    (document.activeElement as HTMLElement)?.blur();
+    this.formFocused = false;
+    this.cdr.detectChanges();
+  }
 }

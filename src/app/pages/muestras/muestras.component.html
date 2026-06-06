@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <!-- Estado vacío (tiene parcelas pero sin muestras) -->
+  <!-- Estado vacío -->
   <div class="empty-state card" *ngIf="!loading && tieneParcelas === true && muestras.length === 0 && !errorMsg">
     <div class="empty-icon">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -73,34 +73,111 @@
     <a routerLink="/muestras/nueva" class="btn-primary">+ Nueva muestra</a>
   </div>
 
-  <!-- Filtros y conteo -->
+  <!-- ── Toolbar completo ─────────────────────────────────────────────────── -->
   <div class="muestras-toolbar" *ngIf="!loading && muestras.length > 0">
-    <div class="nivel-filters">
-      <button class="nivel-btn" [class.active]="filtroNivel === ''" (click)="setFiltro('')">
-        Todos <span class="nivel-count">{{ muestras.length }}</span>
-      </button>
-      <button class="nivel-btn nivel-btn--leve" [class.active]="filtroNivel === 'leve'" (click)="setFiltro('leve')">
-        Leve <span class="nivel-count">{{ contarPorNivel('leve') }}</span>
-      </button>
-      <button class="nivel-btn nivel-btn--moderado" [class.active]="filtroNivel === 'moderado'"
-        (click)="setFiltro('moderado')">
-        Moderado <span class="nivel-count">{{ contarPorNivel('moderado') }}</span>
-      </button>
-      <button class="nivel-btn nivel-btn--severo" [class.active]="filtroNivel === 'severo'"
-        (click)="setFiltro('severo')">
-        Severo <span class="nivel-count">{{ contarPorNivel('severo') }}</span>
-      </button>
+
+    <!-- Fila 1: Filtros de nivel + controles de vista -->
+    <div class="toolbar-row-top">
+      <div class="nivel-filters">
+        <button class="nivel-btn" [class.active]="filtroNivel === ''" (click)="setFiltro('')">
+          Todos <span class="nivel-count">{{ muestras.length }}</span>
+        </button>
+        <button class="nivel-btn nivel-btn--leve" [class.active]="filtroNivel === 'leve'" (click)="setFiltro('leve')">
+          Leve <span class="nivel-count">{{ contarPorNivel('leve') }}</span>
+        </button>
+        <button class="nivel-btn nivel-btn--moderado" [class.active]="filtroNivel === 'moderado'"
+          (click)="setFiltro('moderado')">
+          Moderado <span class="nivel-count">{{ contarPorNivel('moderado') }}</span>
+        </button>
+        <button class="nivel-btn nivel-btn--severo" [class.active]="filtroNivel === 'severo'"
+          (click)="setFiltro('severo')">
+          Severo <span class="nivel-count">{{ contarPorNivel('severo') }}</span>
+        </button>
+      </div>
+
+      <div class="toolbar-controls">
+        <!-- Toggle vista plana / agrupada -->
+        <div class="vista-toggle">
+          <button class="vista-btn" [class.active]="!vistaAgrupada" (click)="vistaAgrupada = false" title="Vista lista">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            Lista
+          </button>
+          <button class="vista-btn" [class.active]="vistaAgrupada" (click)="vistaAgrupada = true"
+            title="Agrupar por parcela">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            Por parcela
+          </button>
+        </div>
+        <div class="nivel-filters">
+          <button class="nivel-btn" [class.active]="filtroNivel === ''" (click)="setFiltro('')">
+            Todos <span class="nivel-count">{{ muestras.length }}</span>
+          </button>
+          <button class="nivel-btn nivel-btn--leve" [class.active]="filtroNivel === 'leve'" (click)="setFiltro('leve')">
+            Leve <span class="nivel-count">{{ contarPorNivel('leve') }}</span>
+          </button>
+          <button class="nivel-btn nivel-btn--moderado" [class.active]="filtroNivel === 'moderado'"
+            (click)="setFiltro('moderado')">
+            Moderado <span class="nivel-count">{{ contarPorNivel('moderado') }}</span>
+          </button>
+          <button class="nivel-btn nivel-btn--severo" [class.active]="filtroNivel === 'severo'"
+            (click)="setFiltro('severo')">
+            Severo <span class="nivel-count">{{ contarPorNivel('severo') }}</span>
+          </button>
+        </div>
+
+        <div class="page-size-selector">
+          <span>Mostrar</span>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" id="m-page-size">
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          <span>por página</span>
+        </div>
+      </div>
     </div>
 
-    <div class="page-size-selector">
-      <span>Mostrar</span>
-      <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" id="m-page-size">
-        <option [value]="6">6</option>
-        <option [value]="12">12</option>
-        <option [value]="24">24</option>
-      </select>
-      <span>por página</span>
+    <!-- Fila 2: Selector de parcela (chips scrollables) -->
+    <div class="parcela-filters" *ngIf="parcelas.length > 1">
+      <span class="parcela-filters-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        Parcela:
+      </span>
+      <div class="parcela-chips">
+        <button class="parcela-chip" [class.active]="filtroParcela === ''" (click)="setFiltroParcela('')">
+          Todas
+          <span class="parcela-chip-count">{{ muestras.length }}</span>
+        </button>
+        <button class="parcela-chip" *ngFor="let p of parcelas" [class.active]="filtroParcela === p.id"
+          (click)="setFiltroParcela(p.id!)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+          </svg>
+          {{ p.nombre }}
+          <span class="parcela-chip-count">{{ contarPorParcela(p.id!) }}</span>
+        </button>
+      </div>
     </div>
+
   </div>
 
   <!-- Sin resultados del filtro -->
@@ -113,93 +190,249 @@
       </svg>
     </div>
     <h3>Sin resultados</h3>
-    <p>No hay muestras con nivel "{{ filtroNivel }}"</p>
-    <button class="btn-outline" (click)="setFiltro('')">Ver todas</button>
+    <p>No hay muestras para los filtros seleccionados</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn-outline" (click)="setFiltro('')">Quitar filtro nivel</button>
+      <button class="btn-outline" *ngIf="filtroParcela" (click)="setFiltroParcela('')">Quitar filtro parcela</button>
+    </div>
   </div>
 
-  <!-- Grid de tarjetas -->
-  <div class="muestras-grid" *ngIf="!loading && muestrasPaginadas.length > 0">
-    <div class="muestra-card" *ngFor="let m of muestrasPaginadas">
+  <!-- ── VISTA LISTA (plana) ─────────────────────────────────────────────── -->
+  <ng-container *ngIf="!vistaAgrupada">
+    <div class="muestras-grid" *ngIf="!loading && muestrasPaginadas.length > 0">
+      <ng-container *ngFor="let m of muestrasPaginadas">
+        <ng-container *ngTemplateOutlet="muestra_card; context: { m: m }"></ng-container>
+      </ng-container>
+    </div>
 
-      <div class="muestra-card__header">
-        <div class="parte-info">
-          <div class="parte-icon parte-icon--{{ (m.parteAfectada || 'otro') | lowercase }}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path
-                d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14" />
-            </svg>
-          </div>
-          <div>
-            <h3>{{ m.parteAfectada | titlecase }}</h3>
-            <span class="fecha-label">{{ m.createdAt | date:'dd MMM yyyy' }}</span>
-          </div>
-        </div>
-        <span class="nivel-badge nivel-badge--{{ nivelClass(m.nivelAfectacion) }}">
-          {{ m.nivelAfectacion || 'leve' }}
-        </span>
-      </div>
-
-      <div class="muestra-card__body">
-        <div class="sintomas-label" *ngIf="m.sintomas?.length">Síntomas detectados:</div>
-        <div class="sintomas-chips" *ngIf="m.sintomas?.length">
-          <span class="sintoma-chip" *ngFor="let s of (m.sintomas || []).slice(0, 2)">{{ s }}</span>
-          <span class="sintoma-chip sintoma-chip--more" *ngIf="(m.sintomas?.length || 0) > 2">
-            +{{ (m.sintomas?.length || 0) - 2 }} más
-          </span>
-        </div>
-        <p class="no-sintomas" *ngIf="!m.sintomas?.length">Sin síntomas registrados</p>
-
-        <div class="estado-row" *ngIf="m.estado">
-          <span class="estado-dot estado-dot--{{ m.estado }}"></span>
-          <span class="estado-text">{{ m.estado | titlecase }}</span>
-        </div>
-      </div>
-
-      <div class="muestra-card__actions">
-        <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
+    <!-- Paginación -->
+    <div class="pagination-bar" *ngIf="!loading && totalPaginas > 1">
+      <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ muestrasFiltradas.length }}</span>
+      <div class="page-controls">
+        <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)"
+          title="Anterior">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <polyline points="15 18 9 12 15 6" />
           </svg>
-          Ver diagnóstico
-        </a>
-        <button class="btn-danger-sm" (click)="eliminar(m.id!)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+        </button>
+        <ng-container *ngFor="let p of paginas">
+          <span *ngIf="p === null" class="page-ellipsis">…</span>
+          <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{
+            p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)"
+          title="Siguiente">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <polyline points="9 18 15 12 9 6" />
           </svg>
-          Eliminar
         </button>
       </div>
     </div>
-  </div>
+  </ng-container>
 
-  <!-- Paginación -->
-  <div class="pagination-bar" *ngIf="!loading && totalPaginas > 1">
-    <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ muestrasFiltradas.length }}</span>
-    <div class="page-controls">
-      <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)"
-        title="Anterior">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-      </button>
-      <ng-container *ngFor="let p of paginas">
-        <span *ngIf="p === null" class="page-ellipsis">…</span>
-        <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p
-          }}</button>
-      </ng-container>
-      <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)"
-        title="Siguiente">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
+  <!-- ── VISTA AGRUPADA por parcela ──────────────────────────────────────── -->
+  <ng-container *ngIf="vistaAgrupada && !loading && muestrasFiltradas.length > 0">
+    <div class="grupo-parcela" *ngFor="let grupo of gruposPorParcela">
+
+      <!-- Cabecera de grupo -->
+      <div class="grupo-header">
+        <div class="grupo-header-left">
+          <div class="grupo-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
+          <div class="grupo-info">
+            <h2 class="grupo-nombre">{{ grupo.nombre }}</h2>
+            <div class="grupo-meta" *ngIf="grupo.parcela">
+              <span *ngIf="grupo.parcela.cultivo">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                </svg>
+                {{ grupo.parcela.cultivo | titlecase }}
+              </span>
+              <span *ngIf="grupo.parcela.areaAproximada">
+                {{ grupo.parcela.areaAproximada }} {{ grupo.parcela.unidadArea || 'ha' }}
+              </span>
+              <span *ngIf="grupo.parcela.referencia">{{ grupo.parcela.referencia }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="grupo-header-right">
+          <span class="grupo-count">{{ grupo.muestras.length }} muestra{{ grupo.muestras.length !== 1 ? 's' : ''
+            }}</span>
+          <a [routerLink]="['/parcelas', grupo.parcela?.id]" class="btn-outline-sm-link" *ngIf="grupo.parcela?.id">
+            Ver parcela →
+          </a>
+        </div>
+      </div>
+
+      <!-- Grid de cards del grupo -->
+      <div class="muestras-grid">
+        <ng-container *ngFor="let m of grupo.muestras">
+          <ng-container *ngTemplateOutlet="muestra_card; context: { m: m }"></ng-container>
+        </ng-container>
+      </div>
+
     </div>
+  </ng-container>
+</div>
+
+<!-- ── Template reutilizable de card de muestra ────────────────────────────── -->
+<ng-template #muestra_card let-m="m">
+  <div class="muestra-card">
+    <div class="muestra-card__header">
+      <div class="parte-info">
+        <div class="parte-icon parte-icon--{{ (m.parteAfectada || 'otro') | lowercase }}"
+          [ngSwitch]="(m.parteAfectada || 'otro') | lowercase">
+          <!-- Fruto -->
+          <img *ngSwitchCase="'fruto'" src="/icons/fruto.svg" width="22" height="22" alt="Fruto">
+          <!-- Hoja -->
+          <img *ngSwitchCase="'hoja'" src="/icons/hoja.svg" width="22" height="22" alt="Hoja">
+          <!-- Tallo -->
+          <img *ngSwitchCase="'tallo'" src="/icons/tallo.svg" width="22" height="22" alt="Tallo">
+          <!-- Raíz -->
+          <img *ngSwitchCase="'raíz'" src="/icons/raiz.svg" width="22" height="22" alt="Raíz">
+          <img *ngSwitchCase="'raiz'" src="/icons/raiz.svg" width="22" height="22" alt="Raíz">
+          <!-- Flor -->
+          <img *ngSwitchCase="'flor'" src="/icons/flor.svg" width="22" height="22" alt="Flor">
+          <img *ngSwitchCase="'planta_completa'" src="/icons/planta-completa.svg" width="22" height="22"
+            alt="Planta completa">
+          <!-- Default (otro) -->
+          <svg *ngSwitchDefault width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path
+              d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14" />
+          </svg>
+        </div>
+        <div>
+          <h3>{{ m.parteAfectada | titlecase }}</h3>
+          <span class="fecha-label">{{ m.createdAt | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+      <span class="nivel-badge nivel-badge--{{ nivelClass(m.nivelAfectacion) }}">
+        {{ m.nivelAfectacion || 'leve' }}
+      </span>
+    </div>
+
+    <!-- Badge de parcela (solo en vista lista) -->
+    <div class="parcela-badge-row" *ngIf="!vistaAgrupada && parcelas.length > 1">
+      <span class="parcela-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        </svg>
+        {{ getNombreParcela(m.parcelaId) }}
+      </span>
+    </div>
+    <!-- Grid de tarjetas -->
+    <div class="muestras-grid" *ngIf="!loading && muestrasPaginadas.length > 0">
+      <div class="muestra-card" *ngFor="let m of muestrasPaginadas">
+
+        <div class="muestra-card__header">
+          <div class="parte-info">
+            <div class="parte-icon parte-icon--{{ (m.parteAfectada || 'otro') | lowercase }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path
+                  d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14" />
+              </svg>
+            </div>
+            <div>
+              <h3>{{ m.parteAfectada | titlecase }}</h3>
+              <span class="fecha-label">{{ m.createdAt | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+          <span class="nivel-badge nivel-badge--{{ nivelClass(m.nivelAfectacion) }}">
+            {{ m.nivelAfectacion || 'leve' }}
+          </span>
+        </div>
+
+        <div class="muestra-card__body">
+          <div class="sintomas-label" *ngIf="m.sintomas?.length">Síntomas detectados:</div>
+          <div class="sintomas-chips" *ngIf="m.sintomas?.length">
+            <span class="sintoma-chip" *ngFor="let s of (m.sintomas || []).slice(0, 2)">{{ s }}</span>
+            <span class="sintoma-chip sintoma-chip--more" *ngIf="(m.sintomas?.length || 0) > 2">
+              +{{ (m.sintomas?.length || 0) - 2 }} más
+            </span>
+          </div>
+          <p class="no-sintomas" *ngIf="!m.sintomas?.length">Sin síntomas registrados</p>
+
+          <div class="estado-row" *ngIf="m.estado">
+            <span class="estado-dot estado-dot--{{ m.estado }}"></span>
+            <span class="estado-text">{{ m.estado | titlecase }}</span>
+          </div>
+        </div>
+
+        <div class="muestra-card__actions">
+          <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            Ver detalle
+          </a>
+          <button class="btn-danger-sm" (click)="eliminar(m.id!)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            </svg>
+            Eliminar
+          </button>
+        </div>
+      </div>
+</ng-template>
+
+<div class="muestra-card__actions">
+  <a [routerLink]="['/muestras', m.id]" class="btn-outline-sm">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+    Ver diagnóstico
+  </a>
+  <button class="btn-danger-sm" (click)="eliminar(m.id!)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+    </svg>
+    Eliminar
+  </button>
+</div>
+</div>
+</div>
+
+<!-- Paginación -->
+<div class="pagination-bar" *ngIf="!loading && totalPaginas > 1">
+  <span class="page-info">{{ rangoInicio }}–{{ rangoFin }} de {{ muestrasFiltradas.length }}</span>
+  <div class="page-controls">
+    <button class="page-btn" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" title="Anterior">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </button>
+    <ng-container *ngFor="let p of paginas">
+      <span *ngIf="p === null" class="page-ellipsis">…</span>
+      <button *ngIf="p !== null" class="page-btn" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">{{ p
+        }}</button>
+    </ng-container>
+    <button class="page-btn" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)"
+      title="Siguiente">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </button>
   </div>
+</div>
 </div>

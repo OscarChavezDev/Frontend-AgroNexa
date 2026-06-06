@@ -143,6 +143,42 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+// ── Mini-pastilla (cuando se está escribiendo) ────────────────
+.ob-guide-mini {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9010;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 999px;
+  background: #2d6a4f;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  pointer-events: all;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  opacity: 0.92;
+  animation: ob-slide-up .22s ease;
+  transition: opacity .15s, transform .15s;
+
+  &:hover { opacity: 1; transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+}
+
+.ob-guide-mini-prog {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.22);
+}
+
 .ob-card-header {
   display: flex;
   align-items: center;

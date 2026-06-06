@@ -14,7 +14,7 @@ export class AdminRecomendacionesComponent implements OnInit {
   busqueda = '';
   soloPendientes = false;
   paginaActual = 1;
-  pageSize = 8;
+  pageSize = 10;
 
   constructor(
     private mensajesService: MensajesService,
@@ -62,6 +62,11 @@ export class AdminRecomendacionesComponent implements OnInit {
   }
 
   onBusquedaChange() {
+    this.paginaActual = 1;
+  }
+
+  onPageSizeChange() {
+    this.pageSize = +this.pageSize;   // el <select> devuelve string; lo pasamos a número
     this.paginaActual = 1;
   }
 
