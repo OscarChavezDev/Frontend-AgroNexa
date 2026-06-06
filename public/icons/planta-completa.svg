@@ -1,9 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Planta completa">
-  <path fill="#a76844" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M20.1 48.4h23.8l4.1 10.6a3.2 3.2 0 0 1-3 4.3H19a3.2 3.2 0 0 1-3-4.2z"/>
-  <path fill="#8f5637" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M24.2 41.4h15.8l3.6 7H20.8z"/>
-  <path fill="none" stroke="#0b0b0b" stroke-linecap="round" stroke-width="4" d="M31.9 44.4V18.3"/>
-  <path fill="#68c46b" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M31.4 17.5c-7.3-1.2-13.1.5-17.5 5.3 4.7 5 10.6 6.8 17.7 5.1 2.1-3.3 2-6.8-.2-10.4Z"/>
-  <path fill="#4bb465" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M32.6 22.5c7.2-2.4 13.3-1.5 18.7 3  -3.8 5.7-9.3 8.2-16.4 7.4-2.8-2.6-3.5-6-.9-10.4Z"/>
-  <path fill="#84d374" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M31.1 31.4c-6-1.3-10.8-.1-14.6 3.5 3.9 4.2 8.8 5.6 14.9 4.2 1.8-2.1 1.7-4.7-.3-7.7Z"/>
-  <path fill="#59bf67" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M33.2 34.3c5.6-1.7 10.4-.9 14.4 2.7-3.1 4.1-7.5 5.9-13.1 5.3-2.2-2-2.7-4.7-1.3-8Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#6ee7a8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Planta completa">
+  <path d="M32 56V24"/>
+  <path d="M32 34C23 34 15.5 28.5 12 20c9.5-2 17.5 3.5 20 14Z"/>
+  <path d="M32 29c8.5 0 15.5-5 19-13-9-2-16.5 3-19 13Z"/>
+  <path d="M22 56h20"/>
 </svg>

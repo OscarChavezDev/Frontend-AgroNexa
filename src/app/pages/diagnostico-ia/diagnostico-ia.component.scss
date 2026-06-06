@@ -296,7 +296,7 @@
   padding: 10px 14px; border-radius: 10px;
   background: var(--clr-neutral-50); border: 1px solid var(--clr-border);
 
-  &--principal { border-color: var(--clr-brand-300); background: var(--clr-brand-25); }
+  &--principal { border-color: rgba(82, 183, 136, .45); background: rgba(82, 183, 136, .12); }
 }
 
 .prob-row-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }

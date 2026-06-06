@@ -132,4 +132,14 @@ export class ParcelaDetailComponent implements OnInit {
     const map: any = { severo: 'red', moderado: 'amber', leve: 'green' };
     return map[nivel || ''] || 'gray';
   }
+
+  /** Devuelve el icono según la parte afectada de la muestra. */
+  iconoParte(parte: string | undefined): string {
+    const map: Record<string, string> = {
+      hoja: 'hoja', fruto: 'fruto', tallo: 'tallo', raiz: 'raiz', flor: 'flor',
+      planta_completa: 'planta-completa',
+    };
+    const key = map[(parte || '').toLowerCase()] || 'cacao';
+    return `/icons/${key}.svg`;
+  }
 }

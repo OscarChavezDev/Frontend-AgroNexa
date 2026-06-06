@@ -23,13 +23,13 @@ export class PopupComponent implements OnInit, OnDestroy {
         clearTimeout(this.timeoutId);
       }
       
-      // Auto close after 3.5 seconds
+      // Auto close after 2 seconds
       this.ngZone.runOutsideAngular(() => {
         this.timeoutId = setTimeout(() => {
           this.ngZone.run(() => {
             this.close();
           });
-        }, 3500);
+        }, 2000);
       });
       this.cdr.detectChanges();
     });

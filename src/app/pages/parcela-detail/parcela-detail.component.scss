@@ -175,11 +175,21 @@
 }
 
 .muestra-icon {
-  width: 32px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid var(--clr-border);
+}
+
+.muestra-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .muestra-info {

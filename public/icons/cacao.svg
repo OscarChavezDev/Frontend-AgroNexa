@@ -1,8 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cacao">
-  <path fill="#c8754f" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M38.2 6.9c8.4 2.8 14.9 13.3 15.8 25.6.9 12.7-4.4 22.3-13.2 27.6-7.5-7.1-12.5-16.8-12.2-27.7.2-9.8 4-18.6 9.6-25.5Z"/>
-  <path fill="none" stroke="#0b0b0b" stroke-linecap="round" stroke-width="3.5" d="M44.6 14.2c2.9 12.2 2.3 24.1-1.8 35.4"/>
-  <path fill="#ffd36a" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M31.8 14.7C20.8 15.9 11.1 25 7.5 37.1 4.6 47 6.6 55.5 10.1 60.2c8.8-1.6 18.8-8.4 23.8-18.4 4.7-9.4 3.6-19-.1-25.9l-2-1.2Z"/>
-  <path fill="#fff3c2" stroke="#0b0b0b" stroke-linejoin="round" stroke-width="3" d="M16.9 35.7c3.7-7.8 9.6-12.3 16.2-14.5 2.1 6.7 1 13.7-2.9 19.8-3.7 5.9-8.8 10-15.4 12.8-1.5-5.3-.8-11.9 2.1-18.1Z"/>
-  <path fill="none" stroke="#0b0b0b" stroke-linecap="round" stroke-width="2.6" d="M22.3 29.4 31 42.8M29.4 24.4 17.6 45.9M17.5 39.4l16.2-7.8M15.7 47.8l16.4-8"/>
-  <path fill="#9a5a38" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M37.5 6.6 39.1 1.8h8l-2.2 8.4c-2.2-1.8-4.6-3-7.4-3.6Z"/>
+  <!-- peciolo -->
+  <path d="M32 11c-1-3.5 0-6.5 3-9" fill="none" stroke="#4f3216" stroke-width="3" stroke-linecap="round"/>
+  <!-- hoja -->
+  <path d="M35 3.5c4-2.4 8.6-2.8 13-1.4-1.3 4.3-4.5 7.3-8.7 8-3.3-.2-5.1-3.1-4.3-6.6Z" fill="#5fa85f"/>
+  <!-- cuerpo de la mazorca (marrón cacao) -->
+  <path d="M32 10c10 4 16 14 16 26s-6 22-16 26c-10-4-16-14-16-26s6-22 16-26Z" fill="#a86a37"/>
+  <!-- sombra lateral para volumen -->
+  <path d="M32 10c10 4 16 14 16 26s-6 22-16 26c5-6 7.6-15 7.6-26S37 16 32 10Z" fill="#824e23"/>
+  <!-- surcos -->
+  <g fill="none" stroke="#e8c79a" stroke-width="2.2" stroke-linecap="round">
+    <path d="M32 14v44"/>
+    <path d="M23.5 18c-3 12-3 24 0 36" opacity="0.85"/>
+    <path d="M40.5 18c3 12 3 24 0 36" opacity="0.85"/>
+  </g>
 </svg>
