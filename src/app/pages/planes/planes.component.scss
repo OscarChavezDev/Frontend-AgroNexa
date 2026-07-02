@@ -140,9 +140,9 @@
   width: 100%;
   padding: 12px;
   border-radius: var(--radius-md);
-  border: 1.5px solid var(--clr-brand-600);
-  background: var(--clr-brand-600);
-  color: #fff;
+  border: 1.5px solid transparent;
+  background: var(--btn-primary-grad);
+  color: var(--btn-primary-text);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -154,19 +154,18 @@
   gap: 8px;
 
   &:hover:not(:disabled) {
-    background: var(--clr-brand-700);
-    border-color: var(--clr-brand-700);
+    background: var(--btn-primary-grad-hover);
     box-shadow: 0 4px 12px rgba(45,106,79,.3);
     transform: translateY(-1px);
   }
   &:active:not(:disabled) { transform: translateY(0); }
 
   &--current {
-    background: var(--clr-brand-25);
-    color: var(--clr-brand-700);
-    border-color: var(--clr-brand-200);
+    background: var(--clr-accent-dim);
+    color: var(--clr-accent);
+    border-color: var(--clr-accent-dim);
     cursor: default;
-    &:hover { box-shadow: none; transform: none; background: var(--clr-brand-25); }
+    &:hover { box-shadow: none; transform: none; background: var(--clr-accent-dim); }
   }
 
   &:disabled:not(.btn-plan--current) { opacity: .55; cursor: not-allowed; transform: none; }

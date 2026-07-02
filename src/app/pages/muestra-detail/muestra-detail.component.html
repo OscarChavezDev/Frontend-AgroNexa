@@ -9,64 +9,83 @@
 
   <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
   <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
-  <div class="success-banner" *ngIf="creadoExito">
-    ¡Muestra registrada con éxito! Puedes consultar los detalles a continuación.
-  </div>
 
-  <div *ngIf="!loading && muestra" class="detail-layout">
+  <div *ngIf="!loading && muestra" class="detail-flow">
 
-    <!-- Columna izquierda: datos de la muestra -->
-    <div class="detail-col">
-
-      <!-- Observación de campo -->
-      <div class="card observacion-card">
-        <h3 class="card-title">Observación de campo</h3>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <span class="detail-label">Parte afectada</span>
-            <span class="detail-value">{{ muestra.parteAfectada | titlecase }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Nivel de afectación</span>
-            <span class="badge badge--{{ muestra.nivelAfectacion === 'severo' ? 'red' : muestra.nivelAfectacion === 'moderado' ? 'amber' : 'green' }}">
-              {{ muestra.nivelAfectacion || 'leve' }}
-            </span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Estado</span>
-            <span class="detail-value">{{ muestra.estado | titlecase }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Fecha</span>
-            <span class="detail-value">{{ muestra.createdAt | date:'dd/MM/yyyy' }}</span>
-          </div>
+    <!-- ── 1. Métricas clave ───────────────────────────────────────────── -->
+    <div class="card metrics-card">
+      <div class="metrics-row">
+        <div class="metric-item">
+          <span class="metric-label">Parte afectada</span>
+          <span class="metric-value" style="display: inline-flex; align-items: center; gap: 6px;">
+            <ng-container [ngSwitch]="(muestra.parteAfectada || 'otro') | lowercase">
+              <img *ngSwitchCase="'fruto'" src="/icons/fruto.svg" width="20" height="20" alt="Fruto">
+              <img *ngSwitchCase="'hoja'" src="/icons/hoja.svg" width="20" height="20" alt="Hoja">
+              <img *ngSwitchCase="'tallo'" src="/icons/tallo.svg" width="20" height="20" alt="Tallo">
+              <img *ngSwitchCase="'raíz'" src="/icons/raiz.svg" width="20" height="20" alt="Raíz">
+              <img *ngSwitchCase="'raiz'" src="/icons/raiz.svg" width="20" height="20" alt="Raíz">
+              <img *ngSwitchCase="'flor'" src="/icons/flor.svg" width="20" height="20" alt="Flor">
+              <img *ngSwitchCase="'planta_completa'" src="/icons/planta-completa.svg" width="20" height="20" alt="Planta completa">
+            </ng-container>
+            {{ muestra.parteAfectada | titlecase }}
+          </span>
         </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-label">Nivel de afectación</span>
+          <span class="badge badge--{{ muestra.nivelAfectacion === 'severo' ? 'red' : muestra.nivelAfectacion === 'moderado' ? 'amber' : 'green' }}">
+            {{ muestra.nivelAfectacion || 'leve' }}
+          </span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-label">Estado</span>
+          <span class="metric-value">{{ muestra.estado | titlecase }}</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-label">Fecha de registro</span>
+          <span class="metric-value">{{ muestra.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
 
+    <!-- ── 2. Síntomas + Observaciones ────────────────────────────────── -->
+    <div class="card obs-card" *ngIf="muestra.sintomas?.length || muestra.observaciones">
+      <h3 class="card-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        Observación de campo
+      </h3>
+      <div class="obs-body">
         <div class="sintomas-section" *ngIf="muestra.sintomas?.length">
           <span class="detail-label">Síntomas identificados</span>
           <div class="sintomas-list">
             <span *ngFor="let s of muestra.sintomas" class="sintoma-tag">{{ s }}</span>
           </div>
         </div>
-
         <div class="observacion" *ngIf="muestra.observaciones">
-          <span class="detail-label">Observaciones</span>
+          <span class="detail-label">Observaciones del productor</span>
           <p>{{ muestra.observaciones }}</p>
         </div>
       </div>
+    </div>
+
+    <!-- ── 3. Fotografías + Sensores (grid 2 cols) ────────────────────── -->
+    <div class="media-sensor-grid">
 
       <!-- Fotografías -->
       <div class="card fotos-card" *ngIf="imagenes.length > 0">
-        <h3 class="card-title">Fotografías ({{ imagenes.length }})</h3>
+        <h3 class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Fotografías ({{ imagenes.length }})
+        </h3>
         <div class="imagenes-gallery">
           <div class="gallery-item" *ngFor="let img of imagenes">
             <a [href]="img.url" target="_blank" rel="noopener" class="gallery-link" #imgWrap>
               <img [src]="img.url" [alt]="img.descripcion || img.tipoImagen || 'Imagen'"
                    loading="lazy" decoding="async"
                    (load)="imgWrap.classList.add('loaded'); $event.target['classList'].add('loaded')">
-              <div class="gallery-overlay">
-                <span>Ver completa</span>
-              </div>
+              <div class="gallery-overlay"><span>Ver completa</span></div>
             </a>
             <div class="gallery-meta" *ngIf="img.tipoImagen || img.descripcion">
               <span class="tipo-chip" *ngIf="img.tipoImagen">{{ img.tipoImagen | titlecase }}</span>
@@ -78,167 +97,89 @@
 
       <!-- Datos del sensor -->
       <div class="card sensor-card" *ngIf="muestra.datosSensor">
-        <h3 class="card-title">Datos del sensor</h3>
+        <h3 class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Datos del sensor
+        </h3>
         <div class="sensor-grid">
           <div class="sensor-item" *ngIf="muestra.datosSensor.ph !== undefined && muestra.datosSensor.ph !== null">
             <div class="sensor-icon sensor-icon--ph">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M9 3v8l-4 6h14l-4-6V3"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M9 3v8l-4 6h14l-4-6V3"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">pH</span>
-              <span class="sensor-value">{{ muestra.datosSensor.ph }}</span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">pH</span><span class="sensor-value">{{ muestra.datosSensor.ph }}</span></div>
           </div>
           <div class="sensor-item" *ngIf="muestra.datosSensor.nitrogeno !== undefined && muestra.datosSensor.nitrogeno !== null">
             <div class="sensor-icon sensor-icon--n">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">Nitrógeno</span>
-              <span class="sensor-value">{{ muestra.datosSensor.nitrogeno }}<span class="unit"> ppm</span></span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">Nitrógeno</span><span class="sensor-value">{{ muestra.datosSensor.nitrogeno }}<span class="unit"> ppm</span></span></div>
           </div>
           <div class="sensor-item" *ngIf="muestra.datosSensor.fosforo !== undefined && muestra.datosSensor.fosforo !== null">
             <div class="sensor-icon sensor-icon--p">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">Fósforo</span>
-              <span class="sensor-value">{{ muestra.datosSensor.fosforo }}<span class="unit"> ppm</span></span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">Fósforo</span><span class="sensor-value">{{ muestra.datosSensor.fosforo }}<span class="unit"> ppm</span></span></div>
           </div>
           <div class="sensor-item" *ngIf="muestra.datosSensor.potasio !== undefined && muestra.datosSensor.potasio !== null">
             <div class="sensor-icon sensor-icon--k">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">Potasio</span>
-              <span class="sensor-value">{{ muestra.datosSensor.potasio }}<span class="unit"> ppm</span></span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">Potasio</span><span class="sensor-value">{{ muestra.datosSensor.potasio }}<span class="unit"> ppm</span></span></div>
           </div>
           <div class="sensor-item" *ngIf="muestra.datosSensor.humedadSuelo !== undefined && muestra.datosSensor.humedadSuelo !== null">
             <div class="sensor-icon sensor-icon--h">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">Humedad Suelo</span>
-              <span class="sensor-value">{{ muestra.datosSensor.humedadSuelo }}<span class="unit">%</span></span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">Humedad</span><span class="sensor-value">{{ muestra.datosSensor.humedadSuelo }}<span class="unit">%</span></span></div>
           </div>
           <div class="sensor-item" *ngIf="muestra.datosSensor.temperaturaSuelo !== undefined && muestra.datosSensor.temperaturaSuelo !== null">
             <div class="sensor-icon sensor-icon--t">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">Temp. Suelo</span>
-              <span class="sensor-value">{{ muestra.datosSensor.temperaturaSuelo }}<span class="unit">°C</span></span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">Temp. Suelo</span><span class="sensor-value">{{ muestra.datosSensor.temperaturaSuelo }}<span class="unit">°C</span></span></div>
           </div>
-          <div class="sensor-item" *ngIf="muestra.datosSensor.conductividadElectrica !== undefined && muestra.datosSensor.conductividadElectrica !== null">
+          <div class="sensor-item sensor-item--wide" *ngIf="muestra.datosSensor.conductividadElectrica !== undefined && muestra.datosSensor.conductividadElectrica !== null">
             <div class="sensor-icon sensor-icon--ce">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             </div>
-            <div class="sensor-info">
-              <span class="sensor-label">Conductividad</span>
-              <span class="sensor-value">{{ muestra.datosSensor.conductividadElectrica }}<span class="unit"> dS/m</span></span>
-            </div>
+            <div class="sensor-info"><span class="sensor-label">Conductividad eléctrica</span><span class="sensor-value">{{ muestra.datosSensor.conductividadElectrica }}<span class="unit"> dS/m</span></span></div>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- Columna derecha: diagnóstico -->
-    <div class="diagnostico-col">
-
-      <div class="card diagnostico-card" *ngIf="!diagnostico || !diagnostico.resultado">
-        <div class="diagnostico-empty">
-          <span class="empty-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
-            </svg>
-          </span>
-          <h3>Sin diagnóstico aún</h3>
-          <p>Genera un diagnóstico preliminar basado en los síntomas y datos registrados de tus sensores.</p>
-          <button class="btn-primary" [disabled]="generando" (click)="generarDiagnostico()">
-            <span *ngIf="!generando">Generar diagnóstico</span>
-            <span *ngIf="generando" class="spinner"></span>
-          </button>
+    <!-- ── 4. CTA Diagnóstico IA ───────────────────────────────────────── -->
+    <div class="ia-cta-card">
+      <div class="ia-cta-left">
+        <div class="ia-cta-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="ia-cta-text">
+          <h3>Diagnóstico con Inteligencia Artificial</h3>
+          <p>Analiza las imágenes y datos del sensor con IA para detectar enfermedades del cultivo con alta precisión y confianza.</p>
         </div>
       </div>
-
-      <div class="card diagnostico-card" *ngIf="diagnostico && diagnostico.resultado">
-        <div class="diagnostico-header">
-          <h3>Diagnóstico Preliminar</h3>
-          <span class="riesgo-badge riesgo-badge--{{ riesgoClass }}">
-            Riesgo {{ diagnostico.resultado.riesgo | uppercase }}
-          </span>
-        </div>
-
-        <div class="enfermedad-info">
-          <span class="enfermedad-nombre">{{ diagnostico.resultado.enfermedad | titlecase }}</span>
-          <div class="confianza-bar">
-            <span class="confianza-label">Confianza: {{ (diagnostico.resultado.confianza * 100) | number:'1.0-0' }}%</span>
-            <div class="bar">
-              <div class="bar-fill" [style.width.%]="diagnostico.resultado.confianza * 100"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="motivo" *ngIf="diagnostico.motivo">
-          <span class="detail-label">Análisis</span>
-          <p>{{ diagnostico.motivo }}</p>
-        </div>
-
-        <div class="recomendaciones" *ngIf="diagnostico.recomendaciones?.length">
-          <span class="detail-label">Recomendaciones</span>
-          <ul>
-            <li *ngFor="let r of diagnostico.recomendaciones">{{ r }}</li>
-          </ul>
-        </div>
-
-        <div class="regen-action">
-          <button class="btn-outline-regen" [disabled]="generando" (click)="generarDiagnostico()">
-            <span *ngIf="!generando">↻ Regenerar diagnóstico</span>
-            <span *ngIf="generando" class="spinner-small"></span>
-          </button>
-        </div>
+      <div class="ia-cta-right">
+        <span class="ia-status-badge ia-status-badge--done" *ngIf="tieneDiagnostico">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Diagnóstico disponible
+        </span>
+        <span class="ia-status-badge ia-status-badge--pending" *ngIf="!tieneDiagnostico">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Sin diagnóstico aún
+        </span>
+        <a [routerLink]="['/muestras', muestraId, 'diagnostico']" class="btn-ia-primary" id="btn-ver-diagnostico-ia">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          {{ tieneDiagnostico ? 'Ver diagnóstico IA' : 'Generar diagnóstico IA' }}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
       </div>
-
-      <!-- Consultar con un Especialista -->
-      <div class="card especialista-card">
-        <h3 class="card-title">
-          <span class="title-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-          </span>
-          Asesoría Profesional
-        </h3>
-        
-        <div *ngIf="!consultaEnviada">
-          <p>
-            ¿Deseas una opinión profesional sobre esta muestra y su diagnóstico? Solicita la revisión directa de un ingeniero agrónomo especialista.
-          </p>
-          <button class="btn-primary btn-specialist" [disabled]="solicitandoConsulta" (click)="consultarEspecialista()">
-            <span *ngIf="!solicitandoConsulta">Consultar especialista</span>
-            <span *ngIf="solicitandoConsulta" class="spinner"></span>
-          </button>
-        </div>
-
-        <div *ngIf="consultaEnviada" class="specialist-success">
-          <span class="success-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </span>
-          <h4>¡Solicitud Enviada!</h4>
-          <p>
-            Un agrónomo especialista revisará esta muestra y se pondrá en contacto contigo a la brevedad.
-          </p>
-        </div>
-      </div>
-
     </div>
+
   </div>
 </div>

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /$
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /parcelas
+Disallow: /muestras
+Disallow: /planes
+Disallow: /perfil
+Disallow: /admin
+
+Sitemap: https://solucionestingo.org/sitemap.xml

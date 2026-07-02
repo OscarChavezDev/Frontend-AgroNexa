@@ -1,0 +1,98 @@
+<ng-container *ngIf="isVisible && currentStep">
+
+  <!-- ══ PASOS CON ELEMENTO RESALTADO (spotlight + tooltip posicionado) ══ -->
+  <ng-container *ngIf="!isModal && currentStep.targetSelector">
+
+    <!-- Spotlight: solo renderiza cuando ya tiene dimensiones reales -->
+    <div
+      *ngIf="spotlight.width > 0"
+      class="ob-spotlight"
+      [style.top.px]="spotlight.top"
+      [style.left.px]="spotlight.left"
+      [style.width.px]="spotlight.width"
+      [style.height.px]="spotlight.height"
+    ></div>
+
+    <!-- Tooltip: solo visible cuando ya tiene posición calculada -->
+    <div
+      class="ob-tooltip"
+      [class.ob-tooltip--visible]="tooltipReady"
+      [ngStyle]="tooltipPos"
+    >
+      <div class="ob-tt-header">
+        <span class="ob-tt-brand"><span class="ob-tt-dot"></span>AgroNexa</span>
+        <span class="ob-tt-progress">{{ progressLabel }}</span>
+      </div>
+      <h3 class="ob-tt-title">{{ currentStep.title }}</h3>
+      <p class="ob-tt-desc">{{ currentStep.description }}</p>
+      <div class="ob-tt-footer">
+        <button class="ob-btn-ghost" (click)="onSkip()">Saltar</button>
+        <span class="ob-tt-hint" *ngIf="currentStep.nextAction === 'click'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Haz clic en el elemento resaltado
+        </span>
+        <button class="ob-btn-primary" (click)="onNext()" *ngIf="currentStep.nextAction === 'button'">
+          {{ currentStep.id === 'feedback' ? 'Entendido' : 'Siguiente' }}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ══ PASOS DE FORMULARIO (tarjeta fija, sin oscurecer) ══ -->
+  <ng-container *ngIf="!isModal && !currentStep.targetSelector">
+
+    <!-- Tarjeta guía: se oculta mientras el usuario rellena un campo -->
+    <div *ngIf="!formFocused" class="ob-guide-card">
+      <div class="ob-card-header">
+        <span class="ob-tt-brand"><span class="ob-tt-dot"></span>AgroNexa</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="ob-tt-progress">{{ progressLabel }}</span>
+          <button class="ob-btn-close" (click)="onSkip()">×</button>
+        </div>
+      </div>
+      <div class="ob-card-body">
+        <p class="ob-card-title">{{ currentStep.title }}</p>
+        <p class="ob-card-desc">{{ currentStep.description }}</p>
+      </div>
+    </div>
+
+    <!-- Mini-pastilla: aparece al escribir; no estorba y reabre la guía -->
+    <button *ngIf="formFocused" class="ob-guide-mini" (click)="showGuide()" type="button">
+      <span class="ob-tt-dot"></span>
+      Ver guía
+      <span class="ob-guide-mini-prog" *ngIf="progressLabel">{{ progressLabel }}</span>
+    </button>
+
+  </ng-container>
+
+  <!-- ══ MODAL CENTRAL (bienvenida / completado) ══ -->
+  <div *ngIf="isModal" class="ob-backdrop">
+    <div class="ob-modal">
+
+      <div class="ob-modal-icon" [class.ob-modal-icon--done]="currentStep.id === 'complete'">
+        <svg *ngIf="currentStep.id === 'welcome'" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <svg *ngIf="currentStep.id === 'complete'" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+
+      <h2 class="ob-modal-title">{{ currentStep.title }}</h2>
+      <p class="ob-modal-desc">{{ currentStep.description }}</p>
+
+      <div class="ob-modal-footer">
+        <button *ngIf="currentStep.id !== 'complete'" class="ob-btn-ghost" (click)="onSkip()">Saltar guía</button>
+        <button class="ob-btn-primary ob-btn-lg" (click)="onNext()">
+          {{ currentStep.id === 'complete' ? 'Explorar AgroNexa' : 'Comenzar tour' }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</ng-container>

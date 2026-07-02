@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { MuestrasService } from '../../core/services/muestras.service';
+import { ParcelasService } from '../../core/services/parcelas.service';
 import { Muestra } from '../../core/models/muestra.model';
+import { Parcela } from '../../core/models/parcela.model';
 
 @Component({
   selector: 'app-muestras',
@@ -11,8 +14,17 @@ import { Muestra } from '../../core/models/muestra.model';
 })
 export class MuestrasComponent implements OnInit, OnDestroy {
   muestras: Muestra[] = [];
+  parcelas: Parcela[] = [];
+  tieneParcelas: boolean | null = null;
   loading = true;
   errorMsg = '';
+
+  // Filtros
+  filtroNivel = '';
+  filtroParcela = '';          // '' = todas las parcelas
+
+  // Vista
+  vistaAgrupada = false;       // false = lista plana, true = agrupada por parcela
 
   paginaActual = 1;
   pageSize = 10;
@@ -22,6 +34,7 @@ export class MuestrasComponent implements OnInit, OnDestroy {
 
   constructor(
     private muestrasService: MuestrasService,
+    private parcelasService: ParcelasService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -41,41 +54,103 @@ export class MuestrasComponent implements OnInit, OnDestroy {
     this.timeout = setTimeout(() => {
       if (this.loading) {
         this.loading = false;
-        this.errorMsg = 'No se pudo conectar con el servidor (Tiempo de espera agotado).';
+        this.errorMsg = 'No se pudo conectar con el servidor.';
         this.cdr.detectChanges();
       }
     }, 5000);
 
-    this.sub = this.muestrasService.listar().subscribe({
-      next: (res) => { 
-        clearTimeout(this.timeout); 
-        console.log('Respuesta del backend (Muestras):', res);
-        this.muestras = (res.data || []).sort((a: Muestra, b: Muestra) =>
-          new Date(a.createdAt || '').getTime() - new Date(b.createdAt || '').getTime()
+    this.sub = forkJoin({
+      muestras: this.muestrasService.listar().pipe(catchError(() => of({ data: [] }))),
+      parcelas: this.parcelasService.listar().pipe(catchError(() => of({ data: [] })))
+    }).subscribe({
+      next: ({ muestras, parcelas }) => {
+        clearTimeout(this.timeout);
+        this.muestras = ((muestras as any).data || []).sort((a: Muestra, b: Muestra) =>
+          new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
         );
+        this.parcelas = (parcelas as any).data || [];
+        this.tieneParcelas = this.parcelas.length > 0;
         this.paginaActual = 1;
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => { 
-        clearTimeout(this.timeout); 
-        console.error('Error al obtener muestras:', err);
-        this.errorMsg = 'Error al cargar muestras'; 
-        this.loading = false; 
+      error: () => {
+        clearTimeout(this.timeout);
+        this.errorMsg = 'Error al cargar datos';
+        this.loading = false;
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  // ── Filtros ──────────────────────────────────────────────────────────────────
+
+  setFiltro(nivel: string) {
+    this.filtroNivel = nivel;
+    this.paginaActual = 1;
+    this.cdr.detectChanges();
+  }
+
+  setFiltroParcela(parcelaId: string) {
+    this.filtroParcela = parcelaId;
+    this.paginaActual = 1;
+    this.cdr.detectChanges();
+  }
+
+  toggleVista() {
+    this.vistaAgrupada = !this.vistaAgrupada;
+    this.cdr.detectChanges();
+  }
+
+  contarPorNivel(nivel: string): number {
+    return this.muestras.filter(m =>
+      (m.nivelAfectacion || 'leve') === nivel &&
+      (!this.filtroParcela || m.parcelaId === this.filtroParcela)
+    ).length;
+  }
+
+  contarPorParcela(parcelaId: string): number {
+    return this.muestras.filter(m => m.parcelaId === parcelaId).length;
+  }
+
+  getNombreParcela(parcelaId: string): string {
+    return this.parcelas.find(p => p.id === parcelaId)?.nombre || 'Parcela desconocida';
+  }
+
+  // ── Computed ─────────────────────────────────────────────────────────────────
+
+  get muestrasFiltradas(): Muestra[] {
+    return this.muestras.filter(m => {
+      const nivelOk = !this.filtroNivel || (m.nivelAfectacion || 'leve') === this.filtroNivel;
+      const parcelaOk = !this.filtroParcela || m.parcelaId === this.filtroParcela;
+      return nivelOk && parcelaOk;
     });
   }
 
   get muestrasPaginadas(): Muestra[] {
     const size = +this.pageSize;
     const inicio = (this.paginaActual - 1) * size;
-    return this.muestras.slice(inicio, inicio + size);
+    return this.muestrasFiltradas.slice(inicio, inicio + size);
   }
 
-  get totalPaginas(): number { return Math.ceil(this.muestras.length / +this.pageSize); }
-  get rangoInicio(): number { return this.muestras.length === 0 ? 0 : (this.paginaActual - 1) * +this.pageSize + 1; }
-  get rangoFin(): number { return Math.min(this.paginaActual * +this.pageSize, this.muestras.length); }
+  /** Agrupa las muestras filtradas por parcela */
+  get gruposPorParcela(): { parcela: Parcela | null; nombre: string; muestras: Muestra[] }[] {
+    const grupos = new Map<string, Muestra[]>();
+    for (const m of this.muestrasFiltradas) {
+      const pid = m.parcelaId || '_sin_parcela';
+      if (!grupos.has(pid)) grupos.set(pid, []);
+      grupos.get(pid)!.push(m);
+    }
+    return Array.from(grupos.entries()).map(([pid, ms]) => ({
+      parcela: this.parcelas.find(p => p.id === pid) ?? null,
+      nombre: this.parcelas.find(p => p.id === pid)?.nombre ?? 'Sin parcela',
+      muestras: ms
+    }));
+  }
+
+  get totalPaginas(): number { return Math.ceil(this.muestrasFiltradas.length / +this.pageSize); }
+  get rangoInicio(): number { return this.muestrasFiltradas.length === 0 ? 0 : (this.paginaActual - 1) * +this.pageSize + 1; }
+  get rangoFin(): number { return Math.min(this.paginaActual * +this.pageSize, this.muestrasFiltradas.length); }
 
   get paginas(): (number | null)[] {
     const total = this.totalPaginas;
@@ -110,7 +185,7 @@ export class MuestrasComponent implements OnInit, OnDestroy {
   }
 
   nivelClass(nivel: string | undefined): string {
-    const map: any = { severo: 'red', moderado: 'amber', leve: 'green' };
-    return map[nivel || ''] || 'gray';
+    const map: Record<string, string> = { severo: 'red', moderado: 'amber', leve: 'green' };
+    return map[nivel || ''] || 'green';
   }
 }

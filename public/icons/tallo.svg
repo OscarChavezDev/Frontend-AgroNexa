@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#6ee7a8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Tallo">
+  <path d="M32 56V12"/>
+  <path d="M32 30C25.5 29 20.5 24.5 18.5 17.5"/>
+  <path d="M32 40c6.5-1 11.5-5.5 13.5-12.5"/>
+  <circle cx="32" cy="12" r="2.6"/>
+  <circle cx="32" cy="35" r="2.6"/>
+</svg>

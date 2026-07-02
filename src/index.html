@@ -1,20 +1,35 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <title>FrontAgroNexa</title>
+  <title>AgroNexa - Diagnóstico inteligente para tus cultivos</title>
   <base href="/">
+  <!-- Aplica el tema guardado antes de pintar (evita flash). Default: oscuro. -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('agro_theme');
+        document.documentElement.setAttribute('data-theme', (t === 'light' || t === 'dark') ? t : 'dark');
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta name="description" content="AgroNexa: diagnóstico inteligente para tus cultivos. Registra parcelas, toma muestras y obtén análisis precisos con IA para mejorar tus cosechas.">
+  <link rel="canonical" href="https://solucionestingo.org/">
+  <link rel="icon" type="image/x-icon" href="\assets\logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7Z9MGungOXukJk3609jP7On5uVr6S_NA&libraries=places"
-    async defer
-  ></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7Z9MGungOXukJk3609jP7On5uVr6S_NA&libraries=places"
+    async defer></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
+
 <body>
   <app-root></app-root>
 </body>
+
 </html>

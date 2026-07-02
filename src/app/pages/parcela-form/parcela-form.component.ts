@@ -1,7 +1,9 @@
-import { Component, OnInit, AfterViewInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CULTIVO_OPTIONS, CultivoOption, normalizeCultivo } from '../../core/constants/cultivos';
 import { ParcelasService } from '../../core/services/parcelas.service';
+import { PopupService } from '../../shared/services/popup.service';
 
 declare var google: any;
 
@@ -23,8 +25,8 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   private marker: any;
   private mapInitialized = false;
 
-  cultivoOpciones = ['cacao', 'café', 'maíz', 'papa', 'arroz', 'quinua', 'palto', 'mango', 'plátano', 'otro'];
-  sistemasOpciones = ['monocultivo', 'agroforestal', 'mixto', 'orgánico', 'otro'];
+  cultivoOpciones: CultivoOption[] = CULTIVO_OPTIONS.filter(opt => opt.key === 'cacao');
+  sistemasOpciones = ['monocultivo', 'agroforestal', 'mixto', 'org\u00E1nico', 'otro'];
   showAvanzados = false;
 
   constructor(
@@ -33,11 +35,13 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private popupService: PopupService
   ) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
-      cultivo: ['', Validators.required],
+      cultivo: ['cacao', Validators.required],
+      otroCultivo: [''],
       variedad: [''],
       areaAproximada: [''],
       unidadArea: ['ha'],
@@ -52,9 +56,19 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    this.form.get('cultivo')?.valueChanges.subscribe((value) => {
+      const otroControl = this.form.get('otroCultivo');
+      if (normalizeCultivo(value) === 'otro') {
+        otroControl?.setValidators([Validators.required]);
+      } else {
+        otroControl?.clearValidators();
+      }
+      otroControl?.updateValueAndValidity();
+    });
+
+    this.route.paramMap.subscribe((params) => {
       this.parcelaId = params.get('id') || '';
-      this.isEdit = !!this.parcelaId && this.route.snapshot.url.some(s => s.path === 'editar');
+      this.isEdit = !!this.parcelaId && this.route.snapshot.url.some((segment) => segment.path === 'editar');
       if (this.isEdit) {
         this.cargarParcela();
       } else {
@@ -80,6 +94,7 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
 
   private initMap() {
     if (this.mapInitialized) return;
+
     const mapEl = document.getElementById('parcela-map');
     const searchEl = document.getElementById('parcela-search') as HTMLInputElement;
     if (!mapEl) return;
@@ -94,18 +109,24 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     this.map = new google.maps.Map(mapEl, {
       center,
       zoom: hasCoords ? 14 : 6,
-      mapTypeId: google.maps.MapTypeId.HYBRID,
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
       mapTypeControl: true,
+      mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.TERRAIN],
+      },
       streetViewControl: false,
     });
 
     if (hasCoords) {
       this.placeMarker(center);
+    } else {
+      this.tryUseCurrentLocation();
     }
 
-    this.map.addListener('click', (e: any) => {
+    this.map.addListener('click', (event: any) => {
       this.ngZone.run(() => {
-        this.placeMarker({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+        this.placeMarker({ lat: event.latLng.lat(), lng: event.latLng.lng() });
       });
     });
 
@@ -113,14 +134,20 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
       const autocomplete = new google.maps.places.Autocomplete(searchEl, {
         fields: ['geometry'],
       });
+
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
           const place = autocomplete.getPlace();
           if (!place.geometry?.location) return;
-          const loc = { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() };
-          this.map.setCenter(loc);
+
+          const location = {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng()
+          };
+
+          this.map.setCenter(location);
           this.map.setZoom(15);
-          this.placeMarker(loc);
+          this.placeMarker(location);
         });
       });
     }
@@ -134,15 +161,44 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
         position,
         map: this.map,
         draggable: true,
-        title: 'Ubicación de la parcela',
+        title: 'Ubicacion de la parcela',
       });
-      this.marker.addListener('dragend', (e: any) => {
+
+      this.marker.addListener('dragend', (event: any) => {
         this.ngZone.run(() => {
-          this.updateCoords(e.latLng.lat(), e.latLng.lng());
+          this.updateCoords(event.latLng.lat(), event.latLng.lng());
         });
       });
     }
+
     this.updateCoords(position.lat, position.lng);
+  }
+
+  private tryUseCurrentLocation() {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.ngZone.run(() => {
+          const currentLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          this.map.setCenter(currentLocation);
+          this.map.setZoom(16);
+          this.placeMarker(currentLocation);
+        });
+      },
+      () => {
+        // Si el usuario no concede permiso, mantenemos el centro por defecto.
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   }
 
   private updateCoords(lat: number, lng: number) {
@@ -152,31 +208,36 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
   cargarParcela() {
     this.loading = true;
     this.cdr.detectChanges();
+
     this.parcelasService.obtener(this.parcelaId).subscribe({
-      next: (res) => {
+      next: (response) => {
         try {
-          const p = res?.data;
-          if (p) {
+          const parcela = response?.data;
+          if (parcela) {
             this.form.patchValue({
-              ...p,
-              lat: p.ubicacion?.lat,
-              lng: p.ubicacion?.lng
+              ...parcela,
+              lat: parcela.ubicacion?.lat,
+              lng: parcela.ubicacion?.lng
             });
+
+            // Enforce cacao
+            this.form.patchValue({ cultivo: 'cacao' });
+
             setTimeout(() => this.waitForMapsAndInit(), 0);
           } else {
             this.errorMsg = 'No se encontraron datos de la parcela';
           }
           this.loading = false;
-        } catch (e) {
-          console.error('Error in ParcelaForm cargarParcela next:', e);
+        } catch (error) {
+          console.error('Error in ParcelaForm cargarParcela next:', error);
           this.errorMsg = 'Error al procesar datos de la parcela';
           this.loading = false;
         } finally {
           this.cdr.detectChanges();
         }
       },
-      error: (err) => {
-        console.error('Error fetching Parcela for edit:', err);
+      error: (error) => {
+        console.error('Error fetching Parcela for edit:', error);
         this.errorMsg = 'Error al cargar parcela';
         this.loading = false;
         this.cdr.detectChanges();
@@ -184,18 +245,40 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     });
   }
 
+  seleccionarCultivo(cultivo: string) {
+    this.form.patchValue({ cultivo });
+    this.form.get('cultivo')?.markAsTouched();
+  }
+
+  isCultivoSeleccionado(cultivo: CultivoOption): boolean {
+    return normalizeCultivo(this.form.get('cultivo')?.value) === cultivo.key;
+  }
+
   onSubmit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.saving = true;
     this.cdr.detectChanges();
-    const { lat, lng, ...rest } = this.form.value;
-    const payload = { ...rest, ubicacion: { lat: +lat, lng: +lng } };
 
-    const onSuccess = () => this.router.navigate(['/parcelas']);
-    const onError = (err: any) => {
+    const { lat, lng, ...rest } = this.form.value;
+    const payload = {
+      ...rest,
+      cultivo: 'cacao',
+      ubicacion: { lat: +lat, lng: +lng }
+    };
+    delete (payload as any).otroCultivo;
+
+    const onSuccess = () => {
+      this.popupService.success('¡Parcela guardada!', 'Los datos de la parcela se registraron con éxito.');
+      this.router.navigate(['/parcelas']);
+    };
+    const onError = (error: any) => {
       try {
-        this.errorMsg = err.error?.message || 'Error al guardar';
-      } catch (e) {
+        this.errorMsg = error.error?.message || 'Error al guardar';
+      } catch {
         this.errorMsg = 'Error de red al guardar';
       } finally {
         this.saving = false;
@@ -210,5 +293,11 @@ export class ParcelaFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  get f() { return this.form.controls; }
+  trackCultivo(_: number, cultivo: CultivoOption) {
+    return cultivo.key;
+  }
+
+  get f() {
+    return this.form.controls;
+  }
 }

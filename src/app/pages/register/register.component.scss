@@ -1,6 +1,101 @@
 @use '../../../styles/auth' as *;
 @use '../../../styles/page' as *;
 
+// ── Step indicator ────────────────────────────────────────────────────────────
+.step-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  gap: 0;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--clr-border-strong);
+    background: var(--clr-bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--clr-text-muted);
+    transition: all 0.25s ease;
+  }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--clr-text-muted);
+    white-space: nowrap;
+    transition: color 0.25s ease;
+  }
+
+  &.active {
+    .step-dot {
+      border-color: var(--clr-accent);
+      background: rgba(74, 222, 128, .12);
+      color: var(--clr-accent);
+    }
+    .step-label { color: var(--clr-accent); font-weight: 600; }
+  }
+
+  &.done {
+    .step-dot {
+      border-color: var(--clr-accent);
+      background: var(--clr-accent);
+      color: #051a0a;
+    }
+    .step-label { color: var(--clr-text-secondary); }
+  }
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--clr-border-strong);
+  margin: 0 8px;
+  margin-bottom: 22px;
+  max-width: 48px;
+  border-radius: 2px;
+  transition: background 0.25s ease;
+
+  &.active { background: var(--clr-accent); }
+}
+
+// ── Step content animation ─────────────────────────────────────────────────
+.step-content {
+  animation: stepFadeIn 0.3s ease both;
+}
+
+@keyframes stepFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Step actions (navigation buttons) ────────────────────────────────────────
+.step-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+
+  .btn-primary { flex: 1; }
+  .btn-ghost   { flex-shrink: 0; }
+
+  &--single {
+    .btn-primary { width: 100%; }
+  }
+}
+
+// ── Form misc ─────────────────────────────────────────────────────────────────
 .btn-full {
   width: 100%;
   justify-content: center;
@@ -11,11 +106,24 @@
 
 .req { color: var(--clr-red); font-weight: 700; }
 
+.step-hint {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--clr-text-primary);
+  margin-bottom: 14px;
+}
+
+// ── Role cards ─────────────────────────────────────────────────────────────────
 .rol-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  @media (max-width: 480px) { grid-template-columns: 1fr; }
+  margin-bottom: 4px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 .rol-card {
@@ -28,7 +136,7 @@
   border: 1.5px solid var(--clr-border-strong);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
   background: var(--clr-bg-input);
 
   &.selected {
@@ -47,4 +155,22 @@
   .rol-icon { font-size: 22px; }
   .rol-name { font-size: 12.5px; font-weight: 700; color: var(--clr-text-secondary); }
   .rol-desc { font-size: 11px; color: var(--clr-text-muted); line-height: 1.4; }
+
+  // Horizontal layout on mobile
+  @media (max-width: 480px) {
+    flex-direction: row;
+    text-align: left;
+    gap: 12px;
+    padding: 14px 16px;
+
+    .rol-icon { font-size: 24px; flex-shrink: 0; }
+    .rol-name  { font-size: 13.5px; }
+    .rol-desc  { font-size: 12px; }
+
+    .rol-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
 }

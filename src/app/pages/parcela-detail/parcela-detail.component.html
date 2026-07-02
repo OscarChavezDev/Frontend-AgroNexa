@@ -7,7 +7,7 @@
     <div class="header-actions">
       <a routerLink="/parcelas" class="btn-outline">← Volver</a>
       <a *ngIf="parcela" [routerLink]="['/parcelas', parcela.id, 'editar']" class="btn-outline">Editar</a>
-      <button class="btn-primary" (click)="nuevaMuestra()">+ Nueva muestra</button>
+      <button class="btn-primary" id="onboarding-btn-nueva-muestra" (click)="nuevaMuestra()">+ Nueva muestra</button>
     </div>
   </div>
 
@@ -86,10 +86,8 @@
         <div class="muestras-list" *ngIf="muestras.length > 0">
           <a *ngFor="let m of muestras" [routerLink]="['/muestras', m.id]" class="muestra-row">
             <div class="muestra-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
-            </svg>
-          </div>
+              <img class="muestra-icon-img" [src]="iconoParte(m.parteAfectada)" [alt]="m.parteAfectada || 'Muestra'">
+            </div>
             <div class="muestra-info">
               <span class="muestra-title">{{ m.parteAfectada | titlecase }}</span>
               <span class="muestra-sub">

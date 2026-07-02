@@ -58,12 +58,13 @@
         </li>
       </ul>
 
-      <button class="btn-plan" [class.btn-plan--current]="esPlanActual(plan.codigo)"
-        [disabled]="esPlanActual(plan.codigo) || procesando === plan.codigo"
+      <button class="btn-plan" [class.btn-plan--current]="esPlanActual(plan.codigo) || esInteresado(plan.codigo)"
+        [disabled]="esPlanActual(plan.codigo) || esInteresado(plan.codigo) || procesando === plan.codigo"
         (click)="suscribirse(plan)">
-        <span *ngIf="esPlanActual(plan.codigo)">Plan actual</span>
-        <span *ngIf="!esPlanActual(plan.codigo) && procesando !== plan.codigo">
-          {{ plan.precio === 0 ? 'Activar gratis' : 'Suscribirse' }}
+        <span *ngIf="esPlanActual(plan.codigo)">Suscrito</span>
+        <span *ngIf="esInteresado(plan.codigo)">Solicitado</span>
+        <span *ngIf="!esPlanActual(plan.codigo) && !esInteresado(plan.codigo) && procesando !== plan.codigo">
+          {{ (plan.codigo === 'asociacion' || plan.codigo === 'institucional') ? 'Me interesa' : (plan.precio === 0 ? 'Activar gratis' : 'Suscribirse') }}
         </span>
         <span *ngIf="procesando === plan.codigo" class="spinner"></span>
       </button>

@@ -35,7 +35,7 @@ export class PerfilComponent implements OnInit {
     this.form = this.fb.group({
       nombre:   ['', Validators.required],
       apellido: ['', Validators.required],
-      telefono: ['']
+      telefono: ['', Validators.pattern('^$|^[0-9]{9}$')]
     });
 
     this.passwordForm = this.fb.group({
@@ -113,6 +113,13 @@ export class PerfilComponent implements OnInit {
     });
   }
 
+  soloDigitos(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const limpio = input.value.replace(/[^0-9]/g, '').slice(0, 9);
+    input.value = limpio;
+    this.form.get('telefono')?.setValue(limpio, { emitEvent: false });
+  }
+
   get f() { return this.form.controls; }
   get pf() { return this.passwordForm.controls; }
 
@@ -122,10 +129,10 @@ export class PerfilComponent implements OnInit {
 
   get rolLabel(): string {
     const map: Record<string, string> = {
-      productor:  '🌾 Productor',
-      asociacion: '🤝 Asociación',
-      institucion:'🏛️ Institución',
-      admin:      '⚙️ Administrador',
+      productor:  'Productor',
+      asociacion: 'Asociación',
+      institucion:'Institución',
+      admin:      'Administrador',
     };
     return map[this.user?.rol || ''] || (this.user?.rol || '');
   }

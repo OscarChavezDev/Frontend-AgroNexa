@@ -1,10 +1,10 @@
 <div class="page">
 
-  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <!-- Header -->
   <div class="page-header">
     <div>
       <h1>Bienvenido, {{ user?.nombre }}</h1>
-      <p class="subtitle">Resumen de tu actividad agrícola</p>
+      <p class="subtitle">Resumen de tu actividad agr&iacute;cola</p>
     </div>
     <a routerLink="/parcelas/nueva" class="btn-primary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -12,7 +12,21 @@
     </a>
   </div>
 
-  <!-- ── Stat cards ───────────────────────────────────────────────────── -->
+  <div class="success-banner reingreso-banner" *ngIf="mostrarMensajeReingreso">
+    <div class="reingreso-banner__body">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <span>Gracias por volver. Tu cuenta est&aacute; activa otra vez y ya puedes continuar donde lo dejaste.</span>
+    </div>
+    <button class="reingreso-banner__close" type="button" (click)="cerrarMensajeReingreso()" aria-label="Cerrar mensaje">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Stat cards -->
   <div class="stats-grid">
 
     <!-- Parcelas registradas -->
@@ -38,7 +52,7 @@
       </div>
     </div>
 
-    <!-- Parcelas activas -->
+    <!-- Muestras creadas -->
     <div class="stat-card stat-card--blue">
       <div class="stat-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -46,22 +60,22 @@
         </svg>
       </div>
       <div class="stat-info">
-        @if (loadingParcelas) {
+        @if (loadingMuestras) {
           <span class="sk-val"></span>
         } @else {
-          <span class="stat-value">{{ parcelasActivas }}</span>
+          <span class="stat-value">{{ totalMuestras }}</span>
         }
-        <span class="stat-label">Parcelas activas</span>
-        @if (!loadingParcelas && totalParcelas > 0) {
+        <span class="stat-label">Muestras creadas</span>
+        @if (!loadingMuestras && totalMuestras > 0) {
           <span class="stat-trend stat-trend--up">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
-            En producción
+            En seguimiento
           </span>
         }
       </div>
     </div>
 
-    <!-- Muestras totales -->
+    <!-- Diagnosticos hechos -->
     <div class="stat-card stat-card--amber">
       <div class="stat-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -72,47 +86,33 @@
         @if (loadingMuestras) {
           <span class="sk-val"></span>
         } @else {
-          <span class="stat-value">{{ totalMuestras }}</span>
+          <span class="stat-value">{{ totalDiagnosticos }}</span>
         }
-        <span class="stat-label">Muestras analizadas</span>
-        @if (!loadingMuestras && totalMuestras > 0) {
+        <span class="stat-label">Diagn&oacute;sticos hechos</span>
+        @if (!loadingMuestras && totalDiagnosticos > 0) {
           <span class="stat-trend stat-trend--up">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
-            Diagnósticos listos
+            An&aacute;lisis completados
           </span>
         }
       </div>
     </div>
 
-    <!-- Plan -->
-    <div class="stat-card stat-card--purple">
-      <div class="stat-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ user?.plan | titlecase }}</span>
-        <span class="stat-label">Plan actual</span>
-        <a routerLink="/planes" class="stat-trend stat-upgrade">
-          Ver planes →
-        </a>
-      </div>
-    </div>
+
 
   </div>
 
-  <!-- ── Main grid ─────────────────────────────────────────────────────── -->
+  <!-- Main grid -->
   <div class="dashboard-grid">
 
-    <!-- Últimas Parcelas -->
+    <!-- Ultimas Parcelas -->
     <div class="card">
       <div class="card-header">
         <h3>
           <span class="card-dot card-dot--green"></span>
-          Últimas Parcelas
+          &Uacute;ltimas Parcelas
         </h3>
-        <a routerLink="/parcelas" class="link-more">Ver todas →</a>
+        <a routerLink="/parcelas" class="link-more">Ver todas &rarr;</a>
       </div>
 
       @if (loadingParcelas) {
@@ -134,21 +134,22 @@
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
           </div>
-          <p>No tienes parcelas aún.</p>
+          <p>No tienes parcelas a&uacute;n.</p>
           <a routerLink="/parcelas/nueva" class="btn-outline">Registrar parcela</a>
         </div>
       } @else {
         <div class="item-list">
           @for (p of parcelas.slice(0, 4); track p.id) {
             <a [routerLink]="['/parcelas', p.id]" class="item-row">
-              <div class="item-icon">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
+              <div class="item-icon item-icon--cultivo item-icon--{{ getCultivoMeta(p.cultivo).key }}">
+                <img *ngIf="getCultivoMeta(p.cultivo).iconPath; else cultivoItemEmoji"
+                  [src]="getCultivoMeta(p.cultivo).iconPath"
+                  [alt]="getCultivoMeta(p.cultivo).label">
+                <ng-template #cultivoItemEmoji><span aria-hidden="true">{{ getCultivoMeta(p.cultivo).icon }}</span></ng-template>
               </div>
               <div class="item-info">
                 <span class="item-title">{{ p.nombre }}</span>
-                <span class="item-sub">{{ p.cultivo }} · {{ p.areaAproximada }} {{ p.unidadArea }}</span>
+                <span class="item-sub">{{ getParcelaResumen(p) }}</span>
               </div>
               <span class="badge badge--{{ p.estado === 'activo' ? 'green' : 'gray' }}">{{ p.estado }}</span>
             </a>
@@ -157,14 +158,14 @@
       }
     </div>
 
-    <!-- Últimas Muestras -->
+    <!-- Ultimas Muestras -->
     <div class="card">
       <div class="card-header">
         <h3>
           <span class="card-dot card-dot--amber"></span>
-          Últimas Muestras
+          &Uacute;ltimas Muestras
         </h3>
-        <a routerLink="/muestras" class="link-more">Ver todas →</a>
+        <a routerLink="/muestras" class="link-more">Ver todas &rarr;</a>
       </div>
 
       @if (loadingMuestras) {
@@ -192,8 +193,21 @@
         <div class="item-list">
           @for (m of ultimasMuestras; track m.id) {
             <a [routerLink]="['/muestras', m.id]" class="item-row">
-              <div class="item-icon">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <div class="item-icon item-icon--{{ (m.parteAfectada || 'otro') | lowercase }}" [ngSwitch]="(m.parteAfectada || 'otro') | lowercase">
+                <!-- Fruto -->
+                <img *ngSwitchCase="'fruto'" src="/icons/fruto.svg" width="20" height="20" alt="Fruto">
+                <!-- Hoja -->
+                <img *ngSwitchCase="'hoja'" src="/icons/hoja.svg" width="20" height="20" alt="Hoja">
+                <!-- Tallo -->
+                <img *ngSwitchCase="'tallo'" src="/icons/tallo.svg" width="20" height="20" alt="Tallo">
+                <!-- Raíz -->
+                <img *ngSwitchCase="'raíz'" src="/icons/raiz.svg" width="20" height="20" alt="Raíz">
+                <img *ngSwitchCase="'raiz'" src="/icons/raiz.svg" width="20" height="20" alt="Raíz">
+                <!-- Flor -->
+                <img *ngSwitchCase="'flor'" src="/icons/flor.svg" width="20" height="20" alt="Flor">
+                <img *ngSwitchCase="'planta_completa'" src="/icons/planta-completa.svg" width="20" height="20" alt="Planta completa">
+                <!-- Default (otro) -->
+                <svg *ngSwitchDefault width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5m4 0h10M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5M5 14h14"/>
                 </svg>
               </div>
@@ -211,4 +225,5 @@
     </div>
 
   </div>
+
 </div>

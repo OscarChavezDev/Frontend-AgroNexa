@@ -2,26 +2,26 @@
   <div class="page-header">
     <div>
       <h1>Mis Parcelas</h1>
-      <p class="subtitle">Gestiona tus parcelas agrícolas</p>
+      <p class="subtitle">Gestiona tus parcelas agr&iacute;colas</p>
     </div>
-    <a routerLink="/parcelas/nueva" class="btn-primary">+ Nueva parcela</a>
+    <a routerLink="/parcelas/nueva" class="btn-primary" id="onboarding-btn-nueva-parcela">+ Nueva parcela</a>
   </div>
 
   <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
 
-  <!-- Skeletons mientras carga -->
   <div class="parcelas-skeleton" *ngIf="loading">
-    <div class="skeleton-card" *ngFor="let i of [1,2,3]">
+    <div class="skeleton-card" *ngFor="let i of [1, 2, 3]">
       <div class="sk sk-title"></div>
       <div class="sk sk-line"></div>
       <div class="sk sk-line sk-short"></div>
     </div>
   </div>
 
-  <!-- Sin datos -->
   <div class="empty-state card" *ngIf="!loading && !errorMsg && parcelas.length === 0">
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      <rect x="3" y="4" width="18" height="16" rx="3"/>
+      <path d="M3 9.5c4-2 14-2 18 0"/>
+      <path d="M3 14.5c4-2 14-2 18 0"/>
     </svg>
     <h3>Sin parcelas registradas</h3>
     <p>Empieza registrando tu primera parcela</p>
@@ -29,31 +29,59 @@
   </div>
 
   <div class="parcelas-grid" *ngIf="parcelas.length > 0">
-    <div class="parcela-card" *ngFor="let p of parcelas">
-      <div class="parcela-card__header">
-        <div>
-          <h3>{{ p.nombre }}</h3>
-          <span class="badge badge--{{ p.estado === 'activo' ? 'green' : 'gray' }}">{{ p.estado }}</span>
+    <article class="parcela-card" *ngFor="let p of parcelas">
+      <div class="parcela-card__hero">
+        <div class="parcela-card__eyebrow">
+          <span class="parcela-card__status badge badge--{{ p.estado === 'activo' ? 'green' : 'gray' }}">{{ p.estado || 'sin estado' }}</span>
         </div>
-        <span class="cultivo-badge">{{ p.cultivo | titlecase }}</span>
+
+        <div class="parcela-card__header">
+          <div class="parcela-card__identity">
+            <div class="cultivo-avatar cultivo-avatar--{{ getCultivoMeta(p.cultivo).key }}">
+              <img *ngIf="getCultivoMeta(p.cultivo).iconPath; else cultivoAvatarEmoji"
+                [src]="getCultivoMeta(p.cultivo).iconPath"
+                [alt]="getCultivoMeta(p.cultivo).label">
+              <ng-template #cultivoAvatarEmoji><span aria-hidden="true">{{ getCultivoMeta(p.cultivo).icon }}</span></ng-template>
+            </div>
+
+            <div class="parcela-card__title">
+              <h3>{{ p.nombre }}</h3>
+            </div>
+          </div>
+
+          <span class="cultivo-badge cultivo-badge--{{ getCultivoMeta(p.cultivo).key }}">
+            <img *ngIf="getCultivoMeta(p.cultivo).iconPath; else cultivoBadgeEmoji"
+              [src]="getCultivoMeta(p.cultivo).iconPath"
+              [alt]="getCultivoMeta(p.cultivo).label">
+            <ng-template #cultivoBadgeEmoji><span aria-hidden="true">{{ getCultivoMeta(p.cultivo).icon }}</span></ng-template>
+            {{ getCultivoMeta(p.cultivo).label }}
+          </span>
+        </div>
       </div>
 
-      <div class="parcela-card__info">
-        <div class="info-row">
-          <span class="info-label">Área:</span>
-          <span>{{ p.areaAproximada }} {{ p.unidadArea }}</span>
+      <div class="parcela-card__metrics">
+        <div class="metric metric--highlight">
+          <span class="metric__label">Muestras</span>
+          <span class="metric__value">{{ getMuestrasCount(p.id) }}</span>
         </div>
-        <div class="info-row" *ngIf="p.variedad">
-          <span class="info-label">Variedad:</span>
-          <span>{{ p.variedad }}</span>
+        <div class="metric" *ngIf="formatSistema(p)">
+          <span class="metric__label">Sistema</span>
+          <span class="metric__value">{{ formatSistema(p) }}</span>
         </div>
-        <div class="info-row" *ngIf="p.cantidadPlantas">
-          <span class="info-label">Plantas:</span>
-          <span>{{ p.cantidadPlantas }}</span>
+        <div class="metric" *ngIf="formatReferencia(p)">
+          <span class="metric__label">Referencia</span>
+          <span class="metric__value">{{ formatReferencia(p) }}</span>
         </div>
-        <div class="info-row" *ngIf="p.ubicacion">
-          <span class="info-label">Ubicación:</span>
-          <span>{{ p.ubicacion.lat }}, {{ p.ubicacion.lng }}</span>
+      </div>
+
+      <div class="parcela-card__info" *ngIf="formatVariedad(p) || p.observaciones">
+        <div class="info-item" *ngIf="formatVariedad(p)">
+          <span class="info-item__label">Variedad</span>
+          <span class="info-item__value">{{ formatVariedad(p) }}</span>
+        </div>
+        <div class="info-item info-item--full" *ngIf="p.observaciones">
+          <span class="info-item__label">Observaciones</span>
+          <span class="info-item__value">{{ p.observaciones }}</span>
         </div>
       </div>
 
@@ -62,6 +90,6 @@
         <a [routerLink]="['/parcelas', p.id, 'editar']" class="btn-outline-sm">Editar</a>
         <button class="btn-danger-sm" (click)="eliminar(p.id!, p.nombre)">Eliminar</button>
       </div>
-    </div>
+    </article>
   </div>
 </div>

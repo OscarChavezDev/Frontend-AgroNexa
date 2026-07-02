@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { MuestrasService } from '../../core/services/muestras.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { ImagenesService } from '../../core/services/imagenes.service';
+import { PopupService } from '../../shared/services/popup.service';
 import { Parcela } from '../../core/models/parcela.model';
 
 interface ImagenItem {
@@ -13,6 +14,15 @@ interface ImagenItem {
   preview: string;
   tipoImagen: string;
   descripcion: string;
+  validando: boolean;
+  validacion: { relevante: boolean; motivo: string } | null;
+}
+
+interface ParteAfectadaOption {
+  value: string;
+  label: string;
+  icon: string;
+  iconPath?: string;
 }
 
 @Component({
@@ -33,13 +43,24 @@ export class MuestraFormComponent implements OnInit {
     'brotes deformados', 'marchitez', 'caida de frutos', 'hongos visibles'
   ];
   sintomasSeleccionados: string[] = [];
+  sinSintomaVisible = false;
 
-  partesAfectadas = ['hoja', 'fruto', 'tallo', 'raiz', 'flor', 'planta_completa'];
+  partesAfectadas: ParteAfectadaOption[] = [
+    { value: 'hoja', label: 'Hoja', icon: '', iconPath: '/icons/hoja.svg' },
+    { value: 'fruto', label: 'Fruto', icon: '', iconPath: '/icons/fruto.svg' },
+    { value: 'tallo', label: 'Tallo', icon: '', iconPath: '/icons/tallo.svg' },
+    { value: 'raiz', label: 'Raiz', icon: '', iconPath: '/icons/raiz.svg' },
+    { value: 'flor', label: 'Flor', icon: '', iconPath: '/icons/flor.svg' },
+    { value: 'planta_completa', label: 'Planta completa', icon: '', iconPath: '/icons/planta-completa.svg' }
+  ];
   nivelesAfectacion = ['leve', 'moderado', 'severo'];
   tiposImagen = ['hoja', 'fruto', 'tallo', 'planta_completa', 'suelo'];
 
   imagenes: ImagenItem[] = [];
+  hayImagenesInvalidas = false;
+  hayImagenesValidando  = false;
   loadingParcelas = true;
+  parcelaDropdownAbierto = false;
 
   sensorMode: 'visual' | 'exacto' = 'visual';
 
@@ -74,7 +95,9 @@ export class MuestraFormComponent implements OnInit {
     private imagenesService: ImagenesService,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone,
+    private popupService: PopupService
   ) {
     this.form = this.fb.group({
       parcelaId: ['', Validators.required],
@@ -101,8 +124,17 @@ export class MuestraFormComponent implements OnInit {
   }
 
   toggleSintoma(s: string) {
+    // Deactivate "sin síntoma" when a real symptom is selected
+    this.sinSintomaVisible = false;
     const idx = this.sintomasSeleccionados.indexOf(s);
     idx >= 0 ? this.sintomasSeleccionados.splice(idx, 1) : this.sintomasSeleccionados.push(s);
+  }
+
+  toggleSinSintoma() {
+    this.sinSintomaVisible = !this.sinSintomaVisible;
+    if (this.sinSintomaVisible) {
+      this.sintomasSeleccionados = [];
+    }
   }
 
   isSintomaSelected(s: string) { return this.sintomasSeleccionados.includes(s); }
@@ -111,22 +143,85 @@ export class MuestraFormComponent implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (!files) return;
     Array.from(files).forEach(file => {
-      this.imagenes.push({
+      const item: ImagenItem = {
         file,
         preview: URL.createObjectURL(file),
-        tipoImagen: 'fruto',
-        descripcion: ''
+        tipoImagen: '',
+        descripcion: '',
+        validando: true,
+        validacion: null,
+      };
+
+      // (change) del input ya está dentro de la zona — actualización directa
+      this.imagenes = [...this.imagenes, item];
+      this.hayImagenesValidando = true;
+      this.cdr.detectChanges(); // muestra el spinner inmediatamente
+
+      this.imagenesService.validar(file).subscribe({
+        next: (res) => {
+          this.zone.run(() => {
+            if (this.imagenes.includes(item)) {
+              item.validando  = false;
+              item.validacion = res.data ?? null;
+              this.sincronizarEstadoImagenes();
+            }
+          });
+        },
+        error: () => {
+          this.zone.run(() => {
+            if (this.imagenes.includes(item)) {
+              item.validando  = false;
+              item.validacion = { relevante: true, motivo: '' };
+              this.sincronizarEstadoImagenes();
+            }
+          });
+        }
       });
     });
     (event.target as HTMLInputElement).value = '';
   }
 
   removeImagen(index: number) {
-    this.imagenes.splice(index, 1);
+    // Este método viene de un (click), ya está dentro de la zona de Angular.
+    // No usar zone.run() aquí — causaría ciclos anidados que difieren el render.
+    this.imagenes = this.imagenes.filter((_, i) => i !== index);
+    this.errorMsg = '';
+    this.hayImagenesValidando = this.imagenes.some(img => img.validando);
+    this.hayImagenesInvalidas = this.imagenes.some(img => !img.validando && img.validacion?.relevante === false);
+    this.cdr.detectChanges();
+  }
+
+  // Usado solo desde callbacks HTTP (fuera del ciclo de eventos de Angular)
+  private sincronizarEstadoImagenes() {
+    this.imagenes = [...this.imagenes]; // nueva ref: fuerza re-evaluación del *ngFor
+    this.hayImagenesValidando = this.imagenes.some(img => img.validando);
+    this.hayImagenesInvalidas = this.imagenes.some(img => !img.validando && img.validacion?.relevante === false);
+    this.cdr.detectChanges();
+  }
+
+  get imagenesValidando(): boolean  { return this.hayImagenesValidando; }
+  get imagenesNoRelevantes(): ImagenItem[] {
+    return this.imagenes.filter(img => !img.validando && img.validacion?.relevante === false);
   }
 
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+
+    if (this.imagenesValidando) {
+      this.errorMsg = 'Espera a que terminen de verificarse todas las imágenes.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (this.imagenesNoRelevantes.length > 0) {
+      const n = this.imagenesNoRelevantes.length;
+      this.errorMsg = n === 1
+        ? 'Hay una imagen que no corresponde a cultivos o plantas. Elimínala antes de continuar.'
+        : `Hay ${n} imágenes que no corresponden a cultivos o plantas. Elimínalas antes de continuar.`;
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.saving = true;
     const v = this.form.value;
     let datosSensor: Record<string, number | null>;
@@ -152,7 +247,7 @@ export class MuestraFormComponent implements OnInit {
       parteAfectada: v.parteAfectada,
       nivelAfectacion: v.nivelAfectacion,
       observaciones: v.observaciones,
-      sintomas: this.sintomasSeleccionados,
+      sintomas: this.sinSintomaVisible ? [] : this.sintomasSeleccionados,
       datosSensor
     };
 
@@ -160,6 +255,7 @@ export class MuestraFormComponent implements OnInit {
       next: (res) => {
         const muestraId = res.data?.id || '';
         if (this.imagenes.length === 0 || !muestraId) {
+          this.popupService.success('¡Muestra registrada!', 'Iniciando diagnóstico con IA...');
           this.router.navigate(['/muestras', muestraId], { queryParams: { creado: 'true' } });
           return;
         }
@@ -168,11 +264,47 @@ export class MuestraFormComponent implements OnInit {
             .pipe(catchError(() => of(null)))
         );
         forkJoin(uploads$).subscribe(() => {
+          this.popupService.success('¡Muestra registrada!', 'Iniciando análisis con IA...');
           this.router.navigate(['/muestras', muestraId], { queryParams: { creado: 'true' } });
         });
       },
       error: (err) => { this.errorMsg = err.error?.message || 'Error al guardar'; this.saving = false; }
     });
+  }
+
+  get parcelaSeleccionada(): Parcela | undefined {
+    const id = this.form.get('parcelaId')?.value;
+    return id ? this.parcelas.find(p => p.id === id) : undefined;
+  }
+
+  seleccionarParcela(p: Parcela): void {
+    this.form.patchValue({ parcelaId: p.id });
+    this.parcelaDropdownAbierto = false;
+    this.cdr.detectChanges();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!(event.target as HTMLElement).closest('.parcela-selector')) {
+      this.parcelaDropdownAbierto = false;
+    }
+  }
+
+  formatTipo(t: string): string {
+    return t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  seleccionarParteAfectada(parte: string) {
+    this.form.patchValue({ parteAfectada: parte });
+    this.form.get('parteAfectada')?.markAsTouched();
+  }
+
+  isParteAfectadaSeleccionada(parte: string): boolean {
+    return this.form.get('parteAfectada')?.value === parte;
+  }
+
+  trackParteAfectada(_: number, parte: ParteAfectadaOption) {
+    return parte.value;
   }
 
   get f() { return this.form.controls; }

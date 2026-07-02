@@ -2,18 +2,16 @@
   <div class="page-header">
     <div>
       <h1>{{ isEdit ? 'Editar Parcela' : 'Nueva Parcela' }}</h1>
-      <p class="subtitle">{{ isEdit ? 'Modifica los datos de tu parcela' : 'Registra una nueva parcela agrícola' }}</p>
+      <p class="subtitle">{{ isEdit ? 'Modifica los datos de tu parcela' : 'Registra una nueva parcela agr&iacute;cola' }}</p>
     </div>
-    <a routerLink="/parcelas" class="btn-outline">← Volver</a>
+    <a routerLink="/parcelas" class="btn-outline">&larr; Volver</a>
   </div>
 
   <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
 
   <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card" novalidate>
-
-    <!-- Información básica -->
     <div class="form-section">
-      <h3 class="section-title">Información básica</h3>
+      <h3 class="section-title">Informaci&oacute;n b&aacute;sica</h3>
 
       <div class="form-group">
         <label>Nombre de la parcela *</label>
@@ -22,31 +20,56 @@
         <span class="field-error" *ngIf="f['nombre'].invalid && f['nombre'].touched">Requerido</span>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Cultivo principal *</label>
-          <select formControlName="cultivo" [class.error]="f['cultivo'].invalid && f['cultivo'].touched">
-            <option value="">Seleccionar...</option>
-            <option *ngFor="let c of cultivoOpciones" [value]="c">{{ c | titlecase }}</option>
-          </select>
-          <span class="field-error" *ngIf="f['cultivo'].invalid && f['cultivo'].touched">Requerido</span>
+      <div class="form-group">
+        <label>Cultivo principal *</label>
+
+        <div class="cultivo-selector" [class.error]="f['cultivo'].invalid && f['cultivo'].touched">
+          <button
+            type="button"
+            class="cultivo-option"
+            *ngFor="let cultivo of cultivoOpciones; trackBy: trackCultivo"
+            [class.is-active]="isCultivoSeleccionado(cultivo)"
+            [class.is-disabled]="cultivo.key !== 'cacao'"
+            [disabled]="cultivo.key !== 'cacao'"
+            (click)="seleccionarCultivo(cultivo.value)">
+            <span class="cultivo-option__icon" aria-hidden="true">
+              <img *ngIf="cultivo.iconPath; else cultivoEmoji" [src]="cultivo.iconPath" [alt]="cultivo.label">
+              <ng-template #cultivoEmoji>{{ cultivo.icon }}</ng-template>
+            </span>
+            <span class="cultivo-option__label">{{ cultivo.label }}</span>
+            <span class="cultivo-option__soon" *ngIf="cultivo.key !== 'cacao'">Pr&oacute;ximamente</span>
+          </button>
         </div>
-        <div class="form-group">
-          <label>Área aproximada <span class="optional">(opcional)</span></label>
-          <div class="area-row">
-            <input type="number" formControlName="areaAproximada" placeholder="0.00" step="0.01" min="0">
-            <select formControlName="unidadArea" class="unit-select">
-              <option value="ha">ha</option>
-              <option value="m2">m²</option>
-              <option value="acres">acres</option>
-            </select>
-          </div>
+        <p class="cultivo-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Por ahora el diagn&oacute;stico con IA est&aacute; optimizado para <strong>cacao</strong>. Pronto m&aacute;s cultivos.
+        </p>
+
+        <span class="field-error" *ngIf="f['cultivo'].invalid && f['cultivo'].touched">Requerido</span>
+
+        <div *ngIf="form.get('cultivo')?.value === 'otro'" class="otro-cultivo">
+          <label class="otro-cultivo__label">Especificar otro cultivo *</label>
+          <input type="text" formControlName="otroCultivo" placeholder="Ej: Lim&oacute;n, Guan&aacute;bana..."
+            [class.error]="f['otroCultivo'].invalid && f['otroCultivo'].touched">
+          <span class="field-error" *ngIf="f['otroCultivo'].invalid && f['otroCultivo'].touched">Requerido</span>
+        </div>
+      </div>
+
+      <div class="form-group area-group">
+        <label>&Aacute;rea aproximada <span class="optional">(opcional)</span></label>
+        <div class="area-row">
+          <input type="number" formControlName="areaAproximada" placeholder="0.00" step="0.01" min="0">
+          <select formControlName="unidadArea" class="unit-select">
+            <option value="ha">ha</option>
+            <option value="m2">m2</option>
+            <option value="acres">acres</option>
+          </select>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Referencia de ubicación *</label>
-        <input type="text" formControlName="referencia" placeholder="Ej: A 10 minutos del caserío Los Andes"
+        <label>Referencia de ubicaci&oacute;n *</label>
+        <input type="text" formControlName="referencia" placeholder="Ej: A 10 minutos del caser&iacute;o Los Andes"
           [class.error]="f['referencia'].invalid && f['referencia'].touched">
         <span class="field-error" *ngIf="f['referencia'].invalid && f['referencia'].touched">Requerido</span>
       </div>
@@ -57,9 +80,8 @@
           placeholder="Condiciones del terreno, acceso, notas importantes..."></textarea>
       </div>
 
-      <!-- Datos avanzados colapsables -->
       <button type="button" class="toggle-avanzados" (click)="showAvanzados = !showAvanzados">
-        {{ showAvanzados ? '▲ Ocultar datos avanzados' : '▼ Agregar datos avanzados' }}
+        {{ showAvanzados ? 'Ocultar datos avanzados' : 'Agregar datos avanzados' }}
         <span class="toggle-hint">(variedad, edad, plantas, sistema)</span>
       </button>
 
@@ -71,7 +93,7 @@
           </div>
           <div class="form-group">
             <label>Edad del cultivo</label>
-            <input type="text" formControlName="edadCultivo" placeholder="Ej: 3 a 5 años">
+            <input type="text" formControlName="edadCultivo" placeholder="Ej: 3 a 5 a&ntilde;os">
           </div>
         </div>
         <div class="form-row">
@@ -83,21 +105,20 @@
             <label>Sistema de cultivo</label>
             <select formControlName="sistemaCultivo">
               <option value="">Seleccionar...</option>
-              <option *ngFor="let s of sistemasOpciones" [value]="s">{{ s | titlecase }}</option>
+              <option *ngFor="let sistema of sistemasOpciones" [value]="sistema">{{ sistema | titlecase }}</option>
             </select>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Ubicación en el mapa -->
     <div class="form-section">
-      <h3 class="section-title">Ubicación en el mapa *</h3>
-      <p class="section-hint">Busca un lugar o haz clic en el mapa para fijar la ubicación. Luego arrastra el marcador para ajustar.</p>
+      <h3 class="section-title">Ubicaci&oacute;n en el mapa *</h3>
+      <p class="section-hint">Busca un lugar o haz clic en el mapa para fijar la ubicaci&oacute;n. Si aceptas el permiso del navegador, el mapa comenzar&aacute; desde tu ubicaci&oacute;n actual. Luego arrastra el marcador para ajustar.</p>
 
       <div class="map-search-wrapper">
         <input type="text" id="parcela-search" class="map-search-input"
-               placeholder="Buscar dirección, localidad o región...">
+               placeholder="Buscar direcci&oacute;n, localidad o regi&oacute;n...">
       </div>
 
       <div id="parcela-map" class="map-container"></div>
@@ -107,7 +128,7 @@
           <label>Latitud *</label>
           <input type="number" formControlName="lat" readonly placeholder="Haz clic en el mapa"
             [class.error]="f['lat'].invalid && f['lat'].touched" class="coord-readonly">
-          <span class="field-error" *ngIf="f['lat'].invalid && f['lat'].touched">Selecciona una ubicación</span>
+          <span class="field-error" *ngIf="f['lat'].invalid && f['lat'].touched">Selecciona una ubicaci&oacute;n</span>
         </div>
         <div class="form-group">
           <label>Longitud *</label>

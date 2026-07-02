@@ -15,12 +15,18 @@ import { ParcelaDetailComponent } from './pages/parcela-detail/parcela-detail.co
 import { MuestrasComponent } from './pages/muestras/muestras.component';
 import { MuestraFormComponent } from './pages/muestra-form/muestra-form.component';
 import { MuestraDetailComponent } from './pages/muestra-detail/muestra-detail.component';
+import { DiagnosticoIaComponent } from './pages/diagnostico-ia/diagnostico-ia.component';
 import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
+import { AdminActividadComponent } from './pages/admin-actividad/admin-actividad.component';
+import { AdminSesionesComponent } from './pages/admin-sesiones/admin-sesiones.component';
+import { AdminRecomendacionesComponent } from './pages/admin-recomendaciones/admin-recomendaciones.component';
+import { LandingComponent } from './pages/landing/landing.component';
 
 const routes: Routes = [
+  { path: '', component: LandingComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [NoAuthGuard] },
   {
@@ -37,10 +43,14 @@ const routes: Routes = [
       { path: 'muestras', component: MuestrasComponent },
       { path: 'muestras/nueva', component: MuestraFormComponent },
       { path: 'muestras/:id', component: MuestraDetailComponent },
+      { path: 'muestras/:id/diagnostico', component: DiagnosticoIaComponent },
       { path: 'planes', component: PlanesComponent },
       { path: 'perfil', component: PerfilComponent },
       { path: 'admin', component: AdminDashboardComponent, canActivate: [AdminGuard] },
       { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [AdminGuard] },
+      { path: 'admin/actividad', component: AdminActividadComponent, canActivate: [AdminGuard] },
+      { path: 'admin/sesiones', component: AdminSesionesComponent, canActivate: [AdminGuard] },
+      { path: 'admin/recomendaciones', component: AdminRecomendacionesComponent, canActivate: [AdminGuard] },
     ]
   },
   { path: '**', redirectTo: 'dashboard' }

@@ -24,4 +24,10 @@ export class ImagenesService {
   eliminar(id: string, muestraId: string): Observable<ApiResponse<any>> {
     return this.api.delete<ApiResponse<any>>(`${endpoint.IMAGEN_BY_ID}/${id}`, { muestraId });
   }
+
+  validar(file: File): Observable<ApiResponse<{ relevante: boolean; motivo: string }>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.api.postFormData<ApiResponse<{ relevante: boolean; motivo: string }>>(endpoint.IMAGENES_VALIDAR, formData);
+  }
 }

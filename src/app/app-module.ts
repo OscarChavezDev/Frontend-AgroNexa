@@ -21,10 +21,18 @@ import { ParcelaDetailComponent } from './pages/parcela-detail/parcela-detail.co
 import { MuestrasComponent } from './pages/muestras/muestras.component';
 import { MuestraFormComponent } from './pages/muestra-form/muestra-form.component';
 import { MuestraDetailComponent } from './pages/muestra-detail/muestra-detail.component';
+import { DiagnosticoIaComponent } from './pages/diagnostico-ia/diagnostico-ia.component';
 import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
+import { AdminActividadComponent } from './pages/admin-actividad/admin-actividad.component';
+import { AdminSesionesComponent } from './pages/admin-sesiones/admin-sesiones.component';
+import { AdminRecomendacionesComponent } from './pages/admin-recomendaciones/admin-recomendaciones.component';
+import { LandingComponent } from './pages/landing/landing.component';
+import { OnboardingOverlayComponent } from './shared/onboarding/onboarding-overlay.component';
+import { NotificacionesComponent } from './shared/notificaciones/notificaciones.component';
+import { PopupComponent } from './shared/components/popup/popup.component';
 
 @NgModule({
   declarations: [
@@ -39,17 +47,25 @@ import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.co
     MuestrasComponent,
     MuestraFormComponent,
     MuestraDetailComponent,
+    DiagnosticoIaComponent,
     PlanesComponent,
     PerfilComponent,
     AdminDashboardComponent,
     AdminUsuariosComponent,
+    AdminActividadComponent,
+    AdminSesionesComponent,
+    AdminRecomendacionesComponent,
+    LandingComponent,
+    OnboardingOverlayComponent,
+    NotificacionesComponent,
+    PopupComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    AppRoutingModule,
+    AppRoutingModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

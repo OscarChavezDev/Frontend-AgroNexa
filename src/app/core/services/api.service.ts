@@ -7,7 +7,10 @@ export const endpoint = {
   // AUTH
   AUTH_REGISTER:            'auth/register',
   AUTH_LOGIN:               'auth/login',
+  AUTH_GOOGLE:              'auth/google',
+  AUTH_CHECK_EMAIL:         'auth/check-email',
   AUTH_ME:                  'auth/me',
+
 
   // USUARIOS
   USERS_ME:                 'users/me',
@@ -20,6 +23,9 @@ export const endpoint = {
   ADMIN_USUARIO_BY_ID:      'admin/usuarios', // + /{id}
   ADMIN_USUARIO_ESTADO:     'admin/usuarios', // + /{id}/estado
   ADMIN_ESTADISTICAS:       'admin/estadisticas',
+  ADMIN_ACTIVIDAD_TEMPORAL: 'admin/estadisticas/actividad',
+  ADMIN_USUARIO_HISTORIAL:  'admin/usuarios',   // + /{id}/historial
+  ADMIN_SESIONES:           'admin/sesiones',
 
   // PARCELAS
   PARCELAS:                 'parcelas',
@@ -33,11 +39,13 @@ export const endpoint = {
   MUESTRA_IMAGENES:         'muestras',       // + /{id}/imagenes
 
   // DIAGNÓSTICOS
-  DIAGNOSTICOS_GENERAR:     'diagnosticos/generar', // + /{muestraId}
-  DIAGNOSTICO_BY_ID:        'diagnosticos',         // + /{id}
+  DIAGNOSTICOS_GENERAR:     'diagnosticos/generar',   // + /{muestraId}
+  DIAGNOSTICOS_REGENERAR:   'diagnosticos/regenerar', // + /{muestraId}
+  DIAGNOSTICO_BY_ID:        'diagnosticos',            // + /{id}
 
   // IMÁGENES
   IMAGENES_UPLOAD:          'imagenes/upload',
+  IMAGENES_VALIDAR:         'imagenes/validar',
   IMAGEN_BY_ID:             'imagenes',       // + /{id}
 
   // SUSCRIPCIONES

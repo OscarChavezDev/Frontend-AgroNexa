@@ -3,71 +3,278 @@
 .parcelas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 
 .parcela-card {
-  background: var(--clr-surface);
+  background:
+    radial-gradient(circle at top right, rgba(74, 222, 128, 0.08), transparent 34%),
+    var(--clr-bg-card);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 16px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--clr-border);
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  gap: 12px;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 
-  &:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(74, 222, 128, 0.18);
+  }
+
+  &__hero {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__status {
+    text-transform: capitalize;
+  }
+
+  &__reference {
+    font-size: 11.5px;
+    color: var(--clr-text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__header,
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
 
   &__header {
-    display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
+  }
+
+  &__title {
+    min-width: 0;
 
     h3 {
-      margin: 0 0 6px;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--clr-brand-800);
-      letter-spacing: -.1px;
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 800;
+      color: var(--clr-text-primary);
+      overflow-wrap: anywhere;
+    }
+
+    p {
+      margin: 6px 0 0;
+      color: var(--clr-text-secondary);
+      font-size: 13px;
+      font-weight: 500;
     }
   }
 
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
   &__info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
   }
 
   &__actions {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
     margin-top: auto;
-    padding-top: 12px;
-    border-top: 1px solid var(--clr-border-soft);
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.cultivo-avatar,
+.cultivo-badge {
+  span {
+    line-height: 1;
+  }
+
+  img {
+    display: block;
+    object-fit: contain;
+  }
+}
+
+.cultivo-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 24px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  img {
+    width: 28px;
+    height: 28px;
   }
 }
 
 .cultivo-badge {
   font-size: 12px;
-  font-weight: 600;
-  background: var(--clr-brand-25);
-  color: var(--clr-brand-700);
-  padding: 4px 10px;
+  font-weight: 700;
+  padding: 7px 10px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--clr-brand-100);
   white-space: nowrap;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
 }
 
-// Skeleton
+.metric,
+.info-item {
+  background: var(--clr-bg-input);
+  border: 1px solid var(--clr-border);
+  border-radius: 10px;
+  padding: 9px 10px;
+  min-width: 0;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &--highlight {
+    background: var(--clr-accent-dim);
+    border-color: rgba(74, 222, 128, 0.16);
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--clr-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--clr-text-primary);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--clr-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__value {
+    font-size: 13.5px;
+    color: var(--clr-text-secondary);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+}
+
+.cultivo-avatar--cacao,
+.cultivo-badge--cacao {
+  background: rgba(168, 106, 55, 0.16);
+  color: #d39a66;
+  border: 1px solid rgba(168, 106, 55, 0.30);
+}
+
+.cultivo-avatar--cafe,
+.cultivo-badge--cafe {
+  background: rgba(120, 53, 15, 0.2);
+  color: #fbbf24;
+}
+
+.cultivo-avatar--maiz,
+.cultivo-badge--maiz {
+  background: rgba(113, 63, 18, 0.24);
+  color: #facc15;
+}
+
+.cultivo-avatar--papa,
+.cultivo-badge--papa {
+  background: rgba(146, 64, 14, 0.22);
+  color: #fdba74;
+}
+
+.cultivo-avatar--arroz,
+.cultivo-badge--arroz {
+  background: rgba(134, 239, 172, 0.14);
+  color: #bbf7d0;
+}
+
+.cultivo-avatar--quinua,
+.cultivo-badge--quinua {
+  background: rgba(167, 139, 250, 0.16);
+  color: #ddd6fe;
+}
+
+.cultivo-avatar--palta,
+.cultivo-badge--palta {
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+}
+
+.cultivo-avatar--mango,
+.cultivo-badge--mango {
+  background: rgba(249, 115, 22, 0.18);
+  color: #fdba74;
+}
+
+.cultivo-avatar--platano,
+.cultivo-badge--platano {
+  background: rgba(234, 179, 8, 0.18);
+  color: #fde68a;
+}
+
+.cultivo-avatar--otro,
+.cultivo-badge--otro {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
 .parcelas-skeleton {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 
 .skeleton-card {
@@ -94,4 +301,33 @@
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+@media (max-width: 840px) {
+  .parcelas-grid,
+  .parcelas-skeleton {
+    grid-template-columns: 1fr;
+  }
+
+  .parcela-card {
+    &__header,
+    &__eyebrow,
+    &__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__identity {
+      align-items: flex-start;
+    }
+
+    &__metrics,
+    &__info {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cultivo-badge {
+    align-self: flex-start;
+  }
 }

@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
+// ── Onboarding ───────────────────────────────────────────────────────────────
+.onboarding-target-active {
+  outline: 3px solid #52b788 !important;
+  outline-offset: 5px !important;
+  border-radius: 8px !important;
+  animation: ob-pulse 2s ease-in-out infinite !important;
+}
+@keyframes ob-pulse {
+  0%, 100% { outline-color: #52b788; }
+  50%       { outline-color: #1b4332; outline-width: 4px; }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ── Design Tokens ──────────────────────────────────────────────────────────
 :root {
   // Brand palette (keeps original hue, darker range)
@@ -20,6 +33,21 @@
   --clr-accent:         #4ade80;
   --clr-accent-dim:     rgba(74, 222, 128, .14);
   --clr-accent-glow:    rgba(74, 222, 128, .22);
+
+  // Botón primario (cambia por tema)
+  --btn-primary-grad:       linear-gradient(135deg, #3ecf6e 0%, #2ab55b 100%);
+  --btn-primary-grad-hover: linear-gradient(135deg, #4ade80 0%, #2ab55b 100%);
+  --btn-primary-text:       #031a09;
+
+  // Chip/tag seleccionado (verde sólido que cambia por tema)
+  --chip-selected-bg: #2d6a4f;
+
+  // Panel izquierdo del login/registro (cambia por tema)
+  --auth-left-bg:
+    radial-gradient(ellipse 80% 60% at 60% 10%, rgba(74, 222, 128, .10) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(45, 212, 191, .07) 0%, transparent 55%),
+    linear-gradient(155deg, #0b1d13 0%, #071410 50%, #060e08 100%);
+  --auth-grid-dot: rgba(255, 255, 255, .06);
   --clr-teal:           #2dd4bf;
   --clr-teal-dim:       rgba(45, 212, 191, .12);
   --clr-amber:          #fbbf24;
@@ -89,6 +117,67 @@
   --transition-spring: 420ms cubic-bezier(.34, 1.56, .64, 1);
 }
 
+// ── Tema claro (override de variables) ───────────────────────────────────────
+[data-theme="light"] {
+  // Acento (se oscurece para buen contraste sobre fondo claro)
+  --clr-accent:         #16a34a;
+  --clr-accent-dim:     rgba(22, 163, 74, .12);
+  --clr-accent-glow:    rgba(22, 163, 74, .18);
+
+  // Botón primario más fresco en claro
+  --btn-primary-grad:       linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  --btn-primary-grad-hover: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  --btn-primary-text:       #ffffff;
+
+  // Chip seleccionado más limpio en claro
+  --chip-selected-bg: #16a34a;
+
+  // Panel izquierdo del login en claro: degradado verde claro + puntos oscuros
+  --auth-left-bg:
+    radial-gradient(ellipse 80% 60% at 60% 10%, rgba(22, 163, 74, .12) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(13, 148, 136, .08) 0%, transparent 55%),
+    linear-gradient(155deg, #eaf3ec 0%, #e3efe6 50%, #dbeadd 100%);
+  --auth-grid-dot: rgba(0, 0, 0, .05);
+
+  // Surfaces
+  --clr-bg-page:        #f5f8f4;
+  --clr-bg-sidebar:     #ffffff;
+  --clr-bg-card:        #ffffff;
+  --clr-bg-card-hover:  #f1f5f0;
+  --clr-bg-input:       rgba(0, 0, 0, .035);
+  --clr-bg-topbar:      rgba(255, 255, 255, .85);
+
+  // Text
+  --clr-text-primary:   #13241b;
+  --clr-text-secondary: rgba(19, 36, 27, .62);
+  --clr-text-muted:     rgba(19, 36, 27, .45);
+
+  // Borders
+  --clr-border:         rgba(0, 0, 0, .10);
+  --clr-border-soft:    rgba(0, 0, 0, .06);
+  --clr-border-strong:  rgba(0, 0, 0, .16);
+
+  // Status (light-friendly)
+  --clr-success-bg:     rgba(22, 163, 74, .12);
+  --clr-success-text:   #15803d;
+  --clr-error-bg:       rgba(220, 38, 38, .10);
+  --clr-error-text:     #dc2626;
+  --clr-warning-bg:     rgba(217, 119, 6, .12);
+  --clr-warning-text:   #b45309;
+  --clr-info-bg:        rgba(37, 99, 235, .10);
+  --clr-info-text:      #1d4ed8;
+
+  // Shadows (más suaves en claro)
+  --shadow-xs: 0 1px 3px rgba(20, 40, 30, .08);
+  --shadow-sm: 0 2px 8px rgba(20, 40, 30, .08), 0 1px 2px rgba(20, 40, 30, .05);
+  --shadow-md: 0 4px 16px rgba(20, 40, 30, .10), 0 2px 6px rgba(20, 40, 30, .06);
+  --shadow-lg: 0 8px 32px rgba(20, 40, 30, .12), 0 3px 12px rgba(20, 40, 30, .07);
+  --shadow-xl: 0 20px 64px rgba(20, 40, 30, .15), 0 8px 24px rgba(20, 40, 30, .10);
+
+  --glow-green:   0 0 24px rgba(22, 163, 74, .14), 0 4px 12px rgba(20, 40, 30, .10);
+  --glow-focus:   0 0 0 3px rgba(22, 163, 74, .20);
+}
+
 // ── Reset ──────────────────────────────────────────────────────────────────
 *, *::before, *::after { box-sizing: border-box; }
 html { height: 100%; }
@@ -98,11 +187,13 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--clr-bg-page);
   color: var(--clr-text-primary);
+  transition: background-color .3s ease, color .3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 15px;
   line-height: 1.6;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -131,9 +222,16 @@ p { margin: 0; }
   border-radius: 3px;
 }
 
+// Styling for native select options to prevent low contrast (light text on white bg)
+select option {
+  background-color: var(--clr-bg-card);
+  color: var(--clr-text-primary);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
 }
+
