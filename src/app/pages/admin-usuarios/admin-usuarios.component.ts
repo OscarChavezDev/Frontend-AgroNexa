@@ -40,7 +40,7 @@ export class AdminUsuariosComponent implements OnInit {
   historialEntradas: HistorialEntry[] = [];
   loadingHistorial = false;
 
-  readonly INACTIVIDAD_DIAS = 14;
+  readonly INACTIVIDAD_DIAS = 55;
 
   readonly roles = [
     { valor: '', etiqueta: 'Todos los roles' },

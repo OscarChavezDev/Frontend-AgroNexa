@@ -669,25 +669,6 @@
 }
 
 // ── Inactividad automática ────────────────────────────────────────────────────
-.inactividad-rule-banner {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 18px;
-  background: rgba(96, 165, 250, .06);
-  border: 1px solid rgba(96, 165, 250, .2);
-  border-left: 3px solid #60a5fa;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  color: var(--clr-text-secondary);
-  line-height: 1.5;
-  margin-bottom: 16px;
-
-  svg { flex-shrink: 0; margin-top: 2px; color: #60a5fa; }
-  strong { color: var(--clr-text-primary); }
-  em { font-style: normal; color: #60a5fa; font-weight: 600; }
-}
-
 .estado-cell {
   display: flex;
   align-items: center;
