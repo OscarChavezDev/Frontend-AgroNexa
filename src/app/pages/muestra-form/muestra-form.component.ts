@@ -226,35 +226,58 @@ export class MuestraFormComponent implements OnInit {
   onFilesSelected(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (!files) return;
-    Array.from(files).forEach(file => {
-      const item: ImagenItem = {
-        file,
-        preview: URL.createObjectURL(file),
-        tipoImagen: '',
-        descripcion: '',
-        validando: true,
-        validacion: null,
-      };
 
-      // (change) del input ya está dentro de la zona — actualización directa
-      this.imagenes = [...this.imagenes, item];
-      this.hayImagenesValidando = true;
-      this.cdr.detectChanges(); // muestra el spinner inmediatamente
+    const nuevos: ImagenItem[] = Array.from(files).map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+      tipoImagen: '',
+      descripcion: '',
+      validando: true,
+      validacion: null,
+    }));
 
-      this.imagenesService.validar(file).subscribe({
+    // (change) del input ya está dentro de la zona — actualización directa
+    this.imagenes = [...this.imagenes, ...nuevos];
+    this.hayImagenesValidando = true;
+    this.cdr.detectChanges(); // muestra los spinners inmediatamente
+
+    this.encolarValidaciones(nuevos);
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  /**
+   * Valida las imágenes de una en una.
+   *
+   * En paralelo, varias fotos golpean el límite por minuto de Groq y el cliente
+   * reintenta con esperas de decenas de segundos: la segunda imagen parecía
+   * colgada. De a una tarda lo mismo en total y responde de forma pareja.
+   */
+  private encolarValidaciones(items: ImagenItem[]) {
+    const siguiente = (i: number) => {
+      if (i >= items.length) return;
+      const item = items[i];
+
+      // Si la quitaron mientras esperaba su turno, no se gasta la llamada.
+      if (!this.imagenes.includes(item)) {
+        siguiente(i + 1);
+        return;
+      }
+
+      this.imagenesService.validar(item.file).subscribe({
         next: (res) => {
           this.zone.run(() => {
             if (this.imagenes.includes(item)) {
-              item.validando  = false;
+              item.validando = false;
               item.validacion = res.data ?? null;
               this.sincronizarEstadoImagenes();
             }
+            siguiente(i + 1);
           });
         },
         error: () => {
           this.zone.run(() => {
             if (this.imagenes.includes(item)) {
-              item.validando  = false;
+              item.validando = false;
               item.validacion = {
                 relevante: true,
                 validado: false,
@@ -262,11 +285,13 @@ export class MuestraFormComponent implements OnInit {
               };
               this.sincronizarEstadoImagenes();
             }
+            siguiente(i + 1);
           });
         }
       });
-    });
-    (event.target as HTMLInputElement).value = '';
+    };
+
+    siguiente(0);
   }
 
   removeImagen(index: number) {
