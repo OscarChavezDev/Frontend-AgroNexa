@@ -7,6 +7,8 @@
     <div class="header-actions">
       <a routerLink="/parcelas" class="btn-outline">← Volver</a>
       <a *ngIf="parcela" [routerLink]="['/parcelas', parcela.id, 'editar']" class="btn-outline">Editar</a>
+      <a *ngIf="parcela" [routerLink]="['/parcelas', parcela.id, 'clima']" class="btn-outline">Clima</a>
+      <a *ngIf="parcela" [routerLink]="['/parcelas', parcela.id, 'fertilizacion']" class="btn-outline">Fertilización</a>
       <button class="btn-primary" id="onboarding-btn-nueva-muestra" (click)="nuevaMuestra()">+ Nueva muestra</button>
     </div>
   </div>

@@ -16,6 +16,8 @@ import { MuestrasComponent } from './pages/muestras/muestras.component';
 import { MuestraFormComponent } from './pages/muestra-form/muestra-form.component';
 import { MuestraDetailComponent } from './pages/muestra-detail/muestra-detail.component';
 import { DiagnosticoIaComponent } from './pages/diagnostico-ia/diagnostico-ia.component';
+import { FertilizacionComponent } from './pages/fertilizacion/fertilizacion.component';
+import { ClimaComponent } from './pages/clima/clima.component';
 import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
@@ -40,6 +42,10 @@ const routes: Routes = [
       { path: 'parcelas/nueva', component: ParcelaFormComponent },
       { path: 'parcelas/:id', component: ParcelaDetailComponent },
       { path: 'parcelas/:id/editar', component: ParcelaFormComponent },
+      { path: 'parcelas/:id/fertilizacion', component: FertilizacionComponent },
+      { path: 'parcelas/:id/clima', component: ClimaComponent },
+      { path: 'clima', component: ClimaComponent },
+      { path: 'fertilizacion', component: FertilizacionComponent },
       { path: 'muestras', component: MuestrasComponent },
       { path: 'muestras/nueva', component: MuestraFormComponent },
       { path: 'muestras/:id', component: MuestraDetailComponent },

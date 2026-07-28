@@ -1,0 +1,274 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Fertilización</h1>
+      <p class="subtitle" *ngIf="modoSeleccion">
+        Elige una parcela para ver su plan de fertilización
+      </p>
+      <p class="subtitle" *ngIf="!modoSeleccion && nombreParcela">
+        {{ nombreParcela }}
+        <ng-container *ngIf="fechaMuestra">
+          · según la muestra del {{ fechaMuestra | date:'dd/MM/yyyy' }}
+        </ng-container>
+      </p>
+    </div>
+    <button class="btn-outline" *ngIf="!modoSeleccion" (click)="volverAParcela()">← Volver a la parcela</button>
+  </div>
+
+  <div class="loading-state" *ngIf="loading"><div class="spinner-large"></div></div>
+  <div class="error-banner" *ngIf="errorMsg && !generando">{{ errorMsg }}</div>
+
+  <!-- ─── Selector de parcela (entrada desde el menú lateral) ───────────── -->
+  <ng-container *ngIf="!loading && modoSeleccion">
+    <div class="card empty-card" *ngIf="!parcelas.length">
+      <div class="empty-content">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22a7 7 0 007-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 007 7z"/>
+        </svg>
+        <h3>Aún no tienes parcelas</h3>
+        <p>
+          El plan de fertilización se calcula por parcela, a partir de las muestras de suelo
+          que registres en ella. Registra tu primera parcela para empezar.
+        </p>
+        <button class="btn-primary" [routerLink]="['/parcelas/nueva']">Registrar parcela</button>
+      </div>
+    </div>
+
+    <div class="parcelas-grid" *ngIf="parcelas.length">
+      <button type="button" class="parcela-card" *ngFor="let p of parcelas" (click)="abrirParcela(p.id)">
+        <div class="parcela-card-head">
+          <h3>{{ p.nombre }}</h3>
+          <span class="parcela-cultivo">{{ p.cultivo | titlecase }}</span>
+        </div>
+        <p class="parcela-meta" *ngIf="p.areaAproximada">
+          {{ p.areaAproximada }} {{ p.unidadArea || 'ha' }}
+          <ng-container *ngIf="p.cantidadPlantas"> · {{ p.cantidadPlantas }} plantas</ng-container>
+        </p>
+        <span class="parcela-cta">Ver plan de fertilización →</span>
+      </button>
+    </div>
+  </ng-container>
+
+  <div *ngIf="!loading && !modoSeleccion" class="fert-layout">
+
+    <!-- ─── Sin muestras: no hay datos de suelo con qué calcular ────────── -->
+    <div class="card empty-card" *ngIf="!tieneMuestra">
+      <div class="empty-content">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22a7 7 0 007-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 007 7z"/>
+        </svg>
+        <h3>Aún no hay datos de suelo</h3>
+        <p>
+          El plan de fertilización se calcula con las lecturas de pH, nitrógeno, fósforo y potasio
+          de una muestra. Registra una muestra de esta parcela para generarlo.
+        </p>
+        <button class="btn-primary" [routerLink]="['/muestras/nueva']">Registrar muestra</button>
+      </div>
+    </div>
+
+    <ng-container *ngIf="tieneMuestra">
+
+      <!-- ─── Ventana de aplicación: clima + fertilización ──────────────── -->
+      <div class="ventana-banner" [ngClass]="ventanaClass" *ngIf="ventana">
+        <div class="ventana-icono">
+          <svg *ngIf="ventanaClass === 'ok'" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <svg *ngIf="ventanaClass === 'stop'" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/>
+          </svg>
+          <svg *ngIf="ventanaClass === 'warn' || ventanaClass === 'neutral'" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div class="ventana-texto">
+          <h3>{{ ventanaTitulo }}</h3>
+          <p>{{ ventana.motivo }}</p>
+          <p class="ventana-accion" *ngIf="ventana.recomendacion">{{ ventana.recomendacion }}</p>
+
+          <div class="ventana-mejor-dia" *ngIf="ventana.mejorDia">
+            <strong>Mejor día:</strong>
+            {{ ventana.mejorDia.fecha | date:'EEEE d \'de\' MMMM' }}
+            <span *ngIf="ventana.mejorDia.precipitacionMm != null">
+              ({{ ventana.mejorDia.precipitacionMm }} mm)
+            </span>
+            <em *ngIf="ventana.mejorDia.porque">— {{ ventana.mejorDia.porque }}</em>
+          </div>
+
+          <ul class="ventana-avisos" *ngIf="ventana.advertencias?.length">
+            <li *ngFor="let aviso of ventana.advertencias">{{ aviso }}</li>
+          </ul>
+
+          <p class="ventana-glosario">
+            <strong>mm</strong> = milímetros de lluvia. 1 mm equivale a 1 litro de agua por
+            metro cuadrado (10 000 litros por hectárea).
+          </p>
+        </div>
+      </div>
+
+      <div class="fert-grid">
+
+        <!-- ═══ Columna principal: el plan ═══════════════════════════════ -->
+        <div class="fert-col-main">
+
+          <!-- Generando -->
+          <div class="card generando-card" *ngIf="generando">
+            <div class="generando-content">
+              <div class="pulse-ring">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22a7 7 0 007-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 007 7z"/>
+                </svg>
+              </div>
+              <h3>Calculando el plan</h3>
+              <p>Cruzando el análisis de suelo con el pronóstico del clima…</p>
+              <div class="dots"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+
+          <!-- Sin plan todavía -->
+          <div class="card empty-card" *ngIf="!generando && !plan">
+            <div class="empty-content">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/>
+              </svg>
+              <h3>Sin plan generado</h3>
+              <p>
+                Calcularemos qué fertilizantes aplicar, en qué dosis y en qué momento,
+                combinando el análisis de suelo de la última muestra con el pronóstico de lluvia.
+              </p>
+              <button class="btn-primary" (click)="generarPlan()">Generar plan de fertilización</button>
+            </div>
+          </div>
+
+          <!-- Plan generado -->
+          <ng-container *ngIf="!generando && plan">
+
+            <div class="card resumen-card">
+              <div class="resumen-head">
+                <h3>Resumen</h3>
+                <span class="fuente-chip" [class.ia]="esFuenteIA">
+                  {{ esFuenteIA ? 'Generado con IA' : 'Cálculo agronómico' }}
+                </span>
+              </div>
+              <p class="resumen-texto">{{ plan.resumen }}</p>
+              <div class="resumen-meta" *ngIf="plan.parcelaInfo">
+                <span *ngIf="plan.parcelaInfo.areaHa">Área: <strong>{{ plan.parcelaInfo.areaHa }} ha</strong></span>
+                <span *ngIf="plan.parcelaInfo.cantidadPlantas">Plantas: <strong>{{ plan.parcelaInfo.cantidadPlantas }}</strong></span>
+                <span *ngIf="fechaGeneracion">Generado: <strong>{{ fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</strong></span>
+              </div>
+            </div>
+
+            <!-- Productos a aplicar -->
+            <div class="card">
+              <h3 class="card-title">Qué aplicar</h3>
+
+              <div class="fert-item" *ngFor="let item of itemsPlan">
+                <div class="fert-item-head">
+                  <div>
+                    <h4>{{ item.producto }}</h4>
+                    <span class="nutriente" *ngIf="item.nutriente">{{ item.nutriente }}</span>
+                  </div>
+                  <span class="badge" [ngClass]="prioridadClass(item.prioridad)" *ngIf="item.prioridad">
+                    Prioridad {{ item.prioridad }}
+                  </span>
+                </div>
+
+                <div class="dosis-grid">
+                  <div class="dosis" *ngIf="item.dosisHa">
+                    <span class="dosis-label">Por hectárea</span>
+                    <span class="dosis-valor">{{ item.dosisHa }}</span>
+                  </div>
+                  <div class="dosis" *ngIf="item.totalParcela">
+                    <span class="dosis-label">Total parcela</span>
+                    <span class="dosis-valor">{{ item.totalParcela }}</span>
+                  </div>
+                  <div class="dosis" *ngIf="item.dosisPlanta">
+                    <span class="dosis-label">Por planta</span>
+                    <span class="dosis-valor">{{ item.dosisPlanta }}</span>
+                  </div>
+                </div>
+
+                <p class="fert-justificacion" *ngIf="item.justificacion">{{ item.justificacion }}</p>
+                <p class="fert-momento" *ngIf="item.momento">
+                  <strong>Cuándo:</strong> {{ item.momento }}
+                </p>
+                <p class="fert-nota" *ngIf="item.nota">{{ item.nota }}</p>
+              </div>
+            </div>
+
+            <!-- Materia orgánica -->
+            <div class="card" *ngIf="plan.materiaOrganica">
+              <h3 class="card-title">Materia orgánica</h3>
+              <div class="fert-item sin-borde">
+                <div class="fert-item-head">
+                  <h4>{{ plan.materiaOrganica.producto }}</h4>
+                </div>
+                <div class="dosis-grid">
+                  <div class="dosis" *ngIf="plan.materiaOrganica.dosisHa">
+                    <span class="dosis-label">Por hectárea</span>
+                    <span class="dosis-valor">{{ plan.materiaOrganica.dosisHa }}</span>
+                  </div>
+                  <div class="dosis" *ngIf="plan.materiaOrganica.totalParcela">
+                    <span class="dosis-label">Total parcela</span>
+                    <span class="dosis-valor">{{ plan.materiaOrganica.totalParcela }}</span>
+                  </div>
+                </div>
+                <p class="fert-justificacion">{{ plan.materiaOrganica.justificacion }}</p>
+                <p class="fert-momento" *ngIf="plan.materiaOrganica.momento">
+                  <strong>Cuándo:</strong> {{ plan.materiaOrganica.momento }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Cronograma (solo lo devuelve la IA) -->
+            <div class="card" *ngIf="plan.cronograma?.length">
+              <h3 class="card-title">Cronograma</h3>
+              <div class="cronograma">
+                <div class="crono-paso" *ngFor="let paso of plan.cronograma">
+                  <span class="crono-momento">{{ paso.momento }}</span>
+                  <span class="crono-accion">{{ paso.accion }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Advertencias -->
+            <div class="card advertencias-card" *ngIf="plan.advertencias.length">
+              <h3 class="card-title">Advertencias</h3>
+              <ul class="advertencias">
+                <li *ngFor="let aviso of plan.advertencias">{{ aviso }}</li>
+              </ul>
+            </div>
+
+            <div class="regenerar-row">
+              <button class="btn-outline" (click)="generarPlan()">Recalcular plan</button>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- ═══ Columna lateral: clima y suelo ═══════════════════════════ -->
+        <div class="fert-col-side">
+
+          <!-- Análisis de suelo -->
+          <div class="card" *ngIf="filasSuelo.length">
+            <h3 class="card-title">Análisis de suelo</h3>
+            <div class="suelo-lista">
+              <div class="suelo-fila" *ngFor="let fila of filasSuelo">
+                <span class="suelo-etiqueta">{{ fila.etiqueta }}</span>
+                <span class="suelo-valor">
+                  {{ fila.lectura.valor != null ? fila.lectura.valor : '—' }}
+                  <small *ngIf="fila.lectura.unidad && fila.lectura.valor != null">{{ fila.lectura.unidad }}</small>
+                </span>
+                <span class="badge" [ngClass]="estadoClass(fila.lectura.estado)">
+                  {{ estadoTexto(fila.lectura.estado) }}
+                </span>
+              </div>
+            </div>
+            <p class="suelo-pie" *ngIf="filasSuelo[0]?.lectura?.optimo">
+              pH óptimo para cacao: {{ filasSuelo[0].lectura.optimo }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,7 +1,12 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { NgModule, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
+import localeEsPe from '@angular/common/locales/es-PE';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+
+// Sin esto el pipe `date` usa en-US y los días salen en inglés ("Monday").
+registerLocaleData(localeEsPe, 'es-PE');
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
@@ -22,6 +27,8 @@ import { MuestrasComponent } from './pages/muestras/muestras.component';
 import { MuestraFormComponent } from './pages/muestra-form/muestra-form.component';
 import { MuestraDetailComponent } from './pages/muestra-detail/muestra-detail.component';
 import { DiagnosticoIaComponent } from './pages/diagnostico-ia/diagnostico-ia.component';
+import { FertilizacionComponent } from './pages/fertilizacion/fertilizacion.component';
+import { ClimaComponent } from './pages/clima/clima.component';
 import { PlanesComponent } from './pages/planes/planes.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
@@ -48,6 +55,8 @@ import { PopupComponent } from './shared/components/popup/popup.component';
     MuestraFormComponent,
     MuestraDetailComponent,
     DiagnosticoIaComponent,
+    FertilizacionComponent,
+    ClimaComponent,
     PlanesComponent,
     PerfilComponent,
     AdminDashboardComponent,
@@ -69,6 +78,7 @@ import { PopupComponent } from './shared/components/popup/popup.component';
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
+    { provide: LOCALE_ID, useValue: 'es-PE' },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [App]

@@ -48,6 +48,15 @@ export const endpoint = {
   IMAGENES_VALIDAR:         'imagenes/validar',
   IMAGEN_BY_ID:             'imagenes',       // + /{id}
 
+  // CLIMA
+  CLIMA:                    'clima',
+  CLIMA_PARCELA:            'clima/parcela',           // + /{parcelaId}
+
+  // FERTILIZACIÓN
+  FERTILIZACION_GENERAR:    'fertilizacion/generar',   // + /{parcelaId}
+  FERTILIZACION_PARCELA:    'fertilizacion/parcela',   // + /{parcelaId}
+  FERTILIZACION_BY_ID:      'fertilizacion',           // + /{id}
+
   // SUSCRIPCIONES
   PLANES:                   'planes',
   SUSCRIPCIONES:            'suscripciones',
