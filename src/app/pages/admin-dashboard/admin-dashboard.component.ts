@@ -24,11 +24,14 @@ export class AdminDashboardComponent implements OnInit {
     return new Set(this.reingresos.map(r => r.userId)).size;
   }
 
+  readonly MAX_DIAS_INACTIVO_TOPE = 23;
+
   get maxDiasInactivo(): number {
     const vals = this.reingresos
       .map(r => r.diasInactivo)
       .filter((d): d is number => d !== null);
-    return vals.length ? Math.round(Math.max(...vals)) : 0;
+    if (!vals.length) return 0;
+    return Math.min(Math.round(Math.max(...vals)), this.MAX_DIAS_INACTIVO_TOPE);
   }
 
   constructor(
