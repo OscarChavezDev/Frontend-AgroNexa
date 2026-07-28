@@ -19,6 +19,10 @@ export interface Muestra {
   id?: string;
   parcelaId: string;
   userId?: string;
+  /** Nodo de la parcela del que se extrajo la muestra. */
+  nodoId?: string | null;
+  /** Coordenadas reales de la toma, si se capturaron por GPS. */
+  coordenadas?: { lat: number; lng: number } | null;
   parteAfectada?: string;
   nivelAfectacion?: string;
   observaciones?: string;

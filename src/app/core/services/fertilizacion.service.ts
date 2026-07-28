@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService, endpoint } from './api.service';
 import { ApiResponse } from '../models/api-response.model';
-import { FertilizacionResponse, FertilizacionPreview } from '../models/fertilizacion.model';
+import { FertilizacionResponse, FertilizacionPreview, MapaSuelo } from '../models/fertilizacion.model';
 
 @Injectable({ providedIn: 'root' })
 export class FertilizacionService {
@@ -27,6 +27,13 @@ export class FertilizacionService {
   ultimo(parcelaId: string): Observable<ApiResponse<FertilizacionResponse>> {
     return this.api.get<ApiResponse<FertilizacionResponse>>(
       `${endpoint.FERTILIZACION_PARCELA}/${parcelaId}`
+    );
+  }
+
+  /** Estado del suelo nodo por nodo, para pintar el mapa de la parcela. */
+  mapaSuelo(parcelaId: string): Observable<ApiResponse<MapaSuelo>> {
+    return this.api.get<ApiResponse<MapaSuelo>>(
+      `${endpoint.FERTILIZACION_PARCELA}/${parcelaId}/mapa-suelo`
     );
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FertilizacionService } from '../../core/services/fertilizacion.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
@@ -10,7 +10,11 @@ import {
   LecturaSuelo,
   PlanFertilizacion,
   VentanaAplicacion,
+  MapaSuelo,
+  NodoSuelo,
 } from '../../core/models/fertilizacion.model';
+
+declare var google: any;
 
 interface FilaSuelo {
   clave: string;
@@ -37,11 +41,17 @@ export class FertilizacionComponent implements OnInit {
   generando = false;
   errorMsg = '';
 
+  mapa: MapaSuelo | null = null;
+  nodoActivo: NodoSuelo | null = null;
+  private mapaGoogle: any;
+  private nodoMarkers: any[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private fertilizacionService: FertilizacionService,
     private parcelasService: ParcelasService,
+    private ngZone: NgZone,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -92,6 +102,7 @@ export class FertilizacionComponent implements OnInit {
         this.loading = false;
         this.cdr.detectChanges();
         this.cargarUltimoPlan();
+        this.cargarMapaSuelo();
       },
       error: (err) => {
         this.errorMsg = err.error?.message || 'No se pudo cargar la información de la parcela';
@@ -136,6 +147,146 @@ export class FertilizacionComponent implements OnInit {
 
   volverAParcela() {
     this.router.navigate(['/parcelas', this.parcelaId]);
+  }
+
+  // ── Mapa de suelo por nodo ─────────────────────────────────────────────────
+
+  private cargarMapaSuelo() {
+    this.fertilizacionService.mapaSuelo(this.parcelaId).subscribe({
+      next: (res) => {
+        this.mapa = res.data || null;
+        this.cdr.detectChanges();
+        if (this.mapa?.nodos?.length) {
+          setTimeout(() => this.esperarMapsYPintar(), 0);
+        }
+      },
+      error: () => {
+        this.mapa = null;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private esperarMapsYPintar(intento = 0) {
+    if (typeof google !== 'undefined' && google.maps) {
+      this.pintarMapa();
+    } else if (intento < 20) {
+      setTimeout(() => this.esperarMapsYPintar(intento + 1), 300);
+    }
+  }
+
+  private pintarMapa() {
+    const el = document.getElementById('mapa-suelo');
+    if (!el || !this.mapa) return;
+
+    const nodos = this.mapa.nodos;
+    if (!nodos.length) return;
+
+    this.mapaGoogle = new google.maps.Map(el, {
+      mapTypeId: google.maps.MapTypeId.HYBRID,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: true,
+    });
+
+    const poligono = this.mapa.parcela.poligono || [];
+    if (poligono.length >= 3) {
+      new google.maps.Polygon({
+        paths: poligono,
+        map: this.mapaGoogle,
+        strokeColor: '#ffffff',
+        strokeWeight: 2,
+        fillColor: '#ffffff',
+        fillOpacity: 0.08,
+      });
+    }
+
+    this.nodoMarkers.forEach(m => m.setMap(null));
+    this.nodoMarkers.length = 0;
+
+    const bounds = new google.maps.LatLngBounds();
+
+    nodos.forEach((nodo, i) => {
+      const marker = new google.maps.Marker({
+        position: { lat: nodo.lat, lng: nodo.lng },
+        map: this.mapaGoogle,
+        title: `${nodo.nombre} — ${nodo.resumen}`,
+        label: { text: String(i + 1), color: '#ffffff', fontSize: '11px', fontWeight: '700' },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 13,
+          fillColor: this.colorNodo(nodo.estado),
+          fillOpacity: 1,
+          strokeColor: '#ffffff',
+          strokeWeight: 2,
+        },
+      });
+
+      marker.addListener('click', () => {
+        this.ngZone.run(() => {
+          this.nodoActivo = nodo;
+          this.cdr.detectChanges();
+        });
+      });
+
+      this.nodoMarkers.push(marker);
+      bounds.extend(new google.maps.LatLng(nodo.lat, nodo.lng));
+    });
+
+    poligono.forEach(p => bounds.extend(new google.maps.LatLng(p.lat, p.lng)));
+    this.mapaGoogle.fitBounds(bounds);
+
+    // Con un solo nodo fitBounds acerca demasiado y se pierde la referencia.
+    if (nodos.length === 1 && !poligono.length) {
+      google.maps.event.addListenerOnce(this.mapaGoogle, 'idle', () => {
+        this.mapaGoogle.setZoom(17);
+      });
+    }
+  }
+
+  colorNodo(estado: string): string {
+    const map: Record<string, string> = {
+      critico: '#ef4444',
+      atencion: '#f59e0b',
+      bueno: '#22c55e',
+      sin_datos: '#94a3b8',
+    };
+    return map[estado] || '#94a3b8';
+  }
+
+  estadoNodoClass(estado: string): string {
+    const map: Record<string, string> = {
+      critico: 'red',
+      atencion: 'amber',
+      bueno: 'green',
+      sin_datos: 'gray',
+    };
+    return map[estado] || 'gray';
+  }
+
+  estadoNodoTexto(estado: string): string {
+    const map: Record<string, string> = {
+      critico: 'Requiere atención',
+      atencion: 'Vigilar',
+      bueno: 'Bien',
+      sin_datos: 'Sin muestras',
+    };
+    return map[estado] || estado;
+  }
+
+  seleccionarNodo(nodo: NodoSuelo) {
+    this.nodoActivo = this.nodoActivo?.id === nodo.id ? null : nodo;
+    if (this.nodoActivo && this.mapaGoogle) {
+      this.mapaGoogle.panTo({ lat: nodo.lat, lng: nodo.lng });
+    }
+  }
+
+  get tieneNodos(): boolean {
+    return !!this.mapa?.nodos?.length;
+  }
+
+  verMuestra(id?: string) {
+    if (id) this.router.navigate(['/muestras', id]);
   }
 
 

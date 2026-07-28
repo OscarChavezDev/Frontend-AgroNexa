@@ -88,6 +88,34 @@ export interface FertilizacionResponse {
   avisoClima?: string;
 }
 
+export type EstadoNodo = 'critico' | 'atencion' | 'bueno' | 'sin_datos';
+
+/** Un nodo de la parcela con la lectura de su muestra más reciente. */
+export interface NodoSuelo {
+  id: string;
+  nombre: string;
+  lat: number;
+  lng: number;
+  descripcion?: string;
+  suelo: Suelo | null;
+  estado: EstadoNodo;
+  resumen: string;
+  ultimaMuestra: { id: string; fecha?: string } | null;
+}
+
+export interface MapaSuelo {
+  parcela: {
+    id: string;
+    nombre: string;
+    cultivo?: string;
+    ubicacion?: { lat: number; lng: number };
+    poligono: { lat: number; lng: number }[];
+  };
+  nodos: NodoSuelo[];
+  muestrasSinNodo: number;
+  totalMuestras: number;
+}
+
 /** Respuesta de /preview: estado del suelo y clima, sin generar el plan aún. */
 export interface FertilizacionPreview {
   parcela: { id: string; nombre: string; cultivo?: string };

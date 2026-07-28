@@ -7,7 +7,7 @@ import { MuestrasService } from '../../core/services/muestras.service';
 import { ParcelasService } from '../../core/services/parcelas.service';
 import { ImagenesService } from '../../core/services/imagenes.service';
 import { PopupService } from '../../shared/services/popup.service';
-import { Parcela } from '../../core/models/parcela.model';
+import { Parcela, NodoParcela } from '../../core/models/parcela.model';
 
 interface ImagenItem {
   file: File;
@@ -36,6 +36,10 @@ export class MuestraFormComponent implements OnInit {
   saving = false;
   errorMsg = '';
   parcelas: Parcela[] = [];
+
+  ubicandoGps = false;
+  gpsMsg = '';
+  coordenadasGps: { lat: number; lng: number } | null = null;
 
   sintomasDisponibles = [
     'manchas oscuras', 'manchas amarillas', 'pudricion', 'polvo blanco',
@@ -101,6 +105,7 @@ export class MuestraFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       parcelaId: ['', Validators.required],
+      nodoId: [''],
       parteAfectada: ['', Validators.required],
       nivelAfectacion: ['leve', Validators.required],
       observaciones: [''],
@@ -117,10 +122,88 @@ export class MuestraFormComponent implements OnInit {
   ngOnInit() {
     const parcelaId = this.route.snapshot.queryParamMap.get('parcelaId') || '';
     if (parcelaId) this.form.patchValue({ parcelaId });
+
+    // Cambiar de parcela invalida el nodo elegido: pertenece a la parcela anterior.
+    this.form.get('parcelaId')?.valueChanges.subscribe(() => {
+      this.form.patchValue({ nodoId: '' }, { emitEvent: false });
+      this.gpsMsg = '';
+      this.coordenadasGps = null;
+      this.cdr.detectChanges();
+    });
+
     this.parcelasService.listar().subscribe({
       next: (res) => { this.parcelas = res.data || []; this.loadingParcelas = false; this.cdr.detectChanges(); },
       error: () => { this.loadingParcelas = false; this.cdr.detectChanges(); }
     });
+  }
+
+  // ── Nodo de muestreo ───────────────────────────────────────────────────────
+
+  get nodosDisponibles(): NodoParcela[] {
+    return this.parcelaSeleccionada?.nodos || [];
+  }
+
+  /** Distancia en metros entre dos coordenadas (fórmula de Haversine). */
+  private distanciaMetros(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+    const R = 6371000;
+    const rad = (g: number) => (g * Math.PI) / 180;
+    const dLat = rad(b.lat - a.lat);
+    const dLng = rad(b.lng - a.lng);
+    const h =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  /**
+   * Selecciona el nodo más cercano a la posición actual: en campo, el productor
+   * está parado sobre el punto de muestreo y no debería tener que buscarlo.
+   */
+  usarMiUbicacion() {
+    if (!navigator.geolocation) {
+      this.gpsMsg = 'Tu navegador no permite obtener la ubicación.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (!this.nodosDisponibles.length) {
+      this.gpsMsg = 'Esta parcela no tiene nodos de muestreo marcados.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.ubicandoGps = true;
+    this.gpsMsg = '';
+    this.cdr.detectChanges();
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.zone.run(() => {
+          const actual = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          this.coordenadasGps = actual;
+
+          let cercano = this.nodosDisponibles[0];
+          let menor = this.distanciaMetros(actual, cercano);
+          for (const nodo of this.nodosDisponibles.slice(1)) {
+            const d = this.distanciaMetros(actual, nodo);
+            if (d < menor) { menor = d; cercano = nodo; }
+          }
+
+          this.form.patchValue({ nodoId: cercano.id });
+          this.gpsMsg = `Nodo más cercano: ${cercano.nombre}, a ${Math.round(menor)} m de ti.`;
+          this.ubicandoGps = false;
+          this.cdr.detectChanges();
+        });
+      },
+      () => {
+        this.zone.run(() => {
+          this.gpsMsg = 'No se pudo obtener tu ubicación. Elige el nodo de la lista.';
+          this.ubicandoGps = false;
+          this.cdr.detectChanges();
+        });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   }
 
   toggleSintoma(s: string) {
@@ -244,6 +327,8 @@ export class MuestraFormComponent implements OnInit {
 
     const payload = {
       parcelaId: v.parcelaId,
+      nodoId: v.nodoId || null,
+      coordenadas: this.coordenadasGps,
       parteAfectada: v.parteAfectada,
       nivelAfectacion: v.nivelAfectacion,
       observaciones: v.observaciones,

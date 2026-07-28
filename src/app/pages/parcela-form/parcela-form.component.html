@@ -113,15 +113,102 @@
     </div>
 
     <div class="form-section">
-      <h3 class="section-title">Ubicaci&oacute;n en el mapa *</h3>
-      <p class="section-hint">Busca un lugar o haz clic en el mapa para fijar la ubicaci&oacute;n. Si aceptas el permiso del navegador, el mapa comenzar&aacute; desde tu ubicaci&oacute;n actual. Luego arrastra el marcador para ajustar.</p>
+      <h3 class="section-title">Mapa de la parcela *</h3>
+      <p class="section-hint">
+        Busca tu zona y luego elige qu&eacute; marcar. Si aceptas el permiso del navegador,
+        el mapa comenzar&aacute; desde tu ubicaci&oacute;n actual.
+      </p>
 
       <div class="map-search-wrapper">
         <input type="text" id="parcela-search" class="map-search-input"
                placeholder="Buscar direcci&oacute;n, localidad o regi&oacute;n...">
       </div>
 
+      <!-- Modos de dibujo: un clic en el mapa significa algo distinto en cada uno -->
+      <fieldset class="modo-tabs">
+        <legend class="modo-tabs-legend">Qu&eacute; marcar en el mapa</legend>
+        <button type="button" class="modo-tab" [class.activo]="modoMapa === 'punto'"
+                (click)="cambiarModo('punto')">
+          Un punto
+        </button>
+        <button type="button" class="modo-tab" [class.activo]="modoMapa === 'lindero'"
+                (click)="cambiarModo('lindero')">
+          Linderos
+          <span class="modo-badge" *ngIf="poligono.length">{{ poligono.length }}</span>
+        </button>
+        <button type="button" class="modo-tab" [class.activo]="modoMapa === 'nodos'"
+                (click)="cambiarModo('nodos')">
+          Nodos de muestreo
+          <span class="modo-badge" *ngIf="nodos.length">{{ nodos.length }}</span>
+        </button>
+      </fieldset>
+
+      <p class="modo-ayuda" [ngSwitch]="modoMapa">
+        <ng-container *ngSwitchCase="'punto'">
+          Haz clic para fijar un solo punto de referencia. Sirve si a&uacute;n no vas a mapear la parcela completa.
+        </ng-container>
+        <ng-container *ngSwitchCase="'lindero'">
+          Haz clic en cada esquina de la parcela para dibujar su contorno. Con 3 puntos o m&aacute;s
+          se calcula el &aacute;rea sola. Puedes arrastrar los v&eacute;rtices para ajustar.
+        </ng-container>
+        <ng-container *ngSwitchCase="'nodos'">
+          Haz clic donde tomas las muestras. Cada nodo queda georreferenciado, as&iacute; sabr&aacute;s
+          de qu&eacute; zona sali&oacute; cada an&aacute;lisis de suelo.
+        </ng-container>
+      </p>
+
       <div id="parcela-map" class="map-container"></div>
+
+      <!-- Lindero -->
+      <div class="mapa-panel" *ngIf="modoMapa === 'lindero'">
+        <div class="mapa-panel-head">
+          <span *ngIf="!poligono.length">Sin linderos dibujados</span>
+          <span *ngIf="poligono.length">{{ poligono.length }} v&eacute;rtice(s) marcado(s)</span>
+          <div class="mapa-panel-acciones">
+            <button type="button" class="btn-outline-sm" (click)="quitarUltimoVertice()"
+                    [disabled]="!poligono.length">Quitar &uacute;ltimo</button>
+            <button type="button" class="btn-outline-sm" (click)="limpiarLindero()"
+                    [disabled]="!poligono.length">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="area-calculada" *ngIf="areaCalculadaHa != null">
+          <div>
+            <span class="area-label">&Aacute;rea medida del pol&iacute;gono</span>
+            <span class="area-valor">{{ areaCalculadaHa }} ha</span>
+          </div>
+          <button type="button" class="btn-outline-sm" (click)="usarAreaCalculada()">
+            Usar este valor
+          </button>
+        </div>
+        <p class="mapa-nota" *ngIf="poligono.length && poligono.length < 3">
+          Faltan {{ 3 - poligono.length }} punto(s) para cerrar el &aacute;rea.
+        </p>
+      </div>
+
+      <!-- Nodos -->
+      <div class="mapa-panel" *ngIf="modoMapa === 'nodos'">
+        <div class="mapa-panel-head">
+          <span *ngIf="!nodos.length">Sin nodos marcados</span>
+          <span *ngIf="nodos.length">{{ nodos.length }} nodo(s) de muestreo</span>
+          <div class="mapa-panel-acciones">
+            <button type="button" class="btn-outline-sm" (click)="limpiarNodos()"
+                    [disabled]="!nodos.length">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="nodos-lista" *ngIf="nodos.length">
+          <div class="nodo-fila" *ngFor="let nodo of nodos; let i = index">
+            <span class="nodo-numero">{{ i + 1 }}</span>
+            <input type="text" class="nodo-nombre" [value]="nodo.nombre"
+                   (input)="renombrarNodo(i, $any($event.target).value)"
+                   [attr.aria-label]="'Nombre del nodo ' + (i + 1)">
+            <span class="nodo-coords">{{ nodo.lat | number:'1.4-4' }}, {{ nodo.lng | number:'1.4-4' }}</span>
+            <button type="button" class="btn-danger-sm" (click)="eliminarNodo(i)"
+                    [attr.aria-label]="'Eliminar nodo ' + (i + 1)">Eliminar</button>
+          </div>
+        </div>
+      </div>
 
       <div class="form-row coord-row">
         <div class="form-group">

@@ -79,6 +79,34 @@
 
         <span class="field-error" *ngIf="f['parcelaId'].invalid && f['parcelaId'].touched">Requerido</span>
       </div>
+
+      <!-- Nodo de muestreo: ubica la muestra dentro de la parcela -->
+      <div class="form-group" *ngIf="parcelaSeleccionada">
+        <label for="nodo-select">Nodo de muestreo</label>
+
+        <div class="nodo-vacio" *ngIf="!nodosDisponibles.length">
+          Esta parcela no tiene nodos marcados. Puedes a&ntilde;adirlos editando la parcela
+          para saber de qu&eacute; zona sale cada muestra.
+        </div>
+
+        <ng-container *ngIf="nodosDisponibles.length">
+          <div class="nodo-selector">
+            <select id="nodo-select" formControlName="nodoId" class="nodo-select">
+              <option value="">Sin especificar</option>
+              <option *ngFor="let n of nodosDisponibles" [value]="n.id">{{ n.nombre }}</option>
+            </select>
+            <button type="button" class="btn-outline-sm btn-gps" (click)="usarMiUbicacion()"
+                    [disabled]="ubicandoGps">
+              <span *ngIf="!ubicandoGps">Usar mi ubicaci&oacute;n</span>
+              <span *ngIf="ubicandoGps">Ubicando&hellip;</span>
+            </button>
+          </div>
+          <span class="nodo-gps-msg" *ngIf="gpsMsg">{{ gpsMsg }}</span>
+          <span class="field-hint" *ngIf="!gpsMsg">
+            Si est&aacute;s parado en el punto de muestreo, usa el GPS y se elegir&aacute; el nodo m&aacute;s cercano.
+          </span>
+        </ng-container>
+      </div>
     </div>
 
     <!-- Observación de campo -->

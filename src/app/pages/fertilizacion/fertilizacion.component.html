@@ -106,6 +106,81 @@
         </div>
       </div>
 
+      <!-- ─── Mapa de suelo por nodo ─────────────────────────────────────── -->
+      <div class="card mapa-card" *ngIf="tieneNodos">
+        <h3 class="card-title">Mapa de suelo por nodo</h3>
+        <p class="mapa-intro">
+          Cada punto es un nodo de muestreo con el resultado de su &uacute;ltima muestra.
+          As&iacute; ves qu&eacute; zona de la parcela necesita atenci&oacute;n, en vez de un promedio
+          que esconde las diferencias.
+        </p>
+
+        <div id="mapa-suelo" class="mapa-suelo"></div>
+
+        <div class="leyenda">
+          <span class="leyenda-item"><i class="punto red"></i> Requiere atenci&oacute;n</span>
+          <span class="leyenda-item"><i class="punto amber"></i> Vigilar</span>
+          <span class="leyenda-item"><i class="punto green"></i> Bien</span>
+          <span class="leyenda-item"><i class="punto gray"></i> Sin muestras</span>
+        </div>
+
+        <div class="nodos-resumen">
+          <button type="button" class="nodo-chip" *ngFor="let n of mapa?.nodos; let i = index"
+                  [ngClass]="estadoNodoClass(n.estado)"
+                  [class.activo]="nodoActivo?.id === n.id"
+                  (click)="seleccionarNodo(n)">
+            <span class="nodo-chip-num">{{ i + 1 }}</span>
+            <span class="nodo-chip-nombre">{{ n.nombre }}</span>
+            <span class="nodo-chip-estado">{{ estadoNodoTexto(n.estado) }}</span>
+          </button>
+        </div>
+
+        <!-- Detalle del nodo seleccionado -->
+        <div class="nodo-detalle" *ngIf="nodoActivo">
+          <div class="nodo-detalle-head">
+            <div>
+              <h4>{{ nodoActivo.nombre }}</h4>
+              <span class="badge" [ngClass]="estadoNodoClass(nodoActivo.estado)">
+                {{ estadoNodoTexto(nodoActivo.estado) }}
+              </span>
+            </div>
+            <button type="button" class="btn-outline-sm" *ngIf="nodoActivo.ultimaMuestra"
+                    (click)="verMuestra(nodoActivo.ultimaMuestra.id)">
+              Ver muestra
+            </button>
+          </div>
+
+          <p class="nodo-detalle-resumen">{{ nodoActivo.resumen }}</p>
+          <p class="nodo-detalle-fecha" *ngIf="nodoActivo.ultimaMuestra?.fecha">
+            &Uacute;ltima muestra: {{ nodoActivo.ultimaMuestra?.fecha | date:'dd/MM/yyyy' }}
+          </p>
+
+          <div class="nodo-suelo" *ngIf="nodoActivo.suelo">
+            <div class="nodo-suelo-item">
+              <span>pH</span>
+              <strong>{{ nodoActivo.suelo.ph.valor ?? '—' }}</strong>
+            </div>
+            <div class="nodo-suelo-item">
+              <span>N</span>
+              <strong>{{ nodoActivo.suelo.nitrogeno.valor ?? '—' }}</strong>
+            </div>
+            <div class="nodo-suelo-item">
+              <span>P</span>
+              <strong>{{ nodoActivo.suelo.fosforo.valor ?? '—' }}</strong>
+            </div>
+            <div class="nodo-suelo-item">
+              <span>K</span>
+              <strong>{{ nodoActivo.suelo.potasio.valor ?? '—' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <p class="mapa-aviso" *ngIf="mapa && mapa.muestrasSinNodo > 0">
+          {{ mapa.muestrasSinNodo }} muestra(s) de esta parcela no tienen nodo asignado,
+          as&iacute; que no aparecen en el mapa.
+        </p>
+      </div>
+
       <div class="fert-grid">
 
         <!-- ═══ Columna principal: el plan ═══════════════════════════════ -->
