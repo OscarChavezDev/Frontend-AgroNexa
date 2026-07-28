@@ -808,3 +808,23 @@
   line-height: 1.55;
   color: var(--clr-text-secondary);
 }
+
+// ── Imagen sin verificar (la IA no respondió) ────────────────────────────────
+// Ámbar, no verde: no se ha comprobado que la imagen sea de cacao.
+.img-val-badge--sin-verificar {
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning-text);
+}
+
+.img-sin-verificar {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning-text);
+  font-size: 11.5px;
+  line-height: 1.5;
+}

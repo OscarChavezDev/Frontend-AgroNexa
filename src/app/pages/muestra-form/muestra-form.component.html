@@ -214,10 +214,17 @@
               <span class="img-val-badge img-val-badge--loading" *ngIf="img.validando" title="Verificando imagen...">
                 <span class="val-spinner"></span>
               </span>
-              <!-- Válida -->
-              <span class="img-val-badge img-val-badge--ok" *ngIf="!img.validando && img.validacion?.relevante"
+              <!-- Válida (verificada de verdad) -->
+              <span class="img-val-badge img-val-badge--ok"
+                *ngIf="!img.validando && img.validacion?.relevante && img.validacion?.validado !== false"
                 [title]="img.validacion?.motivo || 'Imagen válida'">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <!-- Sin verificar: la IA no respondió. No se afirma que sea válida. -->
+              <span class="img-val-badge img-val-badge--sin-verificar"
+                *ngIf="!img.validando && img.validacion?.validado === false"
+                [title]="img.validacion?.motivo || 'No se pudo verificar'">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="17" x2="12.01" y2="17"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
               </span>
               <!-- No relevante -->
               <span class="img-val-badge img-val-badge--warn" *ngIf="!img.validando && img.validacion && !img.validacion.relevante"
@@ -232,6 +239,12 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             <span>{{ img.validacion.motivo || 'Esta imagen no parece mostrar una planta de cacao (fruto, hoja, tallo, raíz o flor)' }}</span>
           </div>
+          <!-- El control no llegó a correr: se avisa en vez de dar por buena la imagen -->
+          <div class="img-sin-verificar" *ngIf="!img.validando && img.validacion?.validado === false">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12.01" y2="16"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
+            <span>{{ img.validacion?.motivo || 'No se pudo verificar la imagen.' }}</span>
+          </div>
+
           <div class="imagen-meta" *ngIf="!img.validacion || img.validacion.relevante">
             <div class="imagen-meta-field">
               <span class="imagen-meta-label">Tipo de imagen</span>

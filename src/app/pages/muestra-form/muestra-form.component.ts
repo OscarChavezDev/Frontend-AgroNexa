@@ -15,7 +15,8 @@ interface ImagenItem {
   tipoImagen: string;
   descripcion: string;
   validando: boolean;
-  validacion: { relevante: boolean; motivo: string } | null;
+  /** `validado: false` = el control no llegó a ejecutarse (IA caída, sin clave…). */
+  validacion: { relevante: boolean; motivo: string; validado?: boolean } | null;
 }
 
 interface ParteAfectadaOption {
@@ -254,7 +255,11 @@ export class MuestraFormComponent implements OnInit {
           this.zone.run(() => {
             if (this.imagenes.includes(item)) {
               item.validando  = false;
-              item.validacion = { relevante: true, motivo: '' };
+              item.validacion = {
+                relevante: true,
+                validado: false,
+                motivo: 'No se pudo verificar la imagen. Revisa que corresponda a cacao.',
+              };
               this.sincronizarEstadoImagenes();
             }
           });
